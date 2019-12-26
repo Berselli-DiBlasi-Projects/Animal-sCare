@@ -1,0 +1,125 @@
+{% extends base_template %}
+{% block title %}Petiverse - Classifica{% endblock %}
+{% block classifica_active %}active{% endblock %}
+
+{% block body %}
+
+    <div class="container text-left">
+        <b>Classifica</b>
+    </div>
+    <form action = "{% url 'utenti:classifica' %}" method = "post">
+        {% csrf_token %}
+        <div class="container text-center">
+        <select name = 'sel_utenti' class="form-control selectpicker show-tick" onchange='this.form.submit()'>
+            <option {% if sel_utenti == 'tutti' %}
+                    selected
+                    {% endif %} value="tutte">Classifica generale</option>
+            <option {% if sel_utenti == 'petsitter' %}
+                    selected
+                    {% endif %}value = "petsitter">Classifica dei petsitter</option>
+            <option {% if sel_utenti == 'normale' %}
+                    selected
+                    {% endif %} value = "normale">Classifica degli utenti normali</option>
+        </select>
+        <select name = 'sel_filtro' class="form-control selectpicker show-tick" onchange='this.form.submit()'>
+            <option {% if sel_filtro == 'voti' %}
+                    selected
+                    {% endif %} value = "voti">Ordina per voto</option>
+            <option {% if sel_filtro == 'recensioni' %}
+                    selected
+                    {% endif %} value = "recensioni">Ordina per numero di recensioni ricevute</option>
+         </select>
+        </div>
+    </form>
+
+    <div class="container">
+        {% for utente in utenti_sorted %}
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="well well-sm">
+                        <div class="row">
+                            <div class="col-xs-2 col-md-2 text-center">
+                                <a href="#" >
+                                    {% for profilo in utenti_profilo_sorted %}
+                                            {% if profilo.0 == utente.0 %}
+                                                <a href="{% url 'utenti:view-profile' oid=utente.0.pk %}">
+                                                    <img src="{{ profilo.1.foto_profilo.url }}" alt="bootsnipp"
+                                                         class="img-rounded img-responsive" /></a>
+                                            {% endif %}
+                                    {% endfor %}
+                                </a>
+                            </div>
+                            <div class="col-xs-10 col-md-10 section-box">
+                                <div class="inline-block">
+                                    <h3>[{{ forloop.counter }}°] {{ utente.0.first_name }} {{ utente.0.last_name }}</h3>
+                                </div> &nbsp;
+                                <div class="inline-block">
+                                    <a href="{% url 'utenti:view-profile' oid=utente.0.pk %}" target="_blank">
+                                    <span class="glyphicon glyphicon-new-window" style="font-size:20px;">
+                                    </span></a>
+                                </div>
+
+                                <h6>
+
+                                <p>
+                                    {% for profilo in utenti_profilo_sorted %}
+                                        {% if profilo.0 == utente.0 %}
+                                            {% if profilo.1.pet_sitter %}
+                                                Petsitter
+                                            {% else %}
+                                                Utente normale
+                                            {% endif %}
+                                                , {{ profilo.1.indirizzo }} , {{ profilo.1.citta }} <br><br>
+                                        {% endif %}
+                                    {% endfor %}
+                                </p>
+                                <hr />
+                                <div class="row rating-desc">
+                                    <div class="col-md-12">
+                                        <div class="inline-block">
+                                            <h6><b>Profilo:</b></h6>
+                                        </div>
+                                        <div class="inline-block">
+                                            <a href="{% url 'utenti:view-profile' oid=utente.0.pk %}" >
+                                                {{ utente.0.username }}</a>
+                                        </div>
+                                        <span class="separator">|</span>
+                                            {% for voto in utenti_voti_sorted %}
+                                                {% if voto.0 == utente.0 %}
+                                                    {% for i in 'xxxxx' %}
+                                                        {% if forloop.counter0 < voto.1 %}
+                                                            <span class="glyphicon glyphicon-heart"></span>
+                                                        {% else %}
+                                                            <span class="glyphicon glyphicon-heart-empty"></span>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    ( {{ voto.1 }}
+
+                                                {% endif %}
+                                            {% endfor %}
+
+                                        )<span class="separator">|</span>
+                                        <span class="glyphicon glyphicon-comment"></span>(
+                                        {% for recensione in utenti_recensioni_sorted %}
+                                            {% if recensione.0 == utente.0 %}
+                                                {{ recensione.1 }}
+                                                {% if recensione.1 != 1 %}
+                                                    Recensioni
+                                                {% else %}
+                                                    Recensione
+                                                {% endif %}
+                                                )
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

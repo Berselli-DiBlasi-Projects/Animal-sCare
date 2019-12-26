@@ -1,0 +1,34 @@
+{% extends base_template %}
+{% block title %}Petiverse - Registrazione{% endblock %}
+{% block login_active %}active{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h3>Registra un account</h3>
+                    {% if error_message %}
+                        <p><strong>{{ error_message }}</strong></p>
+                    {% endif %}
+                    <div class="col-sm-offset-20 col-sm-100">
+                        <ul>
+                            <li>
+                                Per registrare un account normale <a href="{% url 'utenti:registrazione-normale' %}">Clicca qui</a><br>
+                            </li>
+                            <li>
+                                Per registrare un account da pet sitter <a href="{% url 'utenti:registrazione-petsitter' %}">Clicca qui</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    Hai già un account? <a href="{% url 'utenti:utenti-login' %}">Clicca qui</a> per fare il log in.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

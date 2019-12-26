@@ -1,0 +1,114 @@
+{% extends base_template %}
+{% block title %}Petiverse - Profilo{% endblock %}
+{% block profilo_active %}active{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ view_user.username }} - utente normale</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-3 col-lg-3 " align="center"><img src="{{ user_profile.foto_profilo.url }}"
+                                                                            class="img-responsive"></div>
+
+                        <div class=" col-md-9 col-lg-9 ">
+                            <table class="table table-user-information">
+                                <tbody>
+                                    <tr>
+                                        <td>Nome</td>
+                                        <td>{{ view_user.first_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cognome</td>
+                                        <td>{{ view_user.last_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Email</td>
+                                        <td><a href="mailto:{{ view_user.email }}">{{ view_user.email }}</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Indirizzo</td>
+                                        <td>{{ user_profile.indirizzo }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Città</td>
+                                        <td>{{ user_profile.citta }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Telefono</td>
+                                        <td>{{ user_profile.telefono }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Voti</td>
+                                        <td>
+                                            {% for i in 'xxxxx' %}
+                                                {% if forloop.counter0 < voto_avg %}
+                                                    <span class="glyphicon glyphicon-heart"></span>
+                                                {% else %}
+                                                    <span class="glyphicon glyphicon-heart-empty"></span>
+                                                {% endif %}
+                                            {% endfor %}
+                                            ( {{ voto_avg }})
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Recensioni</td>
+                                        <td>
+                                            <span class="glyphicon glyphicon-comment"></span>(
+                                                {{ recensioni_num }}
+                                            {% if recensioni_num != 1 %}
+                                                Recensioni
+                                            {% else %}
+                                                Recensione
+                                            {% endif %}
+                                            )</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="col-md-3 col-lg-3 " align="left"><img src="{{ user_profile.foto_pet.url }}"
+                                                                            class="img-responsive"></div>
+                        <div class=" col-md-9 col-lg-9 ">
+                            <table class="table table-user-information">
+                                <tbody>
+                                    <tr>
+                                        <td>Nome pet</td>
+                                        <td>{{ user_profile.nome_pet }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Razza</td>
+                                        <td>{{ user_profile.razza }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Età pet</td>
+                                        <td>{{ user_profile.eta }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Particolarità</td>
+                                        <td>{{ user_profile.caratteristiche }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <a href="{% url 'annunci:annunci_di_utente' username=view_user.username %}" class="btn btn-primary">Visualizza annunci di {{ view_user.username }}</a>
+                    <a href="{% url 'recensioni:recensioni_ricevute' username=view_user.username %}" class="btn btn-primary">Recensioni ricevute</a>
+                    {% if request.user.pk == view_user.pk %}
+                        <span class="pull-right">
+                            <a href="{% url 'utenti:edit-profile' oid=user.pk %}" class="btn btn-primary">Modifica profilo</a>
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

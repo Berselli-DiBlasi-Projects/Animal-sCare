@@ -1,0 +1,134 @@
+{% extends base_template %}
+{% block title %}Petiverse - Calendario{% endblock %}
+{% block calendario_active %}active{% endblock %}
+{% load nel_futuro %}
+
+{% block body %}
+    <div class="container">
+        <input type=text id='data-ora' name="data-ora" readonly disabled="disabled">
+        <p> </p>
+    </div>
+
+    <script type="text/javascript">
+        function display_c(){
+            var refresh=1000;
+            mytime=setTimeout('display_ct()',refresh)
+        }
+
+        function display_ct() {
+            var x = new Date()
+            var x1= x.getDate() + "/" + (x.getMonth() + 1)+ "/" + x.getFullYear();
+            x1 = x1 + " - " +  ("0" + x.getHours()).slice(-2) + ":" +  ("0" + x.getMinutes()).slice(-2) + ":" +  ("0" + x.getSeconds()).slice(-2);
+            document.getElementById('data-ora').value = x1;
+            display_c();
+         }
+    </script>
+
+    <script type="text/javascript">
+        display_ct();
+    </script>
+
+    <form action = "{% url 'annunci:calendario' %}" method = "post">
+        {% csrf_token %}
+        <div class="container text-center">
+        <select name = 'sel_pet' class="form-control selectpicker show-tick" onchange='this.form.submit()'>
+            <option {% if sel_pet == 'tutti' %}
+                    selected
+                    {% endif %} value = "tutti">Tutti gli animali</option>
+            <option {% if sel_pet == 'Cane' %}
+                    selected
+                    {% endif %} value = "Cane">Cani</option>
+            <option {% if sel_pet == 'Gatto' %}
+                    selected
+                    {% endif %} value = "Gatto">Gatti</option>
+            <option {% if sel_pet == 'Coniglio' %}
+                    selected
+                    {% endif %} value = "Coniglio">Conigli</option>
+            <option {% if sel_pet == 'Volatile' %}
+                    selected
+                    {% endif %} value = "Volatile">Volatili</option>
+            <option {% if sel_pet == 'Rettile' %}
+                    selected
+                    {% endif %} value = "Rettile">Rettili</option>
+            <option {% if sel_pet == 'Altro' %}
+                    selected
+                    {% endif %} value = "Altro">Altro</option>
+         </select>
+        </div>
+    </form>
+
+    <div class="container">
+        {% for annuncio, profilo in annunci.items %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="well well-sm"
+                         {% if annuncio.data_fine|nel_futuro %}
+                            style="border:3px solid green;">
+                         {% else %}
+                            style="border:3px solid red;">
+                         {% endif %}
+                        <div class="row">
+                            <div class="col-xs-2 col-md-2 text-center">
+                                <a href="{% url 'annunci:dettagli_annuncio' oid=annuncio.pk %}" >
+                                    <img src="{{ annuncio.logo_annuncio.url }}" alt="bootsnipp"
+                                         class="img-rounded img-responsive" />
+                                </a>
+                            </div>
+                            <div class="col-xs-10 col-md-10 section-box">
+                                <div class="inline-block">
+                                    <a href="{% url 'annunci:dettagli_annuncio' oid=annuncio.pk %}" >
+                                        <h2>{{ annuncio.titolo }}</h2>
+                                    </a>
+                                </div>&nbsp;
+                                <div class="inline-block">
+                                    <a href="{% url 'annunci:dettagli_annuncio' oid=annuncio.pk %}" target="_blank">
+                                    <span class="glyphicon glyphicon-new-window" style="font-size:20px;">
+                                    </span></a>
+                                </div>
+
+                                <p>
+                                    {{ annuncio.sottotitolo }}
+                                    <h6>{{ annuncio.user.first_name }} {{ annuncio.user.last_name }}, {{ profilo.indirizzo }} , {{ profilo.citta }} <br><br>
+                                <b>Data di inizio: </b>{{ annuncio.data_inizio }} &nbsp; <b>Data di fine: </b>{{ annuncio.data_fine }}</h6>
+                                </p>
+                                <hr />
+                                <div class="row rating-desc">
+                                    <div class="col-md-12">
+                                        {% for annuncio_voto, voto in annunci_voti.items %}
+                                            {% if annuncio_voto == annuncio %}
+                                                {% for i in 'xxxxx' %}
+                                                    {% if forloop.counter0 < voto %}
+                                                        <span class="glyphicon glyphicon-heart"></span>
+                                                    {% else %}
+                                                        <span class="glyphicon glyphicon-heart-empty"></span>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                ( {{ voto }}
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        )<span class="separator">|</span>
+                                        <span class="glyphicon glyphicon-comment"></span>(
+                                        {% for annuncio_recensioni, recensioni in annunci_recensioni.items %}
+                                            {% if annuncio_recensioni == annuncio %}
+                                                {{ recensioni }}
+                                            {% endif %}
+                                        {% endfor %}
+                                        Recensioni)
+
+                                        {% if not annuncio.data_fine|nel_futuro and annuncio.user != user_profile.user %}
+                                            <span class="separator">|</span>
+                                            <a href="{% url 'recensioni:nuova_recensione' oid=annuncio.user.pk %}" >
+                                                Scrivi una recensione
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

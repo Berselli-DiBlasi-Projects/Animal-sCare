@@ -1,0 +1,28 @@
+{% extends base_template %}
+{% block title %}Petiverse - Conferma{% endblock %}
+{% block annunci_active %}active{% endblock %}
+{% load staticfiles %}
+
+{% block body %}
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    <h4>Accetti l'annuncio dell'utente <a href="{% url 'utenti:view-profile' oid=annuncio.user.pk %}" >
+                                    {{ annuncio.user.username }}</a>&nbsp?</h4>
+
+                    <a href="{% url 'annunci:dettagli_annuncio' oid=annuncio.pk %}" class="btn btn-primary">Indietro</a>&nbsp;&nbsp;
+                    <a href="{% url 'annunci:accetta_annuncio' oid=annuncio.pk %}" class="btn btn-primary">Conferma</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}
