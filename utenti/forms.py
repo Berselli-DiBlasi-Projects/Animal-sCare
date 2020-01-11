@@ -4,8 +4,9 @@ from .models import Profile
 
 
 class UserForm(forms.ModelForm):
-    first_name = forms.CharField(max_length=30)
-    last_name = forms.CharField(max_length=30)
+    required_css_class = 'required'
+    first_name = forms.CharField(max_length=30, label="Nome")
+    last_name = forms.CharField(max_length=30, label="Cognome")
     email = forms.EmailField(max_length=254)
     password = forms.CharField(widget=forms.PasswordInput)
     conferma_password = forms.CharField(widget=forms.PasswordInput())
@@ -16,6 +17,7 @@ class UserForm(forms.ModelForm):
 
 
 class UtenteNormaleForm(forms.ModelForm):
+    required_css_class = 'required'
     caratteristiche = forms.CharField(widget=forms.Textarea)
     scelta_animali = (('Cane', 'Cane'), ('Gatto', 'Gatto'), ('Coniglio', 'Coniglio'), ('Volatile', 'Volatile'),
                       ('Rettile', 'Rettile'), ('Altro', 'Altro'))
@@ -30,6 +32,7 @@ class UtenteNormaleForm(forms.ModelForm):
 
 
 class UtentePetSitterForm(forms.ModelForm):
+    required_css_class = 'required'
     descrizione = forms.CharField(widget=forms.Textarea)
     foto_profilo = forms.ImageField()
 

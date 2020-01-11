@@ -3,6 +3,7 @@ from .models import Annuncio, Servizio
 
 
 class AnnuncioForm(forms.ModelForm):
+    required_css_class = 'required'
     descrizione = forms.CharField(widget=forms.Textarea)
     scelta_animali = (('Cane', 'Cane'), ('Gatto', 'Gatto'), ('Coniglio', 'Coniglio'), ('Volatile', 'Volatile'),
                       ('Rettile', 'Rettile'), ('Altro', 'Altro'))
@@ -16,7 +17,6 @@ class AnnuncioForm(forms.ModelForm):
 
 
 class ServizioForm(forms.ModelForm):
-
     class Meta:
         model = Servizio
         fields = ['passeggiate', 'pulizia_gabbia', 'ore_compagnia', 'cibo', 'accompagna_dal_vet']

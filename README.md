@@ -1,2 +1,2 @@
-## Animal'sCare
-### Progetto di Applicazioni Web e Mobile
+# Animal'sCare
+Animal'sCare: a Django project

@@ -339,8 +339,8 @@ def login_user(request):
 
 @login_required(login_url='/utenti/login/')
 def logout_user(request):
-        logout(request)
-        return HttpResponseRedirect(reverse('main:index'))
+    logout(request)
+    return HttpResponseRedirect(reverse('main:index'))
 
 
 def registrazione(request):
@@ -355,7 +355,7 @@ def registrazione_normale(request):
     form = UserForm(request.POST or None)
     normaleform = UtenteNormaleForm(request.POST or None, request.FILES or None)
 
-    if form.is_valid() and normaleform.is_valid()and \
+    if form.is_valid() and normaleform.is_valid() and \
             not User.objects.filter(username=form.cleaned_data['username']).exists():
 
         # args: form, profile form, is user a petsitter
