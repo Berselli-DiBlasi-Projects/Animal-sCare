@@ -32,7 +32,7 @@ def accetta_annuncio(request, oid):
             utente_accetta = User.objects.filter(pk=user_profile.user.pk).first()
             email = EmailMessage('Il tuo annuncio è stato accettato',
                                  'L\'utente ' + utente_accetta.username + ' ha accettato il tuo annuncio. Fai il '
-                                                                      'login su Petiverse per controllare subito!',
+                                                                      'login su Animal\'sCare per controllare subito!',
                                  to=[utente_inserzionista.email])
             email.send()
         else:
@@ -49,7 +49,7 @@ def accetta_annuncio(request, oid):
                 utente_accetta = User.objects.filter(pk=user_profile.user.pk).first()
                 email = EmailMessage('Il tuo annuncio è stato accettato',
                                      'L\'utente ' + utente_accetta.username + ' ha accettato il tuo annuncio. Fai il '
-                                                                              'login su Petiverse per controllare '
+                                                                              'login su Animal\'sCare per controllare '
                                                                               'subito!',
                                      to=[utente_inserzionista.email])
                 email.send()
