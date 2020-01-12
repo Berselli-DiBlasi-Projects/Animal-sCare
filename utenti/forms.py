@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django import forms
 from .models import Profile
-
+from main.static.main import NamingList
 
 class UserForm(forms.ModelForm):
     required_css_class = 'required'
@@ -24,10 +24,11 @@ class UtenteNormaleForm(forms.ModelForm):
     pet = forms.ChoiceField(choices=scelta_animali)
     foto_profilo = forms.ImageField()
     foto_pet = forms.ImageField()
-
+    provincia = forms.ChoiceField(choices=NamingList.AnagraficaIstat.ListaProvince)
+    regione = forms.ChoiceField(choices=NamingList.AnagraficaIstat.ListaRegioni)
     class Meta:
         model = Profile
-        fields = ['indirizzo', 'citta', 'telefono', 'foto_profilo', 'nome_pet', 'pet', 'razza', 'eta',
+        fields = ['indirizzo', 'citta','provincia', 'regione', 'telefono', 'foto_profilo', 'nome_pet', 'pet', 'razza', 'eta',
                   'caratteristiche', 'foto_pet']
 
 
@@ -35,7 +36,8 @@ class UtentePetSitterForm(forms.ModelForm):
     required_css_class = 'required'
     descrizione = forms.CharField(widget=forms.Textarea)
     foto_profilo = forms.ImageField()
-
+    provincia = forms.ChoiceField(choices=NamingList.AnagraficaIstat.ListaProvince)
+    regione = forms.ChoiceField(choices=NamingList.AnagraficaIstat.ListaRegioni)
     class Meta:
         model = Profile
-        fields = ['indirizzo', 'citta', 'telefono', 'foto_profilo', 'descrizione', 'hobby']
+        fields = ['indirizzo', 'citta','provincia', 'regione', 'telefono', 'foto_profilo', 'descrizione', 'hobby']

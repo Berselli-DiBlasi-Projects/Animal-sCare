@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
-from .models import User, Profile
+from .models import  User, Profile
 from .forms import UserForm, UtenteNormaleForm, UtentePetSitterForm
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
@@ -395,6 +395,8 @@ def registrazione_normale(request):
 
         profile.indirizzo = normaleform.cleaned_data['indirizzo']
         profile.citta = normaleform.cleaned_data['citta']
+        profile.provincia = normaleform.cleaned_data['provincia']
+        profile.regione = normaleform.cleaned_data['regione']
         profile.telefono = normaleform.cleaned_data['telefono']
         profile.nome_pet = normaleform.cleaned_data['nome_pet']
         profile.pet = normaleform.cleaned_data['pet']
@@ -481,6 +483,8 @@ def registrazione_petsitter(request):
 
         profile.indirizzo = petsitterform.cleaned_data['indirizzo']
         profile.citta = petsitterform.cleaned_data['citta']
+        profile.provincia = petsitterform.cleaned_data['provincia']
+        profile.regione = petsitterform.cleaned_data['regione']
         profile.telefono = petsitterform.cleaned_data['telefono']
         profile.descrizione = petsitterform.cleaned_data['descrizione']
         profile.hobby = petsitterform.cleaned_data['hobby']
