@@ -302,7 +302,6 @@ def edit_profile(request, oid):
             except User.DoesNotExist:
                 print('nessun utente trovato con questo username, username valido.')
 
-            context.update({'error_message': 'Errore: ricontrolla foto e i campi inseriti'})
             form = UserForm(instance=request.user)
             if not profile.pet_sitter:
                 profile_form = UtenteNormaleForm(instance=profile)
@@ -314,6 +313,7 @@ def edit_profile(request, oid):
         context['user_profile'] = profile
 
         return render(request, 'utenti/modifica_profilo.html', context)
+
     else:
         return HttpResponseRedirect(reverse('main:index'))
 

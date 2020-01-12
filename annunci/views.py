@@ -371,7 +371,6 @@ def modifica_annuncio(request, oid):
             servizioform.save()
             return HttpResponseRedirect(reverse('annunci:lista-annunci'))
     else:
-        context.update({'error_message': 'Errore: ricontrolla foto e i campi inseriti'})
         form = AnnuncioForm(instance=annuncio)
         servizioform = ServizioForm(instance=servizi)
 
