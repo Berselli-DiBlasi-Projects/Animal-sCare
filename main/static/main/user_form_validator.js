@@ -6,6 +6,10 @@ jQuery.validator.setDefaults({
   success: 'valid'
 });
 
+jQuery.validator.addMethod("lettersonly", function(value, element) {
+  return this.optional(element) || /^[a-z]+$/i.test(value);
+}, "Caratteri numerici non ammessi");
+
 $( '#user-form' ).validate({
   rules: {
     'username':{
@@ -24,16 +28,19 @@ $( '#user-form' ).validate({
         equalTo: '#password'
         },
       'first_name': {
-        required: true
+        required: true,
+        lettersonly: true
       },
       'last_name':{
-        required: true
+        required: true,
+        lettersonly: true
       },
       'indirizzo': {
         required: true
       },
       'citta':{
-        required: true
+        required: true,
+        lettersonly: true
       },
       'telefono':{
         required: true,
@@ -44,10 +51,12 @@ $( '#user-form' ).validate({
         number: true
       },
       'nome_pet':{
-        required: true
+        required: true,
+        lettersonly: true
       },
       'razza':{
-        required: true
+        required: true,
+        lettersonly: true
       },
       'caratteristiche':{
         required: true
@@ -71,7 +80,8 @@ $( '#user-form' ).validate({
         equalTo: "Le due password non coincidono"
         },
     'first_name': {
-        required: "Il campo nome è obbligatorio"
+        required: "Il campo nome è obbligatorio",
+        notNumber: "Caratteri numerici non consentiti"
       },
     'last_name':{
         required: "Il campo cognome è obbligatorio"
