@@ -8,7 +8,7 @@ class UserForm(forms.ModelForm):
     first_name = forms.CharField(max_length=30, label="Nome")
     last_name = forms.CharField(max_length=30, label="Cognome")
     email = forms.EmailField(max_length=254)
-    password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'id':'password'}))
     conferma_password = forms.CharField(widget=forms.PasswordInput())
 
     class Meta:
