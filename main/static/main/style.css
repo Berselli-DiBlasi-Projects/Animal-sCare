@@ -59,3 +59,6 @@ body{
     content: ' *';
     color: red;
 }
+
+label.error{background:url(/main/static/main/images/unchecked.gif) no-repeat;padding-left:16px;margin-left:.3em}
+label.valid{background:url(/main/static/main/images/checked.gif) no-repeat;display:inline;width:16px;height:16px}
