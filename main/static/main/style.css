@@ -2,8 +2,50 @@ body{
     background: white url("images/background.png");
 }
 
-.navbar{
-    border-radius: 0;
+/* Colore navbar */
+.navbar-default {
+    background-color:#232f3e;
+    color:#ffffff;
+    border-radius:0;
+}
+
+/* Colore scritte non selezionate */
+.navbar-default .navbar-nav > li > a {
+    color:#e1e1e1;
+}
+
+/* Colore scritta selezionata */
+.navbar-default .navbar-nav > .active > a {
+    color: #eeeeee;
+    background-color:transparent;
+}
+
+/* Background opzione selezionata */
+.navbar-default .navbar-nav>.active> a,
+.navbar-default .navbar-nav>.active> a:focus,
+.navbar-default .navbar-nav>.active> a:hover {
+  background: #3b5998; /* 4e698a */
+}
+
+/* Background opzione hovered */
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus,
+.navbar-default .navbar-nav > .open >a {
+    text-decoration: none;
+    background-color: #304054;
+    color: #eeeeee;
+}
+
+/* Colore brand */
+.navbar-default .navbar-brand {
+    color:#e1e1e1;
+}
+
+/* Colore brand hovered */
+.navbar-default .navbar-brand:hover {
+    color: #eeeeee;
 }
 
 .navbar-brand{
