@@ -8,3 +8,7 @@ class Recensione(models.Model):
     titolo = models.CharField(max_length=100)
     descrizione = models.CharField(max_length=250)
     voto = models.IntegerField(default=1)
+
+    class Meta:
+        verbose_name = 'Recensione'
+        verbose_name_plural = "Recensioni"

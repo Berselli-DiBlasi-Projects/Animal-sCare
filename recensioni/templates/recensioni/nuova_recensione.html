@@ -8,11 +8,14 @@
 <div class="container-fluid">
 
     <div class="row">
-        <div class="col-sm-12 col-md-6">
+        <div class="col-sm-12 col-md-6" style="float: none; margin: 0 auto;">
             <div class="panel panel-default">
                 <div class="panel-body">
                     {% if not error_message %}
-                        <h3>Inserisci una nuova recensione</h3>
+                        <div style="text-align: center;">
+                            <h3>Inserisci una nuova recensione</h3>
+                        </div>
+                        </br>
                         <form id="recensione-form" class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
                             {% csrf_token %}
 

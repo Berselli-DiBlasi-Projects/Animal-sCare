@@ -17,6 +17,10 @@ class Annuncio(models.Model):
     data_fine = models.DateTimeField(default=datetime.now)
     logo_annuncio = models.FileField(default=None)
 
+    class Meta:
+        verbose_name = 'Annuncio'
+        verbose_name_plural = "Annunci"
+
 
 class Servizio(models.Model):
     annuncio = models.ForeignKey(Annuncio, on_delete=models.CASCADE)
@@ -25,4 +29,8 @@ class Servizio(models.Model):
     ore_compagnia = models.BooleanField(default=False)
     cibo = models.BooleanField(default=False)
     accompagna_dal_vet = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = 'Servizio'
+        verbose_name_plural = "Servizi"
 
