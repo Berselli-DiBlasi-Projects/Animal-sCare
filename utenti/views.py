@@ -378,20 +378,23 @@ def registrazione_normale(request):
 
         profile = Profile.objects.create(user=user)
 
-        profile.foto_profilo = request.FILES['foto_profilo']
-        file_type = profile.foto_profilo.url.split('.')[-1]
-        file_type = file_type.lower()
-        if file_type not in IMAGE_FILE_TYPES:
-            context = {
-                'form': form,
-                'profileForm': normaleform,
-                'error_message': 'Sono accettate immagini PNG, JPG, o JPEG',
-            }
-            if not request.user.is_authenticated():
-                context['base_template'] = 'main/base_visitor.html'
-            else:
-                context['base_template'] = 'main/base.html'
-            return render(request, 'utenti/registrazione_normale.html', context)
+        try:
+            profile.foto_profilo = request.FILES['foto_profilo']
+            file_type = profile.foto_profilo.url.split('.')[-1]
+            file_type = file_type.lower()
+            if file_type not in IMAGE_FILE_TYPES:
+                context = {
+                    'form': form,
+                    'profileForm': normaleform,
+                    'error_message': 'Sono accettate immagini PNG, JPG, o JPEG',
+                }
+                if not request.user.is_authenticated():
+                    context['base_template'] = 'main/base_visitor.html'
+                else:
+                    context['base_template'] = 'main/base.html'
+                return render(request, 'utenti/registrazione_normale.html', context)
+        except Exception:
+            profile.foto_profilo = None
 
         profile.indirizzo = normaleform.cleaned_data['indirizzo']
         profile.citta = normaleform.cleaned_data['citta']
@@ -403,20 +406,24 @@ def registrazione_normale(request):
         profile.razza = normaleform.cleaned_data['razza']
         profile.eta = normaleform.cleaned_data['eta']
         profile.caratteristiche = normaleform.cleaned_data['caratteristiche']
-        profile.foto_pet = request.FILES['foto_pet']
-        file_type = profile.foto_pet.url.split('.')[-1]
-        file_type = file_type.lower()
-        if file_type not in IMAGE_FILE_TYPES:
-            context = {
-                'form': form,
-                'profileForm': normaleform,
-                'error_message': 'Sono accettate immagini PNG, JPG, o JPEG',
-            }
-            if not request.user.is_authenticated():
-                context['base_template'] = 'main/base_visitor.html'
-            else:
-                context['base_template'] = 'main/base.html'
-            return render(request, 'utenti/registrazione_normale.html', context)
+
+        try:
+            profile.foto_pet = request.FILES['foto_pet']
+            file_type = profile.foto_pet.url.split('.')[-1]
+            file_type = file_type.lower()
+            if file_type not in IMAGE_FILE_TYPES:
+                context = {
+                    'form': form,
+                    'profileForm': normaleform,
+                    'error_message': 'Sono accettate immagini PNG, JPG, o JPEG',
+                }
+                if not request.user.is_authenticated():
+                    context['base_template'] = 'main/base_visitor.html'
+                else:
+                    context['base_template'] = 'main/base.html'
+                return render(request, 'utenti/registrazione_normale.html', context)
+        except Exception:
+            profile.foto_pet = None
 
         profile.descrizione = 'Null'
         profile.hobby = 'Null'

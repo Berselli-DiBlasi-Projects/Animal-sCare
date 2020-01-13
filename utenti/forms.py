@@ -22,8 +22,8 @@ class UtenteNormaleForm(forms.ModelForm):
     scelta_animali = (('Cane', 'Cane'), ('Gatto', 'Gatto'), ('Coniglio', 'Coniglio'), ('Volatile', 'Volatile'),
                       ('Rettile', 'Rettile'), ('Altro', 'Altro'))
     pet = forms.ChoiceField(choices=scelta_animali)
-    foto_profilo = forms.ImageField()
-    foto_pet = forms.ImageField()
+    foto_profilo = forms.ImageField(required=False)
+    foto_pet = forms.ImageField(required=False)
     provincia = forms.ChoiceField(choices=NamingList.AnagraficaIstat.ListaProvince)
     regione = forms.ChoiceField(choices=NamingList.AnagraficaIstat.ListaRegioni)
     class Meta:

@@ -44,7 +44,7 @@
                                     {% for profilo in utenti_profilo_sorted %}
                                             {% if profilo.0 == utente.0 %}
                                                 <a href="{% url 'utenti:view-profile' oid=utente.0.pk %}">
-                                                    <img src="{{ profilo.1.foto_profilo.url }}" alt="bootsnipp"
+                                                    <img src="{{ profilo.1.foto_profilo_or_default }}" alt="bootsnipp"
                                                          class="img-rounded img-responsive" /></a>
                                             {% endif %}
                                     {% endfor %}
