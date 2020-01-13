@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django import forms
 from .models import Profile
-from main.static.main import NamingList
+from static import NamingList
 
 class UserForm(forms.ModelForm):
     required_css_class = 'required'
