@@ -1,7 +1,8 @@
 from django.db import models
 from datetime import datetime
 from django.contrib.auth.models import User
-
+from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.conf import settings
 
 class Annuncio(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
@@ -15,7 +16,12 @@ class Annuncio(models.Model):
     pet = models.CharField(max_length=50)
     data_inizio = models.DateTimeField(default=datetime.now)
     data_fine = models.DateTimeField(default=datetime.now)
-    logo_annuncio = models.FileField(default=None)
+    logo_annuncio = models.FileField(null=True, default='', blank=True)
+
+    def logo_annuncio_or_default(self, default_path=static("/main/images/annuncio_default.jpg")):
+        if self.logo_annuncio:
+            return settings.MEDIA_URL + str(self.logo_annuncio)
+        return default_path
 
     class Meta:
         verbose_name = 'Annuncio'

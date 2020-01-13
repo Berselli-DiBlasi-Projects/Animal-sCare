@@ -8,7 +8,7 @@ class AnnuncioForm(forms.ModelForm):
     scelta_animali = (('Cane', 'Cane'), ('Gatto', 'Gatto'), ('Coniglio', 'Coniglio'), ('Volatile', 'Volatile'),
                       ('Rettile', 'Rettile'), ('Altro', 'Altro'))
     pet = forms.ChoiceField(choices=scelta_animali)
-    logo_annuncio = forms.ImageField()
+    logo_annuncio = forms.ImageField(required=False)
 
     class Meta:
         model = Annuncio
