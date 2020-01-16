@@ -5,6 +5,8 @@ from .models import Annuncio, Servizio
 class AnnuncioForm(forms.ModelForm):
     required_css_class = 'required'
     descrizione = forms.CharField(widget=forms.Textarea)
+    data_inizio = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'])
+    data_fine = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'])
     scelta_animali = (('Cane', 'Cane'), ('Gatto', 'Gatto'), ('Coniglio', 'Coniglio'), ('Volatile', 'Volatile'),
                       ('Rettile', 'Rettile'), ('Altro', 'Altro'))
     pet = forms.ChoiceField(choices=scelta_animali)

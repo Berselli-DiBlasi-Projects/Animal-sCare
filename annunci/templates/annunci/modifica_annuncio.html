@@ -53,6 +53,19 @@
                     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
                     <script type="text/javascript" src="{% static 'annuncio_form_validator.js' %}"></script>
 
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+                    <script>
+                      $(function () {
+                        $("#id_data_inizio").datetimepicker({
+                          format: 'd/m/Y H:i',
+                        });
+                        $("#id_data_fine").datetimepicker({
+                          format: 'd/m/Y H:i',
+                        });
+                      });
+                    </script>
+
                     </br>
                     <p> I campi contrassegnati con <span style="color:red;">*</span> sono obbligatori.</p>
                 </div>
