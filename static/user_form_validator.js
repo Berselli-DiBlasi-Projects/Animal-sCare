@@ -24,6 +24,10 @@ jQuery.validator.addMethod("username_unique", function(value, element) {
     return isSuccess;
 }, "Username non disponibile");
 
+jQuery.validator.addMethod("eta_pet_valida", function(value, element) {
+  return value >= 0 && value <= 100;
+}, "L'età deve essere compresa tra 0 e 100 anni");
+
 $( '#user-form' ).validate({
   rules: {
     'username':{
@@ -63,7 +67,8 @@ $( '#user-form' ).validate({
       },
       'eta':{
         required: true,
-        number: true
+        number: true,
+        eta_pet_valida: true
       },
       'nome_pet':{
         required: true,

@@ -332,26 +332,21 @@ def edit_profile(request, oid):
 
 @login_required(login_url='/utenti/login/')
 def elimina_profilo(request, oid):
-    user_profile = User.objects.filter(id=oid).first()
-    context = {'profilo': user_profile, 'base_template': 'main/base.html',
-               'user_profile': Profile.objects.filter(user=request.user).first()}
+    user = User.objects.filter(id=oid).first()
+    if user == User.objects.get(username=request.user):
+        context = {'user': user, 'base_template': 'main/base.html'}
 
-    return render(request, 'annunci/elimina_annuncio.html', context)
+        return render(request, 'utenti/elimina_profilo.html', context)
 
 
 @login_required(login_url='/utenti/login/')
 def elimina_profilo_conferma(request, oid):
-    '''
-    Annuncio.objects.filter(id=oid).first().logo_annuncio.delete(save=True)
-    annuncio = Annuncio.objects.filter(id=oid).first()
-    if not annuncio.annuncio_petsitter:
-        userprofile = Profile.objects.filter(user=request.user).first()
-        userprofile.pet_coins = userprofile.pet_coins + annuncio.pet_coins
-        userprofile.save()
+    user = User.objects.filter(id=oid).first()
 
-    Annuncio.objects.filter(id=oid).delete()
-    '''
-    return HttpResponseRedirect(reverse('annunci:lista-annunci'))
+    if user == User.objects.get(username=request.user):
+        User.objects.filter(id=oid).delete()
+
+    return HttpResponseRedirect(reverse('main:index'))
 
 
 def login_user(request):

@@ -132,12 +132,12 @@
                             {% else %}
                                 {% if not annuncio.user_accetta %}
                                     <a href="{% url 'annunci:modifica_annuncio' oid=annuncio.pk %}" class="btn btn-primary">Modifica annuncio</a>
-                                    <a href="{% url 'annunci:elimina_annuncio' oid=annuncio.pk %}" class="btn btn-primary">Elimina annuncio</a>
+                                    <a href="{% url 'annunci:elimina_annuncio' oid=annuncio.pk %}" class="btn btn-danger">Elimina annuncio</a>
                                 {% endif %}
                             {% endif %}
 
                             {% if annuncio.user_accetta and not annuncio.data_fine|nel_futuro %}
-                                <a href="{% url 'annunci:elimina_annuncio' oid=annuncio.pk %}" class="btn btn-primary">Elimina annuncio</a>
+                                <a href="{% url 'annunci:elimina_annuncio' oid=annuncio.pk %}" class="btn btn-danger">Elimina annuncio</a>
                             {% endif %}
                         {% endif %}
                     </article>

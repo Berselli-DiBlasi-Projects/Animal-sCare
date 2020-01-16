@@ -207,25 +207,33 @@ def dettagli_annuncio(request, oid):
 
 @login_required(login_url='/utenti/login/')
 def elimina_annuncio(request, oid):
-    annuncio = Annuncio.objects.filter(id=oid).first()
-    context = {'annuncio': annuncio, 'base_template': 'main/base.html',
-               'user_profile': Profile.objects.filter(user=request.user).first()}
 
-    return render(request, 'annunci/elimina_annuncio.html', context)
+    annuncio = Annuncio.objects.filter(id=oid).first()
+    if annuncio.user == request.user:
+        context = {'annuncio': annuncio, 'base_template': 'main/base.html',
+                   'user_profile': Profile.objects.filter(user=request.user).first()}
+
+        return render(request, 'annunci/elimina_annuncio.html', context)
+
+    return HttpResponseRedirect(reverse('main:index'))
 
 
 @login_required(login_url='/utenti/login/')
 def elimina_annuncio_conferma(request, oid):
-    Annuncio.objects.filter(id=oid).first().logo_annuncio.delete(save=True)
     annuncio = Annuncio.objects.filter(id=oid).first()
-    if not annuncio.annuncio_petsitter:
-        userprofile = Profile.objects.filter(user=request.user).first()
-        userprofile.pet_coins = userprofile.pet_coins + annuncio.pet_coins
-        userprofile.save()
 
-    Annuncio.objects.filter(id=oid).delete()
+    if annuncio.user == request.user:
+        Annuncio.objects.filter(id=oid).first().logo_annuncio.delete(save=True)
+        if not annuncio.annuncio_petsitter:
+            userprofile = Profile.objects.filter(user=request.user).first()
+            userprofile.pet_coins = userprofile.pet_coins + annuncio.pet_coins
+            userprofile.save()
 
-    return HttpResponseRedirect(reverse('annunci:lista-annunci'))
+        Annuncio.objects.filter(id=oid).delete()
+
+        return HttpResponseRedirect(reverse('annunci:lista-annunci'))
+
+    return HttpResponseRedirect(reverse('main:index'))
 
 
 @login_required(login_url='/utenti/login/')

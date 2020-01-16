@@ -14,7 +14,7 @@
                         <h4>Confermi di voler eliminare l'annuncio?</h4>
 
                         <a href="{% url 'annunci:dettagli_annuncio' oid=annuncio.pk %}" class="btn btn-primary">Indietro</a>&nbsp;&nbsp;
-                        <a href="{% url 'annunci:elimina_annuncio_conferma' oid=annuncio.pk %}" class="btn btn-primary">Conferma</a>
+                        <a href="{% url 'annunci:elimina_annuncio_conferma' oid=annuncio.pk %}" class="btn btn-danger">Conferma</a>
                     </div>
                 </div>
             </div>
