@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from recensioni.models import Recensione
 from django.db.models import Avg
+from django.http import HttpResponse
 import operator
 import re
 
@@ -61,6 +62,17 @@ def cerca_utenti(request):
         context.update({'user_profile': Profile.objects.filter(user=request.user).first()})
 
     return render(request, 'utenti/cerca_utenti.html', context)
+
+
+def check_username(request):
+    if request.method == "GET":
+        p = request.GET.copy()
+        if 'username' in p:
+            name = p['username']
+            if User.objects.filter(username__iexact=name):
+                return HttpResponse(False)
+            else:
+                return HttpResponse(True)
 
 
 def classifica(request):

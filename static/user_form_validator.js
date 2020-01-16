@@ -10,11 +10,26 @@ jQuery.validator.addMethod("lettersonly", function(value, element) {
   return this.optional(element) || /^[a-z]+$/i.test(value);
 }, "Caratteri numerici non ammessi");
 
+jQuery.validator.addMethod("username_unique", function(value, element) {
+
+    var isSuccess = false;
+
+   $.ajax({ url: "/utenti/check_username",
+            type: "GET",
+            data: "username=" + value,
+            async: false,
+            dataType:"html",
+            success: function(msg) { isSuccess = msg === "True" }
+          });
+    return isSuccess;
+}, "Username non disponibile");
+
 $( '#user-form' ).validate({
   rules: {
     'username':{
         required: true,
-        minlength: 3
+        minlength: 3,
+        username_unique: true
         },
     'email':{
         required: true,

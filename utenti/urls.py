@@ -34,4 +34,7 @@ urlpatterns = [
 
     # /utenti/cerca/
     url(r'cerca/$', views.cerca_utenti, name='cerca_utenti'),
+
+    # /check_username/?username=john
+    url(r'check_username/$', views.check_username, name='check_username'),
 ]

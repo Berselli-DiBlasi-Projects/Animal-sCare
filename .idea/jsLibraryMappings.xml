@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="file://$PROJECT_DIR$" libraries="{additional-methods, bootstrap, jquery, jquery-1.11.1, jquery.validate, site-demos}" />
+    <file url="file://$PROJECT_DIR$" libraries="{additional-methods, bootstrap, jquery, jquery-1.11.1, jquery-3.4.1, jquery.validate, site-demos}" />
     <excludedPredefinedLibrary name="HTML" />
   </component>
 </project>
