@@ -18,7 +18,7 @@ class Annuncio(models.Model):
     data_fine = models.DateTimeField(default=datetime.now)
     logo_annuncio = models.FileField(null=True, default='', blank=True)
 
-    def logo_annuncio_or_default(self, default_path=static("/main/images/annuncio_default.jpg")):
+    def logo_annuncio_or_default(self, default_path=static("/images/annuncio_default.jpg")):
         if self.logo_annuncio:
             return settings.MEDIA_URL + str(self.logo_annuncio)
         return default_path

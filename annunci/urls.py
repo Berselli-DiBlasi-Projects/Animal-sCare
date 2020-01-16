@@ -14,16 +14,19 @@ urlpatterns = [
     # /annunci/#annuncio/
     url(r'(?P<oid>[0-9]+)/$', views.dettagli_annuncio, name='dettagli_annuncio'),
 
-    # /annuncio/#annuncio/modifica/
+    # /annunci/#annuncio/modifica/
     url(r'(?P<oid>[0-9]+)/modifica/$', views.modifica_annuncio, name='modifica_annuncio'),
 
-    # /annuncio/#annuncio/elimina/
+    # /annunci/#annuncio/elimina/
     url(r'(?P<oid>[0-9]+)/elimina/$', views.elimina_annuncio, name='elimina_annuncio'),
 
-    # /annuncio/#annuncio/accetta/
+    # /annunci/#annuncio/elimina/conferma/
+    url(r'(?P<oid>[0-9]+)/elimina/conferma/$', views.elimina_annuncio_conferma, name='elimina_annuncio_conferma'),
+
+    # /annunci/#annuncio/accetta/
     url(r'(?P<oid>[0-9]+)/accetta/$', views.accetta_annuncio, name='accetta_annuncio'),
 
-    # /annuncio/#annuncio/accetta/conferma/
+    # /annunci/#annuncio/accetta/conferma/
     url(r'(?P<oid>[0-9]+)/accetta/conferma/$', views.conferma_annuncio, name='conferma_annuncio'),
 
     # /annunci/calendario/

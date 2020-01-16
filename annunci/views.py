@@ -207,6 +207,15 @@ def dettagli_annuncio(request, oid):
 
 @login_required(login_url='/utenti/login/')
 def elimina_annuncio(request, oid):
+    annuncio = Annuncio.objects.filter(id=oid).first()
+    context = {'annuncio': annuncio, 'base_template': 'main/base.html',
+               'user_profile': Profile.objects.filter(user=request.user).first()}
+
+    return render(request, 'annunci/elimina_annuncio.html', context)
+
+
+@login_required(login_url='/utenti/login/')
+def elimina_annuncio_conferma(request, oid):
     Annuncio.objects.filter(id=oid).first().logo_annuncio.delete(save=True)
     annuncio = Annuncio.objects.filter(id=oid).first()
     if not annuncio.annuncio_petsitter:

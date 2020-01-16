@@ -28,12 +28,12 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-    def foto_profilo_or_default(self, default_path=static("/main/images/user_default.jpg")):
+    def foto_profilo_or_default(self, default_path=static("/images/user_default.jpg")):
         if self.foto_profilo:
             return settings.MEDIA_URL + str(self.foto_profilo)
         return default_path
 
-    def foto_pet_or_default(self, default_path=static("/main/images/pet_default.jpg")):
+    def foto_pet_or_default(self, default_path=static("/images/pet_default.jpg")):
         if self.foto_pet:
             return settings.MEDIA_URL + str(self.foto_pet)
         return default_path

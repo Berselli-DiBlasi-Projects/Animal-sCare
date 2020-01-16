@@ -1,5 +1,5 @@
 {% extends base_template %}
-{% block title %}Animal'sCare - Conferma{% endblock %}
+{% block title %}Animal'sCare - Elimina annuncio{% endblock %}
 {% block annunci_active %}active{% endblock %}
 {% load staticfiles %}
 
@@ -11,11 +11,10 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div style="text-align: center;">
-                        <h4>Accetti l'annuncio dell'utente <a href="{% url 'utenti:view-profile' oid=annuncio.user.pk %}" >
-                                        {{ annuncio.user.username }}</a>&nbsp?</h4>
+                        <h4>Confermi di voler eliminare l'annuncio?</h4>
 
                         <a href="{% url 'annunci:dettagli_annuncio' oid=annuncio.pk %}" class="btn btn-primary">Indietro</a>&nbsp;&nbsp;
-                        <a href="{% url 'annunci:accetta_annuncio' oid=annuncio.pk %}" class="btn btn-primary">Conferma</a>
+                        <a href="{% url 'annunci:elimina_annuncio_conferma' oid=annuncio.pk %}" class="btn btn-primary">Conferma</a>
                     </div>
                 </div>
             </div>
