@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
-from .models import  User, Profile
+from .models import User, Profile
 from .forms import UserForm, UtenteNormaleForm, UtentePetSitterForm
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
@@ -330,6 +330,30 @@ def edit_profile(request, oid):
         return HttpResponseRedirect(reverse('main:index'))
 
 
+@login_required(login_url='/utenti/login/')
+def elimina_profilo(request, oid):
+    user_profile = User.objects.filter(id=oid).first()
+    context = {'profilo': user_profile, 'base_template': 'main/base.html',
+               'user_profile': Profile.objects.filter(user=request.user).first()}
+
+    return render(request, 'annunci/elimina_annuncio.html', context)
+
+
+@login_required(login_url='/utenti/login/')
+def elimina_profilo_conferma(request, oid):
+    '''
+    Annuncio.objects.filter(id=oid).first().logo_annuncio.delete(save=True)
+    annuncio = Annuncio.objects.filter(id=oid).first()
+    if not annuncio.annuncio_petsitter:
+        userprofile = Profile.objects.filter(user=request.user).first()
+        userprofile.pet_coins = userprofile.pet_coins + annuncio.pet_coins
+        userprofile.save()
+
+    Annuncio.objects.filter(id=oid).delete()
+    '''
+    return HttpResponseRedirect(reverse('annunci:lista-annunci'))
+
+
 def login_user(request):
     if not request.user.is_authenticated():
         if request.method == "POST":
@@ -485,20 +509,23 @@ def registrazione_petsitter(request):
 
         profile = Profile.objects.create(user=user)
 
-        profile.foto_profilo = request.FILES['foto_profilo']
-        file_type = profile.foto_profilo.url.split('.')[-1]
-        file_type = file_type.lower()
-        if file_type not in IMAGE_FILE_TYPES:
-            context = {
-                'form': form,
-                'profileForm': petsitterform,
-                'error_message': 'Sono accettate immagini PNG, JPG, o JPEG',
-            }
-            if not request.user.is_authenticated():
-                context['base_template'] = 'main/base_visitor.html'
-            else:
-                context['base_template'] = 'main/base.html'
-            return render(request, 'utenti/registrazione_petsitter.html', context)
+        try:
+            profile.foto_profilo = request.FILES['foto_profilo']
+            file_type = profile.foto_profilo.url.split('.')[-1]
+            file_type = file_type.lower()
+            if file_type not in IMAGE_FILE_TYPES:
+                context = {
+                    'form': form,
+                    'profileForm': petsitterform,
+                    'error_message': 'Sono accettate immagini PNG, JPG, o JPEG',
+                }
+                if not request.user.is_authenticated():
+                    context['base_template'] = 'main/base_visitor.html'
+                else:
+                    context['base_template'] = 'main/base.html'
+                return render(request, 'utenti/registrazione_petsitter.html', context)
+        except Exception:
+            profile.foto_profilo = None
 
         profile.indirizzo = petsitterform.cleaned_data['indirizzo']
         profile.citta = petsitterform.cleaned_data['citta']

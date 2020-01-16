@@ -188,7 +188,7 @@ def controllo_form_annuncio(userprofile, form):
 def dettagli_annuncio(request, oid):
     if request.user.is_authenticated():
         context = {'base_template': 'main/base.html'}
-        context.update({'user_profile': Profile.objects.filter(user=request.user).first()})
+        context.update({'user': User.objects.get(username=request.user)})
     else:
         context = {'base_template': 'main/base_visitor.html'}
 

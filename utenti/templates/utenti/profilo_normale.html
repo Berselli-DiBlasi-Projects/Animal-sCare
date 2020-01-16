@@ -6,7 +6,7 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-7 toppad" style="float: none; margin: 0 auto;">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h3 class="panel-title">{{ view_user.username }} - utente normale</h3>
@@ -107,11 +107,12 @@
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <a href="{% url 'annunci:annunci_di_utente' username=view_user.username %}" class="btn btn-primary">Visualizza annunci di {{ view_user.username }}</a>
+                    <a href="{% url 'annunci:annunci_di_utente' username=view_user.username %}" class="btn btn-primary">Annunci di {{ view_user.username }}</a>
                     <a href="{% url 'recensioni:recensioni_ricevute' username=view_user.username %}" class="btn btn-primary">Recensioni ricevute</a>
                     {% if request.user.pk == view_user.pk %}
                         <span class="pull-right">
                             <a href="{% url 'utenti:edit-profile' oid=user.pk %}" class="btn btn-primary">Modifica profilo</a>
+                            <a href="{% url 'utenti:edit-profile' oid=user.pk %}" class="btn btn-danger">Elimina profilo</a>
                         </span>
                     {% endif %}
                 </div>

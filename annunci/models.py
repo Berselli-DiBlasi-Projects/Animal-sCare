@@ -6,7 +6,7 @@ from django.conf import settings
 
 class Annuncio(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
-    user_accetta = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='user_accetta')
+    user_accetta = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='user_accetta')
 
     annuncio_petsitter = models.BooleanField(default=True)     # Indica se l'annuncio è stato inserito da un petsitter
     titolo = models.CharField(max_length=100)

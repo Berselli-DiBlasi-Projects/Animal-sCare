@@ -38,7 +38,7 @@ class UtenteNormaleForm(forms.ModelForm):
 class UtentePetSitterForm(forms.ModelForm):
     required_css_class = 'required'
     descrizione = forms.CharField(widget=forms.Textarea)
-    foto_profilo = forms.ImageField()
+    foto_profilo = forms.ImageField(required=False)
     provincia = forms.ChoiceField(choices=NamingList.AnagraficaIstat.ListaProvince)
     regione = forms.ChoiceField(choices=NamingList.AnagraficaIstat.ListaRegioni)
     class Meta:

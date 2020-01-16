@@ -26,6 +26,12 @@ urlpatterns = [
     # /utenti/profilo/#user/modifica/
     url(r'profilo/(?P<oid>[0-9]+)/modifica/$', views.edit_profile, name='edit-profile'),
 
+    # /utenti/profilo/#user/elimina/
+    url(r'(?P<oid>[0-9]+)/elimina/$', views.elimina_profilo, name='elimina_profilo'),
+
+    # /utenti/profilo/#user/elimina/conferma/
+    url(r'(?P<oid>[0-9]+)/elimina/conferma/$', views.elimina_profilo_conferma, name='elimina_profilo_conferma'),
+
     # /utenti/cassa/
     url(r'cassa/$', views.cassa, name='cassa'),
 
