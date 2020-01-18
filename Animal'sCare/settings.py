@@ -130,6 +130,6 @@ MEDIA_URL = '/media/'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'Animal\'sCare.mailbox@gmail.com'
+EMAIL_HOST_USER = 'animalscare.mailbox@gmail.com'
 EMAIL_HOST_PASSWORD = 'Pass123!'
 EMAIL_PORT = 587

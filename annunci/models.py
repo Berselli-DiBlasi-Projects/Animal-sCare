@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import datetime
+from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.conf import settings
@@ -14,8 +14,8 @@ class Annuncio(models.Model):
     descrizione = models.CharField(max_length=250)
     pet_coins = models.PositiveIntegerField(default=0)
     pet = models.CharField(max_length=50)
-    data_inizio = models.DateTimeField(default=datetime.now)
-    data_fine = models.DateTimeField(default=datetime.now)
+    data_inizio = models.DateTimeField(default=timezone.now)
+    data_fine = models.DateTimeField(default=timezone.now)
     logo_annuncio = models.FileField(null=True, default='', blank=True)
 
     def logo_annuncio_or_default(self, default_path=static("/images/annuncio_default.jpg")):
