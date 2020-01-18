@@ -89,7 +89,7 @@
                                 <p>
                                     {{ annuncio.sottotitolo }}
                                     <h6>{{ annuncio.user.first_name }} {{ annuncio.user.last_name }}, {{ profilo.indirizzo }} , {{ profilo.citta }} <br><br>
-                                <b>Data di inizio: </b>{{ annuncio.data_inizio }} &nbsp; <b>Data di fine: </b>{{ annuncio.data_fine }}</h6>
+                                <b>Data di inizio: </b>{{ annuncio.data_inizio | date:"d/m/Y" }} {{ annuncio.data_inizio | time:"H:i" }} &nbsp; <b>Data di fine: </b>{{ annuncio.data_fine | date:"d/m/Y" }} {{ annuncio.data_fine | time:"H:i" }}</h6>
                                 </p>
                                 <hr />
                                 <div class="row rating-desc">

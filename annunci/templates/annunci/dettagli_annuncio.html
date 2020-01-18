@@ -81,11 +81,11 @@
                         </dl>
                         <dl class="param param-feature">
                             <dt>Data inizio:</dt>
-                            <dd>{{ annuncio.data_inizio }}</dd>
+                            <dd>{{ annuncio.data_inizio | date:"d/m/Y" }} {{ annuncio.data_inizio | time:"H:i" }}</dd>
                         </dl>
                         <dl class="param param-feature">
                             <dt>Data fine:</dt>
-                            <dd>{{ annuncio.data_fine }}</dd>
+                            <dd>{{ annuncio.data_fine | date:"d/m/Y"}} {{ annuncio.data_fine | time:"H:i" }}</dd>
                         </dl>
 
                         <hr>
