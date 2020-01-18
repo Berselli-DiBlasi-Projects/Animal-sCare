@@ -104,3 +104,27 @@ body{
 
 label.error{background:url(/static/images/unchecked.gif) no-repeat;padding-left:16px;margin-left:.3em}
 label.valid{background:url(/static/images/checked.gif) no-repeat;display:inline;width:16px;height:16px}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 40px;
+  background-color: #c4c4c4;
+}
+
+@font-face {
+    font-family: "typold_medium";
+    src: url("/static/typold_medium.otf") format("opentype");
+}

@@ -5,7 +5,7 @@
     <title>{% block title %}Animal'sCare{% endblock %}</title>
 
     {% load staticfiles %}
-    <link rel="shortcut icon" type="image/png" href="{%  static 'favicon.ico' %}"/>
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
     <link href="https://fonts.googleapis.com/css?family=Satisfy" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
@@ -64,5 +64,12 @@
 {% block body %}
 {% endblock %}
 
+<footer class="footer">
+  <div class="container" style="text-align: center; padding-top: 10px">
+      <a href="http://127.0.0.1:8000/"><img style="margin-bottom: 4px" src="{% static 'favicon.ico' %}"  alt="Animal'sCare" height="18" width="18" /></a>&nbsp;
+      <p class="text-muted" style="font-family: typold_medium, cursive; display: inline">
+          BERSELLI, DI BLASI</p> <p class="text-muted" style="display: inline">- 2020</p>
+  </div>
+</footer>
 </body>
 </html>
