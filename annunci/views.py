@@ -320,6 +320,7 @@ def lista_annunci(request):
     annunci_validi = dati.get('annunci_validi').filter(user_accetta__isnull=True)
     sel_pet = dati.get('sel_pet')
     sel_categoria = dati.get('sel_categoria')
+    ordina = dati.get('ordina')
     annunci = dati.get('annunci')
     annunci_recensioni = {}
     annunci_voti = {}
@@ -347,6 +348,7 @@ def lista_annunci(request):
                                                               'annunci': annunci,
                                                               'sel_categoria': sel_categoria,
                                                               'sel_pet': sel_pet,
+                                                              'ordina': ordina,
                                                               'annunci_voti': annunci_voti,
                                                               'annunci_recensioni': annunci_recensioni})
 
@@ -418,11 +420,14 @@ def recupera_annunci(request):
 
     sel_categoria = 'tutte'
     sel_pet = 'tutti'
+    ordina = 'non_ordinare'
 
     if request.POST.get('sel_categoria') is not None:
         sel_categoria = request.POST.get('sel_categoria')
     if request.POST.get('sel_pet') is not None:
         sel_pet = request.POST.get('sel_pet')
+    if request.POST.get('ordina') is not None:
+        ordina = request.POST.get('ordina')
 
     annunci = {}
 
@@ -455,6 +460,7 @@ def recupera_annunci(request):
     else:
         sel_pet = 'tutti'
 
-    dati = {'annunci_validi': annunci_validi, 'sel_pet': sel_pet, 'sel_categoria': sel_categoria, 'annunci': annunci}
+    dati = {'annunci_validi': annunci_validi, 'sel_pet': sel_pet, 'sel_categoria': sel_categoria, 'annunci': annunci,
+            'ordina': ordina}
 
     return dati

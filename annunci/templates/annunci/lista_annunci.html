@@ -21,37 +21,61 @@
         <select name = 'sel_categoria' class="form-control selectpicker show-tick" onchange='this.form.submit()'>
             <option {% if sel_categoria == 'tutte' %}
                     selected
-                    {% endif %} value="tutte">Tutte le categorie di annunci</option>
+                    {% endif %} value="tutte">Tutte le categorie di annunci
+            </option>
             <option {% if sel_categoria == 'petsitter' %}
                     selected
-                    {% endif %}value = "petsitter">Cerco un petsitter</option>
+                    {% endif %}value = "petsitter">Cerco un petsitter
+            </option>
             <option {% if sel_categoria == 'normale' %}
                     selected
-                    {% endif %} value = "normale">Cerco un pet</option>
+                    {% endif %} value = "normale">Cerco un pet
+            </option>
         </select>
         <select name = 'sel_pet' class="form-control selectpicker show-tick" onchange='this.form.submit()'>
-            <option {% if sel_pet == 'tutti' %}
-                    selected
-                    {% endif %} value = "tutti">Tutti gli animali</option>
-            <option {% if sel_pet == 'Cane' %}
-                    selected
-                    {% endif %} value = "Cane">Cani</option>
-            <option {% if sel_pet == 'Gatto' %}
-                    selected
-                    {% endif %} value = "Gatto">Gatti</option>
-            <option {% if sel_pet == 'Coniglio' %}
-                    selected
-                    {% endif %} value = "Coniglio">Conigli</option>
-            <option {% if sel_pet == 'Volatile' %}
-                    selected
-                    {% endif %} value = "Volatile">Volatili</option>
-            <option {% if sel_pet == 'Rettile' %}
-                    selected
-                    {% endif %} value = "Rettile">Rettili</option>
-            <option {% if sel_pet == 'Altro' %}
-                    selected
-                    {% endif %} value = "Altro">Altro</option>
-         </select>
+        <option {% if sel_pet == 'tutti' %}
+                selected
+                {% endif %} value = "tutti">Tutti gli animali
+        </option>
+        <option {% if sel_pet == 'Cane' %}
+                selected
+                {% endif %} value = "Cane">Cani
+        </option>
+        <option {% if sel_pet == 'Gatto' %}
+                selected
+                {% endif %} value = "Gatto">Gatti
+        </option>
+        <option {% if sel_pet == 'Coniglio' %}
+                selected
+                {% endif %} value = "Coniglio">Conigli
+        </option>
+        <option {% if sel_pet == 'Volatile' %}
+                selected
+                {% endif %} value = "Volatile">Volatili
+        </option>
+        <option {% if sel_pet == 'Rettile' %}
+                selected
+                {% endif %} value = "Rettile">Rettili
+        </option>
+        <option {% if sel_pet == 'Altro' %}
+                selected
+                {% endif %} value = "Altro">Altro
+        </option>
+        </select>
+            <select name = 'ordina' class="form-control selectpicker show-tick" onchange='this.form.submit()'>
+                <option {% if ordina == 'non_ordinare' %}
+                        selected
+                        {% endif %} value="non_ordinare">Non ordinare gli annunci
+                </option>
+                <option {% if ordina == 'crescente' %}
+                        selected
+                        {% endif %}value = "crescente">Distanza geografica crescente
+                </option>
+                <option {% if ordina == 'decrescente' %}
+                        selected
+                        {% endif %}value = "decrescente">Distanza geografica decrescente
+                </option>
+            </select>
         </div>
     </form>
 
