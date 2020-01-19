@@ -7,7 +7,7 @@ jQuery.validator.setDefaults({
 });
 
 jQuery.validator.addMethod("lettersonly", function(value, element) {
-  return this.optional(element) || /^[a-z]+$/i.test(value);
+  return this.optional(element) || /^[a-z\s]+$/i.test(value);
 }, "Caratteri numerici non ammessi");
 
 jQuery.validator.addMethod("username_unique", function(value, element) {

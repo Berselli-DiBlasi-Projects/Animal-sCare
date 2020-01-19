@@ -5,146 +5,157 @@
 {% load nel_futuro %}
 
 {% block body %}
+<script type="text/javascript" src="{% static 'map.js' %}"></script>
+<div class="container">
+    <div class="card">
+        <div class="row">
+            <aside class="col-sm-5 border-right">
+                <article class="gallery-wrap">
+                    <div class="">
+                        <div><img src="{{ annuncio.logo_annuncio_or_default }}" alt="bootsnipp"
+                                              class="img-rounded img-responsive"></div>
+                    </div>
+                </article>
+            </aside>
+            <aside class="col-sm-7">
+                <article class="card-body p-5">
+                    <h3 class="title mb-3">{{ annuncio.titolo }}</h3>
 
-    <div class="container">
-        <div class="card">
-            <div class="row">
-                <aside class="col-sm-5 border-right">
-                    <article class="gallery-wrap">
-                        <div class="">
-                            <div><img src="{{ annuncio.logo_annuncio_or_default }}" alt="bootsnipp"
-                                                  class="img-rounded img-responsive"></div>
+                    <div id="container" class="price h3 text-warning">
+                        <p class="price-detail-wrap">
+                            <span class="price h3 text-warning">
+                                <div class="inline-block">
+                                    <span class="num">{{ annuncio.pet_coins }}</span>
+                                </div>
+                                <div class="inline-block">
+                                    <span class="currency"><img src="{% static 'images/pet_coin.png' %}" class="img-responsive"
+                                       style="width: 50%; height: 50%"></span>
+                                </div>
+                            </span>
+                        </p>
+                    </div>
+
+                    <dl class="item-property">
+                        <dt>Sottotitolo</dt>
+                        <dd><p>{{ annuncio.sottotitolo }}</p></dd>
+                    </dl>
+                    <dl class="param param-feature">
+                        <dt>Descrizione</dt>
+                        <dd>{{ annuncio.descrizione }}</dd>
+                    </dl>
+                    <dl class="param param-feature">
+                        <div class="inline-block">
+                            <dt>Pubblicato da</dt>
+                        </div>&nbsp;
+                        <div class="inline-block">
+                            <dd><a href="{% url 'utenti:view-profile' oid=annuncio.user.pk %}" >
+                                {{ annuncio.user.username }}</a>&nbsp;
+                                {% if annuncio_profilo.pet_sitter %}
+                                    (petsitter)
+                                {% else %}
+                                    (utente normale)
+                                {% endif %}
+                            </dd>
                         </div>
-                    </article>
-                </aside>
-                <aside class="col-sm-7">
-                    <article class="card-body p-5">
-                        <h3 class="title mb-3">{{ annuncio.titolo }}</h3>
-
-                        <div id="container" class="price h3 text-warning">
-                            <p class="price-detail-wrap">
-                                <span class="price h3 text-warning">
-                                    <div class="inline-block">
-                                        <span class="num">{{ annuncio.pet_coins }}</span>
-                                    </div>
-                                    <div class="inline-block">
-                                        <span class="currency"><img src="{% static 'images/pet_coin.png' %}" class="img-responsive"
-                                           style="width: 50%; height: 50%"></span>
-                                    </div>
-                                </span>
-                            </p>
-                        </div>
-
-                        <dl class="item-property">
-                            <dt>Sottotitolo</dt>
-                            <dd><p>{{ annuncio.sottotitolo }}</p></dd>
-                        </dl>
-                        <dl class="param param-feature">
-                            <dt>Descrizione</dt>
-                            <dd>{{ annuncio.descrizione }}</dd>
-                        </dl>
+                    </dl>
+                    {% if annuncio.user_accetta %}
                         <dl class="param param-feature">
                             <div class="inline-block">
-                                <dt>Pubblicato da</dt>
+                                <dt>Accettato da</dt>
                             </div>&nbsp;
                             <div class="inline-block">
-                                <dd><a href="{% url 'utenti:view-profile' oid=annuncio.user.pk %}" >
-                                    {{ annuncio.user.username }}</a>&nbsp;
-                                    {% if annuncio_profilo.pet_sitter %}
-                                        (petsitter)
-                                    {% else %}
-                                        (utente normale)
-                                    {% endif %}
+                                <dd><a href="{% url 'utenti:view-profile' oid=annuncio.user_accetta.pk %}" >
+                                    {{ annuncio.user_accetta.username }}</a>&nbsp;
+                                {% if annuncio_accetta_profilo.pet_sitter %}
+                                    (petsitter)
+                                {% else %}
+                                    (utente normale)
+                                {% endif %}
                                 </dd>
                             </div>
                         </dl>
-                        {% if annuncio.user_accetta %}
-                            <dl class="param param-feature">
-                                <div class="inline-block">
-                                    <dt>Accettato da</dt>
-                                </div>&nbsp;
-                                <div class="inline-block">
-                                    <dd><a href="{% url 'utenti:view-profile' oid=annuncio.user_accetta.pk %}" >
-                                        {{ annuncio.user_accetta.username }}</a>&nbsp;
-                                    {% if annuncio_accetta_profilo.pet_sitter %}
-                                        (petsitter)
-                                    {% else %}
-                                        (utente normale)
-                                    {% endif %}
-                                    </dd>
-                                </div>
-                            </dl>
-                        {% endif %}
-                        <dl class="param param-feature">
-                            <dt>Pet</dt>
-                            <dd>{{ annuncio.pet }}</dd>
-                        </dl>
-                        <dl class="param param-feature">
-                            <dt>Data inizio:</dt>
-                            <dd>{{ annuncio.data_inizio | date:"d/m/Y" }} {{ annuncio.data_inizio | time:"H:i" }}</dd>
-                        </dl>
-                        <dl class="param param-feature">
-                            <dt>Data fine:</dt>
-                            <dd>{{ annuncio.data_fine | date:"d/m/Y"}} {{ annuncio.data_fine | time:"H:i" }}</dd>
-                        </dl>
+                    {% endif %}
+                    <dl class="param param-feature">
+                        <dt>Pet</dt>
+                        <dd>{{ annuncio.pet }}</dd>
+                    </dl>
+                    <dl class="param param-feature">
+                        <dt>Data inizio</dt>
+                        <dd>{{ annuncio.data_inizio | date:"d/m/Y" }} {{ annuncio.data_inizio | time:"H:i" }}</dd>
+                    </dl>
+                    <dl class="param param-feature">
+                        <dt>Data fine</dt>
+                        <dd>{{ annuncio.data_fine | date:"d/m/Y"}} {{ annuncio.data_fine | time:"H:i" }}</dd>
+                    </dl>
 
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-10">
-                                <dl class="param param-inline">
-                                    <dt>Servizi richiesti:</dt>
-                                    <dd>
-                                        <input type="checkbox" name="passeggiate"
-                                                {% if annuncio_servizi.passeggiate %}
+                    <dl class="param param-feature">
+                        <dt>Posizione&nbsp;&nbsp;<input id="mappa-btn" type="button" onclick="myFunction()" value="Mostra mappa" style="font-weight: normal"></dt>
+                        <dd>
+                            <div id="mappa-div" style="display: none">
+                                <iframe width="300" height="250" frameborder="0" style="border:0"
+                                        src="https://www.google.com/maps/embed/v1/search?q={{ annuncio_profilo.indirizzo }}%20{{ annuncio_profilo.citta }}%20{{ annuncio_profilo.provincia }}%20{{ annuncio_profilo.regione }}&key=AIzaSyA6GQs9IyXUWEBu6vDvlKteuM0AReR4Nag"
+                                        allowfullscreen></iframe>
+                            </div>
+                        </dd>
+                    </dl>
+
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <dl class="param param-inline">
+                                <dt>Servizi richiesti</dt>
+                                <dd>
+                                    <input type="checkbox" name="passeggiate"
+                                            {% if annuncio_servizi.passeggiate %}
+                                                checked
+                                            {% endif %}
+                                           disabled="disabled"> Passeggiate &nbsp;
+                                    <input type="checkbox" name="pulizia_gabbia"
+                                                {% if annuncio_servizi.pulizia_gabbia %}
                                                     checked
                                                 {% endif %}
-                                               disabled="disabled"> Passeggiate &nbsp;
-                                        <input type="checkbox" name="pulizia_gabbia"
-                                                    {% if annuncio_servizi.pulizia_gabbia %}
-                                                        checked
-                                                    {% endif %}
-                                                   disabled="disabled"> Pulizia gabbia &nbsp;
-                                        <input type="checkbox" name="ore_compagnia"
-                                                    {% if annuncio_servizi.ore_compagnia %}
-                                                        checked
-                                                    {% endif %}
-                                                   disabled="disabled"> Ore di compagnia <br>
-                                        <input type="checkbox" name="cibo"
-                                                    {% if annuncio_servizi.cibo %}
-                                                        checked
-                                                    {% endif %}
-                                                   disabled="disabled"> Dare da mangiare &nbsp;
-                                        <input type="checkbox" name="accompagna_dal_vet"
-                                                    {% if annuncio_servizi.accompagna_dal_vet %}
-                                                        checked
-                                                    {% endif %}
-                                                   disabled="disabled"> Accompagna dal veterinario
-                                    </dd>
-                                </dl>
-                            </div>
+                                               disabled="disabled"> Pulizia gabbia &nbsp;
+                                    <input type="checkbox" name="ore_compagnia"
+                                                {% if annuncio_servizi.ore_compagnia %}
+                                                    checked
+                                                {% endif %}
+                                               disabled="disabled"> Ore di compagnia <br>
+                                    <input type="checkbox" name="cibo"
+                                                {% if annuncio_servizi.cibo %}
+                                                    checked
+                                                {% endif %}
+                                               disabled="disabled"> Dare da mangiare &nbsp;
+                                    <input type="checkbox" name="accompagna_dal_vet"
+                                                {% if annuncio_servizi.accompagna_dal_vet %}
+                                                    checked
+                                                {% endif %}
+                                               disabled="disabled"> Accompagna dal veterinario
+                                </dd>
+                            </dl>
                         </div>
-                        <hr>
-                        {% if user is not None %}
-                            {% if user.id != annuncio_utente.id %}
-                                {% if user.pet_sitter != annuncio_profilo.pet_sitter and annuncio.user_accetta is None %}
-                                    <a href="{% url 'annunci:conferma_annuncio' oid=annuncio.pk %}" class="btn btn-primary">Accetta annuncio</a>
-                                {% endif %}
-                            {% else %}
-                                {% if not annuncio.user_accetta %}
-                                    <a href="{% url 'annunci:modifica_annuncio' oid=annuncio.pk %}" class="btn btn-primary">Modifica annuncio</a>
-                                    <a href="{% url 'annunci:elimina_annuncio' oid=annuncio.pk %}" class="btn btn-danger">Elimina annuncio</a>
-                                {% endif %}
+                    </div>
+                    <hr>
+                    {% if user is not None %}
+                        {% if user.id != annuncio_utente.id %}
+                            {% if user.pet_sitter != annuncio_profilo.pet_sitter and annuncio.user_accetta is None %}
+                                <a href="{% url 'annunci:conferma_annuncio' oid=annuncio.pk %}" class="btn btn-primary">Accetta annuncio</a>
                             {% endif %}
-
-                            {% if annuncio.user_accetta and not annuncio.data_fine|nel_futuro %}
+                        {% else %}
+                            {% if not annuncio.user_accetta %}
+                                <a href="{% url 'annunci:modifica_annuncio' oid=annuncio.pk %}" class="btn btn-primary">Modifica annuncio</a>
                                 <a href="{% url 'annunci:elimina_annuncio' oid=annuncio.pk %}" class="btn btn-danger">Elimina annuncio</a>
                             {% endif %}
                         {% endif %}
-                    </article>
-                </aside>
-            </div>
-        </div>
 
+                        {% if annuncio.user_accetta and not annuncio.data_fine|nel_futuro %}
+                            <a href="{% url 'annunci:elimina_annuncio' oid=annuncio.pk %}" class="btn btn-danger">Elimina annuncio</a>
+                        {% endif %}
+                    {% endif %}
+                </article>
+            </aside>
+        </div>
     </div>
+
+</div>
 
 {% endblock %}

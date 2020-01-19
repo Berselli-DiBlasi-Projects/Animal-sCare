@@ -9,6 +9,8 @@ class Profile(models.Model):
     citta = models.CharField(max_length=50)
     provincia = models.CharField(max_length=2)
     regione = models.CharField(max_length=50)
+    latitudine = models.FloatField(null=True, default=0, blank=True)
+    longitudine = models.FloatField(null=True, default=0, blank=True)
     telefono = models.CharField(max_length=20)
     pet_coins = models.IntegerField(default=0)
     foto_profilo = models.FileField(null=True, default='', blank=True)
