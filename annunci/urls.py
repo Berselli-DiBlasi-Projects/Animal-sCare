@@ -11,8 +11,8 @@ urlpatterns = [
     # /annunci/nuovo/
     url(r'nuovo/$', views.inserisci_annuncio, name='inserisci_annuncio'),
 
-    # /annunci/#annuncio/
-    url(r'(?P<oid>[0-9]+)/$', views.dettagli_annuncio, name='dettagli_annuncio'),
+    # /annunci/#annuncio/dettagli/
+    url(r'(?P<oid>[0-9]+)/dettagli/$', views.dettagli_annuncio, name='dettagli_annuncio'),
 
     # /annunci/#annuncio/modifica/
     url(r'(?P<oid>[0-9]+)/modifica/$', views.modifica_annuncio, name='modifica_annuncio'),
@@ -32,6 +32,6 @@ urlpatterns = [
     # /annunci/calendario/
     url(r'calendario/$', views.calendario, name='calendario'),
 
-    # /annunci/@username/
-    url(r'(?P<username>\w+)/$', views.annunci_di_utente, name='annunci_di_utente'),
+    # /annunci/@username/elenco
+    url(r'(?P<username>\w+)/elenco/$', views.annunci_di_utente, name='annunci_di_utente'),
 ]
