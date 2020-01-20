@@ -9,6 +9,7 @@ from .forms import AnnuncioForm, ServizioForm
 from django.db.models import Avg
 from datetime import datetime, timedelta, timezone
 from django.core.mail import EmailMessage
+from math import sin, cos, sqrt, atan2, radians
 import re
 
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
@@ -318,12 +319,30 @@ def lista_annunci(request):
     dati = recupera_annunci(request)
 
     annunci_validi = dati.get('annunci_validi').filter(user_accetta__isnull=True)
+
     sel_pet = dati.get('sel_pet')
     sel_categoria = dati.get('sel_categoria')
     ordina = dati.get('ordina')
     annunci = dati.get('annunci')
     annunci_recensioni = {}
     annunci_voti = {}
+
+    indici = []
+    are_ordinati = False
+    if request.user.is_authenticated():
+        if ordina != 'non_ordinare':
+            user_profile = Profile.objects.filter(user=request.user).first()
+            indici = ordinaAnnunci(user_profile, annunci_validi, ordina)
+            are_ordinati = True
+
+    annunci_validi = list(annunci_validi)
+    new_annunci_validi = list()
+    # Ordina annunci_validi
+    if are_ordinati:
+        for i, annuncio in enumerate(annunci_validi):
+            new_annunci_validi.append(annunci_validi[indici[i]])
+        annunci_validi = new_annunci_validi
+
 
     for annuncio in annunci_validi:
         annunci[annuncio] = Profile.objects.filter(user=annuncio.user).first()
@@ -340,7 +359,9 @@ def lista_annunci(request):
                                                               'sel_categoria': sel_categoria,
                                                               'sel_pet': sel_pet,
                                                               'annunci_voti': annunci_voti,
-                                                              'annunci_recensioni': annunci_recensioni})
+                                                              'annunci_recensioni': annunci_recensioni,
+                                                              'are_ordinati': are_ordinati,
+                                                              'indici': indici})
     else:
         user_profile = Profile.objects.filter(user=request.user).first()
         return render(request, 'annunci/lista_annunci.html', {'base_template': 'main/base.html',
@@ -350,7 +371,9 @@ def lista_annunci(request):
                                                               'sel_pet': sel_pet,
                                                               'ordina': ordina,
                                                               'annunci_voti': annunci_voti,
-                                                              'annunci_recensioni': annunci_recensioni})
+                                                              'annunci_recensioni': annunci_recensioni,
+                                                              'are_ordinati': are_ordinati,
+                                                              'indici': indici})
 
 
 @login_required(login_url='/utenti/login/')
@@ -464,3 +487,41 @@ def recupera_annunci(request):
             'ordina': ordina}
 
     return dati
+
+
+def ordinaAnnunci(user_profile, annunci_validi, ordina):
+    lat_user = user_profile.latitudine
+    lng_user = user_profile.longitudine
+    distanze = []
+    indici = []
+
+    # raggio della terra approssimato, in km
+    R = 6373.0
+
+    lat1 = radians(lat_user)
+    lon1 = radians(lng_user)
+
+    # Calcola le distanze di tutti gli annunci
+    for i, annuncio in enumerate(annunci_validi):
+        indici.append(i)
+        annuncio_profilo = Profile.objects.filter(user=annuncio.user).first()
+
+        lat2 = radians(annuncio_profilo.latitudine)
+        lon2 = radians(annuncio_profilo.longitudine)
+
+        dlon = lon2 - lon1
+        dlat = lat2 - lat1
+
+        a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+        c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        distanze.append(R * c)
+
+    #Ordina in base all'order param
+    if ordina == 'crescente':
+        distanze, indici = (list(t) for t in zip(*sorted(zip(distanze, indici))))
+
+    if ordina == 'decrescente':
+        distanze, indici = (list(t) for t in zip(*sorted(zip(distanze, indici), reverse=True)))
+
+    return indici
