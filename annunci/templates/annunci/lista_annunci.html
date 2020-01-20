@@ -62,6 +62,7 @@
                 {% endif %} value = "Altro">Altro
         </option>
         </select>
+        {% if user.is_authenticated %}
             <select name = 'ordina' class="form-control selectpicker show-tick" onchange='this.form.submit()'>
                 <option {% if ordina == 'non_ordinare' %}
                         selected
@@ -76,6 +77,7 @@
                         {% endif %}value = "decrescente">Distanza geografica decrescente
                 </option>
             </select>
+        {% endif %}
         </div>
     </form>
 
