@@ -43,4 +43,14 @@ urlpatterns = [
 
     # /check_username/?username=john
     url(r'check_username/$', views.check_username, name='check_username'),
+
+#     modifica per la google auth
+#     /utenti/scegli_profilo/
+    url(r'scegli_profilo/$', views.scelta_profilo_oauth, name='scelta_profilo_oauth'),
+
+#     /utenti/oauth_petsitter
+    url(r'oauth_petsitter/$', views.oauth_petsitter, name='oauth_petsitter'),
+
+#     /utenti/oauth_normale
+    url(r'oauth_normale/$', views.oauth_normale, name='oauth_normale'),
 ]

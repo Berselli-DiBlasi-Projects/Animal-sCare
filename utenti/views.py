@@ -2,6 +2,8 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from .models import User, Profile
 from .forms import UserForm, UtenteNormaleForm, UtentePetSitterForm
+from .models import User, Profile
+from .forms import UserForm, UtenteNormaleForm, UtentePetSitterForm
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
@@ -10,7 +12,6 @@ from recensioni.models import Recensione
 from django.db.models import Avg
 from django.http import HttpResponse
 import operator
-import requests
 import re
 
 
@@ -293,15 +294,6 @@ def edit_profile(request, oid):
 
                 return render(request, 'utenti/modifica_profilo.html', context)
 
-            # Ottieni latitudine e longitudine
-            response = requests.get('https://open.mapquestapi.com/geocoding/v1/address?'
-                                    'key=REupVcNAuHmBALQsTjMWgMVfp5G5hltJ&location=' + profile.indirizzo.replace("/","")
-                                    + ',' + profile.citta.replace("/", "") + ',' + profile.provincia.replace("/","") +
-                                    ',' + profile.regione.replace("/", ""))
-            latlong = response.json()
-            profile.latitudine = latlong['results'][0]['locations'][0]['latLng']["lat"]
-            profile.longitudine = latlong['results'][0]['locations'][0]['latLng']["lng"]
-
             user = form.save(commit=False)
             password = form.cleaned_data['password']
             user.set_password(password)
@@ -468,16 +460,6 @@ def registrazione_normale(request):
 
         profile.descrizione = 'Null'
         profile.hobby = 'Null'
-
-        # Ottieni latitudine e longitudine
-        response = requests.get('https://open.mapquestapi.com/geocoding/v1/address?'
-                               'key=REupVcNAuHmBALQsTjMWgMVfp5G5hltJ&location=' + profile.indirizzo.replace("/", "") +
-                                ',' + profile.citta.replace("/", "") + ',' + profile.provincia.replace("/", "") + ','
-                                + profile.regione.replace("/", ""))
-        latlong = response.json()
-        profile.latitudine = latlong['results'][0]['locations'][0]['latLng']["lat"]
-        profile.longitudine = latlong['results'][0]['locations'][0]['latLng']["lng"]
-
         profile.save()
 
         user = authenticate(username=username, password=password)
@@ -554,16 +536,6 @@ def registrazione_petsitter(request):
         profile.pet = 'Null'
         profile.razza = 'Null'
         profile.eta = 0
-
-        # Ottieni latitudine e longitudine
-        response = requests.get('https://open.mapquestapi.com/geocoding/v1/address?'
-                                'key=REupVcNAuHmBALQsTjMWgMVfp5G5hltJ&location=' + profile.indirizzo.replace("/", "")
-                                + ',' + profile.citta.replace("/", "") + ',' + profile.provincia.replace("/", "") + ','
-                                + profile.regione.replace("/", ""))
-        latlong = response.json()
-        profile.latitudine = latlong['results'][0]['locations'][0]['latLng']["lat"]
-        profile.longitudine = latlong['results'][0]['locations'][0]['latLng']["lng"]
-
         profile.save()
 
         user = authenticate(username=username, password=password)
@@ -611,3 +583,181 @@ def view_profile(request, oid):
         return render(request, 'utenti/profilo_normale.html', context)
     else:
         return render(request, 'utenti/profilo_petsitter.html', context)
+
+
+
+@login_required
+def scelta_profilo_oauth(request):
+    print("si è loggato con google l'utente : ")
+    print("ID : ", request.user.id)
+    print("username : ", request.user.username)
+    print("password : ", request.user.password)
+    print("request.method : ", request.method)
+    utente_loggato = User.objects.get(id=request.user.id)
+    flag=True
+    try:
+        profile = Profile.objects.get(user=utente_loggato)
+        # profile = profile[0]
+    except Exception:
+        flag = False
+
+    if flag:
+        return HttpResponseRedirect(reverse('main:index'))
+    else:
+        return render(request, 'utenti/scelta_utente_oauth.html')
+
+    # return HttpResponse("scegli qui il tuo profilo")
+
+
+
+@login_required
+def oauth_petsitter(request):
+    print("sta completando la registrazione da petsitter : ")
+    print("ID : ", request.user.id)
+    print("username : ", request.user.username)
+    print("password : ", request.user.password)
+    print("request.method : ", request.method)
+    # Se la richiesta è di tipo POST, allora possiamo processare i dati
+    if request.method == "POST":
+        # Creiamo l'istanza del form e la popoliamo con i dati della POST request (processo di "binding")
+        # form = OauthNameSurnameForm(request.POST)
+        petsitterform = UtentePetSitterForm(request.POST, request.FILES)
+        # is_valid() controlla se il form inserito è valido:
+        if petsitterform.is_valid():
+            # a questo punto possiamo usare i dati validi!
+            # tenere a mente che cleaned_data["nome_dato"] ci permette di accedere ai dati validati e convertiti in tipi standard di Python
+            print("Il Form è Valido!")
+            utente_loggato = User.objects.get(id=request.user.id)
+            print("utente loggato : ", utente_loggato)
+            profile = Profile.objects.get_or_create(user=utente_loggato)
+            profile = profile[0]
+
+
+            profile.foto_profilo = request.FILES['foto_profilo']
+            # try:
+            #     profile.foto_profilo = request.FILES['foto_profilo']
+            #     file_type = profile.foto_profilo.url.split('.')[-1]
+            #     file_type = file_type.lower()
+            #     if file_type not in IMAGE_FILE_TYPES:
+            #         print("errore, formato immagine non riconosciuto")
+            #         context = {
+            #             "petsitterform": petsitterform
+            #         }
+            #         return render(request, "utenti/oauth_profilo_petsitter.html", context)
+            # except Exception:
+            #     print("errore nella foto !!!!")
+            #     profile.foto_profilo = None
+
+            profile.indirizzo = petsitterform.cleaned_data['indirizzo']
+            profile.citta = petsitterform.cleaned_data['citta']
+            profile.provincia = petsitterform.cleaned_data['provincia']
+            profile.regione = petsitterform.cleaned_data['regione']
+            profile.telefono = petsitterform.cleaned_data['telefono']
+            profile.descrizione = petsitterform.cleaned_data['descrizione']
+            profile.hobby = petsitterform.cleaned_data['hobby']
+            profile.pet_sitter = True
+            profile.nome_pet = 'Null'
+            profile.pet = 'Null'
+            profile.razza = 'Null'
+            profile.eta = 0
+            profile.save()
+            if utente_loggato is not None:
+                if utente_loggato.is_active:
+                    # login(request, utente_loggato)
+                    return HttpResponseRedirect(reverse('main:index'))
+            # ringrazio l'utente per averci contattato - volendo possiamo effettuare un redirect a una pagina specifica
+    # Se la richiesta HTTP usa il metodo GET o qualsiasi altro metodo, allora creo invece il form di default
+    else:
+        # form = OauthNameSurnameForm()
+        petsitterform = UtentePetSitterForm()
+
+    # arriviamo a questo punto se si tratta della prima volta che la pagina viene richiesta(con metodo GET), o se il form non è valido e ha errori
+    context = {
+        # "form": form,
+        "petsitterform": petsitterform
+    }
+
+    return render(request, "utenti/oauth_profilo_petsitter.html", context)
+
+
+
+@login_required
+def oauth_normale(request):
+    print("sta completando la registrazione da user normale l'utente : ")
+    print("ID : ", request.user.id)
+    print("username : ", request.user.username)
+    print("password : ", request.user.password)
+    print("request.method : ", request.method)
+    # Se la richiesta è di tipo POST, allora possiamo processare i dati
+    if request.method == "POST":
+        # Creiamo l'istanza del form e la popoliamo con i dati della POST request (processo di "binding")
+        # form = OauthNameSurnameForm(request.POST)
+        normaleform = UtenteNormaleForm(request.POST, request.FILES)
+        # is_valid() controlla se il form inserito è valido:
+        if normaleform.is_valid() :
+            # a questo punto possiamo usare i dati validi!
+            # tenere a mente che cleaned_data["nome_dato"] ci permette di accedere ai dati validati e convertiti in tipi standard di Python
+            print("Il Form è Valido!")
+            utente_loggato = User.objects.get(id=request.user.id)
+            print("utente loggato : ", utente_loggato)
+            profile = Profile.objects.get_or_create(user=utente_loggato)
+            profile = profile[0]
+            profile.foto_profilo = request.FILES['foto_profilo']
+            # try:
+            #     profile.foto_profilo = request.FILES['foto_profilo']
+            #     file_type = profile.foto_profilo.url.split('.')[-1]
+            #     file_type = file_type.lower()
+            #     if file_type not in IMAGE_FILE_TYPES:
+            #         print("errore, formato immagine non riconosciuto")
+            #         context = {
+            #             "normaleform": normaleform
+            #         }
+            #         return render(request, "utenti/oauth_profilo_petsitter.html", context)
+            # except Exception:
+            #     print("errore nella foto !!!!")
+            #     profile.foto_profilo = None
+
+            profile.indirizzo = normaleform.cleaned_data['indirizzo']
+            profile.citta = normaleform.cleaned_data['citta']
+            profile.provincia = normaleform.cleaned_data['provincia']
+            profile.regione = normaleform.cleaned_data['regione']
+            profile.telefono = normaleform.cleaned_data['telefono']
+            profile.nome_pet = normaleform.cleaned_data['nome_pet']
+            profile.pet = normaleform.cleaned_data['pet']
+            profile.razza = normaleform.cleaned_data['razza']
+            profile.eta = normaleform.cleaned_data['eta']
+            profile.caratteristiche = normaleform.cleaned_data['caratteristiche']
+            profile.foto_pet = normaleform.cleaned_data['foto_pet']
+            # try:
+            #     profile.foto_pet = request.FILES['foto_pet']
+            #     file_type = profile.foto_pet.url.split('.')[-1]
+            #     file_type = file_type.lower()
+            #     if file_type not in IMAGE_FILE_TYPES:
+            #         print("errore, formato immagine non riconosciuto")
+            #         context = {
+            #             "normaleform": normaleform
+            #         }
+            #         return render(request, "utenti/oauth_profilo_petsitter.html", context)
+            # except Exception:
+            #     print("errore nella foto !!!!")
+            #     profile.foto_pet = None
+
+            profile.descrizione = 'Null'
+            profile.hobby = 'Null'
+            profile.save()
+            if utente_loggato is not None:
+                if utente_loggato.is_active:
+                    # login(request, utente_loggato)
+                    return HttpResponseRedirect(reverse('main:index'))
+            # ringrazio l'utente per averci contattato - volendo possiamo effettuare un redirect a una pagina specifica
+    # Se la richiesta HTTP usa il metodo GET o qualsiasi altro metodo, allora creo invece il form di default
+    else:
+        # form = OauthNameSurnameForm()
+        normaleform = UtenteNormaleForm()
+
+    # arriviamo a questo punto se si tratta della prima volta che la pagina viene richiesta(con metodo GET), o se il form non è valido e ha errori
+    context = {
+        # "form": form,
+        "normaleform": normaleform
+    }
+    return render(request, 'utenti/oauth_profilo_normale.html', context)

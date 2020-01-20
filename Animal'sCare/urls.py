@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^annunci/', include('annunci.urls')),
     url(r'^utenti/', include('utenti.urls')),
     url(r'^recensioni/', include('recensioni.urls')),
+    url('', include('social_django.urls', namespace='social')),
 ]
 
 if settings.DEBUG:

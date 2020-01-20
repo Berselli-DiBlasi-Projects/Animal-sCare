@@ -43,6 +43,12 @@
                 </div>
                 <div class="panel-footer">
                     Non hai un account? <a href="{% url 'utenti:registrazione' %}">Clicca qui</a> per registrarti.
+                    <br>
+                    <strong><i><h4>Oppure accedi con il tuo indirizzo di posta Google :</h4></i></strong>
+
+                    <button>
+                        <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.GET.next }}">Login with Google</a>
+                    </button>
                 </div>
             </div>
         </div>

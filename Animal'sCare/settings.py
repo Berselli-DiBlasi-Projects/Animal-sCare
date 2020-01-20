@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+#    app per l'autenticazione esterna
+    'social_django',  # add this
+
 ]
 
 MIDDLEWARE = [
@@ -66,10 +69,19 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends', # add this
+                'social_django.context_processors.login_redirect', # add this
             ],
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
 
 WSGI_APPLICATION = 'Animal\'sCare.wsgi.application'
 
@@ -133,3 +145,43 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'animalscare.mailbox@gmail.com'
 EMAIL_HOST_PASSWORD = 'Pass123!'
 EMAIL_PORT = 587
+
+
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+#                                   OAUTH SETTINGS
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '190611139488-atef7uu5dqjkljmb9mf8ta40cc4v54lf.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'EcwPVI-cp6rbQWigLXCXnHfP'
+
+
+# LOGIN_URL = '/login/'
+
+# LOGIN_REDIRECT_URL = '/' ## versione originale
+LOGIN_REDIRECT_URL = '/utenti/scegli_profilo'
+
+# SOCIAL_AUTH_STRATEGY = 'social_django.strategy.DjangoStrategy'
+# SOCIAL_AUTH_STORAGE = 'social_django.models.DjangoStorage'
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
+# SOCIAL_AUTH_FACEBOOK_KEY = 'replace_me_with_your_key'
+# SOCIAL_AUTH_FACEBOOK_SECRET = 'replace_me_with_your_secret'
+# SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+# SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+#             'fields': 'id,name,email',
+#             }
+SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']

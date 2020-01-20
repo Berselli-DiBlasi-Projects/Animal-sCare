@@ -1,0 +1,49 @@
+{% extends 'main/base_visitor.html' %}
+{% load staticfiles%}
+{% block title %}Animal'sCare - Completa il tuo profilo{% endblock %}
+{% block profilo_active %}active{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12 col-md-6" style="float: none; margin: 0 auto;">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div style="text-align: center;">
+                        <h3>Modifica il tuo profilo</h3>
+                    </div>
+                    <br>
+                    <form id="user-form" class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data" >
+
+{#                    <form action="" method="post" novalidate>#}
+                        {% csrf_token %}
+                        {% for field in petsitterform %}
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <span class="text-danger small">{{ field.errors }}</span>
+                                </div>
+                                <label class="control-label col-sm-2" for="user">{{ field.label_tag }}</label>
+                                <div class="col-sm-10">{{ field }}</div>
+                            </div>
+                        {% endfor %}
+                        <br>
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <input type="submit" class="btn btn-danger" value="INVIA">
+                        </div>
+                    </form>
+                    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+                    <script type="text/javascript" src="{% static 'user_form_validator.js' %}"></script>
+
+                    <br>
+                    <p> I campi contrassegnati con <span style="color:red;">*</span> sono obbligatori.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
