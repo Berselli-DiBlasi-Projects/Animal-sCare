@@ -33,37 +33,51 @@ $( '#user-form' ).validate({
     'username':{
         required: true,
         minlength: 3,
+        maxlength: 15,
         username_unique: true
         },
     'email':{
         required: true,
-        email: true
+        email: true,
+        minlength: 5,
+        maxlength: 50
         },
     'password':{
         required: true,
-        minlength: 4
+        minlength: 4,
+        maxlength: 20
         },
     'conferma_password':{
-        equalTo: '#password'
+        equalTo: '#password',
+        minlength: 4,
+        maxlength: 20
         },
       'first_name': {
         required: true,
-        lettersonly: true
+        lettersonly: true,
+        maxlength: 30
       },
       'last_name':{
         required: true,
-        lettersonly: true
+        lettersonly: true,
+        maxlength: 30
       },
       'indirizzo': {
-        required: true
+        required: true,
+        minlength: 3,
+        maxlength: 50
       },
       'citta':{
         required: true,
-        lettersonly: true
+        lettersonly: true,
+        minlength: 3,
+        maxlength: 50
       },
       'telefono':{
         required: true,
-        number: true
+        number: true,
+        minlength: 3,
+        maxlength: 30
       },
       'eta':{
         required: true,
@@ -72,62 +86,103 @@ $( '#user-form' ).validate({
       },
       'nome_pet':{
         required: true,
-        lettersonly: true
+        lettersonly: true,
+        minlength: 3,
+        maxlength: 30
       },
       'razza':{
         required: true,
-        lettersonly: true
+        lettersonly: true,
+        minlength: 3,
+        maxlength: 30
       },
       'caratteristiche':{
-        required: true
+        required: true,
+        minlength: 1,
+        maxlength: 245
+      },
+      'descrizione':{
+        required: true,
+        maxlength: 245
+      },
+      'hobby':{
+        required: true,
+        maxlength: 95
       }
   },
   messages:
     {
     'username':{
         required: "Il campo username è obbligatorio",
-        minlength: "Scegli un username di almeno 3 lettere"
+        minlength: "Scegli un username di almeno 3 lettere",
+        maxlength: "Limite di 15 caratteri superato"
         },
     'email':{
         required: "Il campo email è obbligatorio",
-        email: "Inserisci un valido indirizzo email"
+        email: "Inserisci un valido indirizzo email",
+        minlength: "Limite minimo di 5 carattere",
+        maxlength: "Limite di 50 caratteri superato"
         },
     'password':{
         required: "Il campo password è obbligatorio",
-        minlength: "Inserisci una password di almeno 4 caratteri"
+        minlength: "Inserisci una password di almeno 4 caratteri",
+        maxlength: "Limite di 20 caratteri superato"
         },
     'conferma_password':{
-        equalTo: "Le due password non coincidono"
+        equalTo: "Le due password non coincidono",
+        minlength: "Inserisci una password di almeno 4 caratteri",
+        maxlength: "Limite di 20 caratteri superato"
         },
     'first_name': {
         required: "Il campo nome è obbligatorio",
-        notNumber: "Caratteri numerici non consentiti"
+        notNumber: "Caratteri numerici non consentiti",
+        maxlength: "Limite di 30 caratteri superato"
       },
     'last_name':{
-        required: "Il campo cognome è obbligatorio"
+        required: "Il campo cognome è obbligatorio",
+        maxlength: "Limite di 30 caratteri superato"
       },
     'indirizzo': {
-        required: "Il campo indirizzo è obbligatorio"
+        required: "Il campo indirizzo è obbligatorio",
+        minlength: "Limite minimo di 3 caratteri",
+        maxlength: "Limite di 50 caratteri superato"
       },
     'citta':{
-        required: "Il campo citta è obbligatorio"
+        required: "Il campo citta è obbligatorio",
+        minlength: "Limite minimo di 3 caratteri",
+        maxlength: "Limite di 50 caratteri superato"
      },
     'telefono':{
         required: "Il campo telefono è obbligatorio",
-        number: "Inserisci un numero valido"
+        number: "Inserisci un numero valido",
+        minlength: "Limite minimo di 3 caratteri",
+        maxlength: "Limite di 30 caratteri superato"
      },
      'eta':{
         required: "Il campo età è obbligatorio",
         number: "Inserisci un numero valido"
      },
      'nome_pet':{
-        required: "Il campo nome pet è obbligatorio"
+        required: "Il campo nome pet è obbligatorio",
+        minlength: "Limite minimo di 3 caratteri",
+        maxlength: "Limite di 30 caratteri superato"
       },
     'razza': {
-        required: "Il campo razza è obbligatorio"
+        required: "Il campo razza è obbligatorio",
+        minlength: "Limite minimo di 3 caratteri",
+        maxlength: "Limite di 30 caratteri superato"
       },
     'caratteristiche':{
-        required: "Il campo caratteristiche è obbligatorio"
-     }
+        required: "Il campo caratteristiche è obbligatorio",
+        maxlength: "Limite di 245 caratteri superato"
+     },
+    'descrizione':{
+        required: "Il campo descrizione è obbligatorio",
+        maxlength: "Limite di 245 caratteri superato"
+    },
+    'hobby':{
+        required: "Il campo hobby è obbligatorio",
+        maxlength: "Limite di 95 caratteri superato"
+    }
     }
 });

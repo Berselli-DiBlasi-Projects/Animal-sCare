@@ -1,0 +1,35 @@
+{% extends base_template %}
+{% load staticfiles%}
+{% block title %}Animal'sCare - Contattaci{% endblock %}
+{% block contattaci_active %}active{% endblock %}
+
+
+{% block body %}
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12 col-md-6" style="float: none; margin: 0 auto;">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <p><strong>Messaggio inviato con successo.</strong></p>
+                    Sarai reindirizzato all'elenco annunci in <span id="countdown">5</span> secondi.
+
+                    <script>
+                        var seconds = document.getElementById("countdown").textContent;
+                        var countdown = setInterval(function() {
+                            seconds--;
+                            document.getElementById("countdown").textContent = seconds;
+                            if (seconds <= 0) clearInterval(countdown);
+                        }, 1000);
+                        window.setTimeout(function(){
+                            window.location.href = "{% url 'annunci:lista-annunci' %}";
+                        }, 5000);
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends base_template %}
+{% load staticfiles%}
+{% block title %}Animal'sCare - Contattaci{% endblock %}
+{% block contattaci_active %}active{% endblock %}
+
+
+{% block body %}
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12 col-md-6" style="float: none; margin: 0 auto;">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div style="text-align: center;">
+                        <h3>Contattaci</h3>
+                    </div>
+                    </br>
+                    <form id="contattaci-form" class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {% for field in form %}
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <span class="text-danger small">{{ field.errors }}</span>
+                                </div>
+                                <label class="control-label col-sm-2" for="user">{{ field.label_tag }}</label>
+                                <div class="col-sm-10">{{ field }}</div>
+                            </div>
+                        {% endfor %}
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-success">Invia messaggio</button>
+                            </div>
+                        </div>
+                    </form>
+                    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+                    <script type="text/javascript" src="{% static 'contattaci_form_validator.js' %}"></script>
+
+                    </br>
+                    <p> I campi contrassegnati con <span style="color:red;">*</span> sono obbligatori.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

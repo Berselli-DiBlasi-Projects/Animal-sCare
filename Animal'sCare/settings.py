@@ -41,9 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-#    app per l'autenticazione esterna
-    'social_django',  # add this
-
+    'social_django',
+    'contattaci.apps.ContattaciConfig',
 ]
 
 MIDDLEWARE = [
@@ -155,8 +154,8 @@ EMAIL_PORT = 587
 ########################################################################################################################
 ########################################################################################################################
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '190611139488-atef7uu5dqjkljmb9mf8ta40cc4v54lf.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'EcwPVI-cp6rbQWigLXCXnHfP'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '215023691410-17lfqcv5rua141cb2s9umt6fege37mnf.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'L40dgH3ZXuWaSJsnbXznatqU'
 
 
 # LOGIN_URL = '/login/'

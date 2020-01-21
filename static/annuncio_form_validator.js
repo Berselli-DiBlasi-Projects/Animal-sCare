@@ -32,20 +32,28 @@ jQuery.validator.addMethod("greaterThanDataInizio", function(value, element, par
     return this.optional(element) || moment(value,"DD/MM/YYYY HH:mm") > moment($(param).val(), "DD/MM/YYYY HH:mm");
 }, "Data di fine deve essere maggiore della data di inizio");
 
+$.validator.addMethod('lowStrict', function (value, el, param) {
+    return value < param;
+});
+
 $( "#annuncio-form" ).validate({
   rules: {
       'titolo':{
-        required: true
+        required: true,
+        maxlength: 95
       },
       'sottotitolo': {
-        required: true
+        required: true,
+        maxlength: 95
       },
       'descrizione':{
-        required: true
+        required: true,
+        maxlength: 245
       },
       'pet_coins':{
         required: true,
-        number: true
+        number: true,
+        lowStrict: 100001
       },
       'data_inizio': {
         required: true,
@@ -63,17 +71,21 @@ $( "#annuncio-form" ).validate({
   messages:
     {
         'titolo':{
-        required: "Il campo titolo è obbligatorio"
+        required: "Il campo titolo è obbligatorio",
+        maxlength: "Limite di 95 caratteri superato"
       },
       'sottotitolo': {
-        required: "Il campo sottotitolo è obbligatorio"
+        required: "Il campo sottotitolo è obbligatorio",
+        maxlength: "Limite di 95 caratteri superato"
       },
       'descrizione':{
-        required: "Il campo descrizione è obbligatorio"
+        required: "Il campo descrizione è obbligatorio",
+        maxlength: "Limite di 245 caratteri superato"
       },
       'pet_coins':{
         required: "Il campo pet coins è obbligatorio",
-        number: "Inserire un numero valido"
+        number: "Inserire un numero valido",
+        lowStrict: "Limite di 100000 pet coins superato"
       }
     }
 });

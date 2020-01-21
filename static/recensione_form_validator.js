@@ -5,19 +5,23 @@ jQuery.validator.setDefaults({
 $( "#recensione-form" ).validate({
   rules: {
       'titolo':{
-        required: true
+        required: true,
+        maxlength: 95
       },
       'descrizione':{
-        required: true
+        required: true,
+        maxlength: 245
       }
   },
   messages:
     {
         'titolo':{
-        required: "Il campo titolo è obbligatorio"
+        required: "Il campo titolo è obbligatorio",
+        maxlength: "Limite di 95 caratteri superato"
       },
       'descrizione':{
-        required: "Il campo descrizione è obbligatorio"
+        required: "Il campo descrizione è obbligatorio",
+        maxlength: "Limite di 245 caratteri superato"
       }
     }
 });
