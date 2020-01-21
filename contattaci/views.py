@@ -19,8 +19,8 @@ def contattaci(request):
     if form.is_valid():
         # manda email
         email = EmailMessage(form.cleaned_data['titolo'],
-                             form.cleaned_data['messaggio'],
-                             to=[settings.EMAIL_HOST_USER])
+                             'Messaggio dall\'utente: ' + request.user.username + "\n" +
+                             form.cleaned_data['messaggio'], to=[settings.EMAIL_HOST_USER])
         email.send()
         return render(request, 'success.html', context)
 
