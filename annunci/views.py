@@ -490,8 +490,11 @@ def recupera_annunci(request):
 
 
 def ordinaAnnunci(user_profile, annunci_validi, ordina):
-    lat_user = user_profile.latitudine
-    lng_user = user_profile.longitudine
+    lat_user = 0
+    lng_user = 0
+    if user_profile.latitudine is not None and user_profile.longitudine is not None:
+        lat_user = user_profile.latitudine
+        lng_user = user_profile.longitudine
     distanze = []
     indici = []
 
@@ -506,8 +509,12 @@ def ordinaAnnunci(user_profile, annunci_validi, ordina):
         indici.append(i)
         annuncio_profilo = Profile.objects.filter(user=annuncio.user).first()
 
-        lat2 = radians(annuncio_profilo.latitudine)
-        lon2 = radians(annuncio_profilo.longitudine)
+        if annuncio_profilo.latitudine != None and annuncio_profilo.longitudine != None:
+            lat2 = radians(annuncio_profilo.latitudine)
+            lon2 = radians(annuncio_profilo.longitudine)
+        else:
+            lat2 = 0
+            lon2 = 0
 
         dlon = lon2 - lon1
         dlat = lat2 - lat1

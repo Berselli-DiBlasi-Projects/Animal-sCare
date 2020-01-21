@@ -12,6 +12,7 @@ from recensioni.models import Recensione
 from django.db.models import Avg
 from django.http import HttpResponse
 import operator
+import requests
 import re
 
 
@@ -294,6 +295,15 @@ def edit_profile(request, oid):
 
                 return render(request, 'utenti/modifica_profilo.html', context)
 
+            # Ottieni latitudine e longitudine
+            response = requests.get('https://open.mapquestapi.com/geocoding/v1/address?'
+                                    'key=REupVcNAuHmBALQsTjMWgMVfp5G5hltJ&location=' + profile.indirizzo.replace("/","")
+                                    + ',' + profile.citta.replace("/", "") + ',' + profile.provincia.replace("/","") +
+                                    ',' + profile.regione.replace("/", ""))
+            latlong = response.json()
+            profile.latitudine = latlong['results'][0]['locations'][0]['latLng']["lat"]
+            profile.longitudine = latlong['results'][0]['locations'][0]['latLng']["lng"]
+
             user = form.save(commit=False)
             password = form.cleaned_data['password']
             user.set_password(password)
@@ -460,6 +470,15 @@ def registrazione_normale(request):
 
         profile.descrizione = 'Null'
         profile.hobby = 'Null'
+
+        # Ottieni latitudine e longitudine
+        response = requests.get('https://open.mapquestapi.com/geocoding/v1/address?'
+                                'key=REupVcNAuHmBALQsTjMWgMVfp5G5hltJ&location=' + profile.indirizzo.replace("/", "") +
+                                ',' + profile.citta.replace("/", "") + ',' + profile.provincia.replace("/", "") + ','
+                                + profile.regione.replace("/", ""))
+        latlong = response.json()
+        profile.latitudine = latlong['results'][0]['locations'][0]['latLng']["lat"]
+        profile.longitudine = latlong['results'][0]['locations'][0]['latLng']["lng"]
         profile.save()
 
         user = authenticate(username=username, password=password)
@@ -536,6 +555,16 @@ def registrazione_petsitter(request):
         profile.pet = 'Null'
         profile.razza = 'Null'
         profile.eta = 0
+
+        # Ottieni latitudine e longitudine
+        response = requests.get('https://open.mapquestapi.com/geocoding/v1/address?'
+                                'key=REupVcNAuHmBALQsTjMWgMVfp5G5hltJ&location=' + profile.indirizzo.replace("/", "")
+                                + ',' + profile.citta.replace("/", "") + ',' + profile.provincia.replace("/", "") + ','
+                                + profile.regione.replace("/", ""))
+        latlong = response.json()
+        profile.latitudine = latlong['results'][0]['locations'][0]['latLng']["lat"]
+        profile.longitudine = latlong['results'][0]['locations'][0]['latLng']["lng"]
+
         profile.save()
 
         user = authenticate(username=username, password=password)
@@ -632,8 +661,10 @@ def oauth_petsitter(request):
             profile = Profile.objects.get_or_create(user=utente_loggato)
             profile = profile[0]
 
-
-            profile.foto_profilo = request.FILES['foto_profilo']
+            try:
+                profile.foto_profilo = request.FILES['foto_profilo']
+            except Exception:
+                profile.foto_profilo = None
             # try:
             #     profile.foto_profilo = request.FILES['foto_profilo']
             #     file_type = profile.foto_profilo.url.split('.')[-1]
@@ -660,6 +691,16 @@ def oauth_petsitter(request):
             profile.pet = 'Null'
             profile.razza = 'Null'
             profile.eta = 0
+            # Ottieni latitudine e longitudine
+            response = requests.get('https://open.mapquestapi.com/geocoding/v1/address?'
+                                    'key=REupVcNAuHmBALQsTjMWgMVfp5G5hltJ&location=' + profile.indirizzo.replace("/",
+                                                                                                                 "")
+                                    + ',' + profile.citta.replace("/", "") + ',' + profile.provincia.replace("/",
+                                                                                                             "") + ','
+                                    + profile.regione.replace("/", ""))
+            latlong = response.json()
+            profile.latitudine = latlong['results'][0]['locations'][0]['latLng']["lat"]
+            profile.longitudine = latlong['results'][0]['locations'][0]['latLng']["lng"]
             profile.save()
             if utente_loggato is not None:
                 if utente_loggato.is_active:
@@ -702,7 +743,10 @@ def oauth_normale(request):
             print("utente loggato : ", utente_loggato)
             profile = Profile.objects.get_or_create(user=utente_loggato)
             profile = profile[0]
-            profile.foto_profilo = request.FILES['foto_profilo']
+            try:
+                profile.foto_profilo = request.FILES['foto_profilo']
+            except Exception:
+                profile.foto_profilo = None
             # try:
             #     profile.foto_profilo = request.FILES['foto_profilo']
             #     file_type = profile.foto_profilo.url.split('.')[-1]
@@ -727,7 +771,10 @@ def oauth_normale(request):
             profile.razza = normaleform.cleaned_data['razza']
             profile.eta = normaleform.cleaned_data['eta']
             profile.caratteristiche = normaleform.cleaned_data['caratteristiche']
-            profile.foto_pet = normaleform.cleaned_data['foto_pet']
+            try:
+                profile.foto_pet = normaleform.cleaned_data['foto_pet']
+            except Exception:
+                profile.foto_pet = None
             # try:
             #     profile.foto_pet = request.FILES['foto_pet']
             #     file_type = profile.foto_pet.url.split('.')[-1]
@@ -744,6 +791,16 @@ def oauth_normale(request):
 
             profile.descrizione = 'Null'
             profile.hobby = 'Null'
+            # Ottieni latitudine e longitudine
+            response = requests.get('https://open.mapquestapi.com/geocoding/v1/address?'
+                                    'key=REupVcNAuHmBALQsTjMWgMVfp5G5hltJ&location=' + profile.indirizzo.replace("/",
+                                                                                                                 "")
+                                    + ',' + profile.citta.replace("/", "") + ',' + profile.provincia.replace("/",
+                                                                                                             "") + ','
+                                    + profile.regione.replace("/", ""))
+            latlong = response.json()
+            profile.latitudine = latlong['results'][0]['locations'][0]['latLng']["lat"]
+            profile.longitudine = latlong['results'][0]['locations'][0]['latLng']["lng"]
             profile.save()
             if utente_loggato is not None:
                 if utente_loggato.is_active:

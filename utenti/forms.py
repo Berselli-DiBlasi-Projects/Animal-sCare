@@ -139,10 +139,13 @@ class UtenteNormaleForm(forms.ModelForm):
 
     def clean_foto_profilo(self):
         files = self.files.get('foto_profilo')
-        file_type = magic.from_buffer(files.read(), mime=True)
-        if file_type not in MIME_TYPES:
-            raise forms.ValidationError(_("file non supportato."))
-        return files
+
+        if files is not None:
+            file_type = magic.from_buffer(files.read(), mime=True)
+            if file_type not in MIME_TYPES:
+                raise forms.ValidationError(_("file non supportato."))
+            return files
+        return None
 
     def clean_nome_pet(self):
         if not re.match("^[A-Za-z 'èòàùì]+$", self.cleaned_data['nome_pet']):
@@ -178,10 +181,12 @@ class UtenteNormaleForm(forms.ModelForm):
 
     def clean_foto_pet(self):
         files = self.files.get('foto_pet')
-        file_type = magic.from_buffer(files.read(), mime=True)
-        if file_type not in MIME_TYPES:
-            raise forms.ValidationError(_("file non supportato."))
-        return files
+        if files is not None:
+            file_type = magic.from_buffer(files.read(), mime=True)
+            if file_type not in MIME_TYPES:
+                raise forms.ValidationError(_("file non supportato."))
+            return files
+        return None
 
 class UtentePetSitterForm(forms.ModelForm):
     required_css_class = 'required'
@@ -225,10 +230,12 @@ class UtentePetSitterForm(forms.ModelForm):
 
     def clean_foto_profilo(self):
         files = self.files.get('foto_profilo')
-        file_type =  magic.from_buffer(files.read(), mime=True)
-        if file_type not in MIME_TYPES:
-            raise forms.ValidationError(_("file non supportato."))
-        return files
+        if files is not None:
+            file_type =  magic.from_buffer(files.read(), mime=True)
+            if file_type not in MIME_TYPES:
+                raise forms.ValidationError(_("file non supportato."))
+            return files
+        return None
 
 
     def clean_descrizione(self):

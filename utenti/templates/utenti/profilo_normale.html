@@ -1,12 +1,14 @@
 {% extends base_template %}
+{% load staticfiles%}
 {% block title %}Animal'sCare - Profilo{% endblock %}
 {% block profilo_active %}active{% endblock %}
 
 {% block body %}
 
+<script type="text/javascript" src="{% static 'map.js' %}"></script>
 <div class="container">
     <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-7 toppad" style="float: none; margin: 0 auto;">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-8 toppad" style="float: none; margin: 0 auto;">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h3 class="panel-title">{{ view_user.username }} - utente normale</h3>
@@ -46,6 +48,17 @@
                                     <tr>
                                         <td>Regione</td>
                                         <td>{{ user_profile.regione }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Posizione</td>
+                                        <td>
+                                            <input id="mappa-btn" type="button" onclick="myFunction()" value="Mostra mappa">
+                                            <div id="mappa-div" style="display: none">
+                                                <iframe width="300" height="250" frameborder="0" style="border:0"
+                                                        src="https://www.google.com/maps/embed/v1/search?q={{ user_profile.indirizzo }}%20{{ user_profile.citta }}%20{{ user_profile.provincia }}%20{{ user_profile.regione }}&key=AIzaSyA6GQs9IyXUWEBu6vDvlKteuM0AReR4Nag"
+                                                        allowfullscreen></iframe>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>Telefono</td>

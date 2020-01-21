@@ -62,7 +62,7 @@
                 {% endif %} value = "Altro">Altro
         </option>
         </select>
-        {% if user.is_authenticated %}
+        {% if user.is_authenticated and username is None %}
             <select name = 'ordina' class="form-control selectpicker show-tick" onchange='this.form.submit()'>
                 <option {% if ordina == 'non_ordinare' %}
                         selected
