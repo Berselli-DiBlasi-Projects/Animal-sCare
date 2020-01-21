@@ -47,6 +47,15 @@ class UserForm(forms.ModelForm):
                   'first_name',
                   'last_name',
                   'email')
+
+    def __init__(self, *args, **kwargs):
+        oauth_user = kwargs.pop('oauth_user')
+        super(UserForm, self).__init__(*args, **kwargs)
+        if oauth_user == 1:
+            del self.fields['password']
+            del self.fields['conferma_password']
+
+
     def clean_username(self):
         if not re.match("^[A-Za-z0-9]+$", self.cleaned_data['username']):
             return 'Errore: lo username può contenere solo lettere e numeri.'

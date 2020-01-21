@@ -163,108 +163,19 @@ def classifica(request):
     return render(request, 'utenti/classifica.html', context)
 
 
-def controllo_form_registrazione(form, normaleform, petsitter):
-    # controllo username
-    if not re.match("^[A-Za-z0-9]+$", form.cleaned_data['username']):
-        return 'Errore: lo username può contenere solo lettere e numeri.'
-    if not (3 <= len(form.cleaned_data['username']) <= 15):
-        return 'Errore: lo username deve avere lunghezza fra 3 e 15 caratteri.'
-
-    # controllo password
-    if not re.match("^[A-Za-z0-9èòàùì]+$", form.cleaned_data['password']):
-        return 'Errore: la password può contenere solo lettere minuscole, maiuscole e numeri.'
-    if not (3 <= len(form.cleaned_data['password']) <= 20):
-        return 'Errore: la password deve avere lunghezza fra 3 e 20 caratteri.'
-
-    # controllo conferma password
-    if not re.match("^[A-Za-z0-9èòàùì]+$", form.cleaned_data['conferma_password']):
-        return 'Errore: la conferma password può contenere solo lettere minuscole, maiuscole e numeri.'
-    if not (3 <= len(form.cleaned_data['conferma_password']) <= 20):
-        return 'Errore: la conferma password deve avere lunghezza fra 3 e 20 caratteri.'
-
-    # controllo nome
-    if not re.match("^[A-Za-z 'èòàùì]+$", form.cleaned_data['first_name']):
-        return 'Errore: il nome può contenere solo lettere.'
-    if not (1 <= len(form.cleaned_data['first_name']) <= 30):
-        return 'Errore: il nome deve avere lunghezza fra 1 e 30 caratteri.'
-
-    # controllo cognome
-    if not re.match("^[A-Za-z 'èòàùì]+$", form.cleaned_data['last_name']):
-        return 'Errore: il cognome può contenere solo lettere.'
-    if not (1 <= len(form.cleaned_data['last_name']) <= 30):
-        return 'Errore: il cognome deve avere lunghezza fra 1 e 30 caratteri.'
-
-    # controllo email
-    if not (5 <= len(form.cleaned_data['email']) <= 50):
-        return 'Errore: la mail deve essere compresa gra 5 e 50 caratteri.'
-
-    # controllo indirizzo
-    if not re.match("^[A-Za-z0-9/ 'èòàùì]+$", normaleform.cleaned_data['indirizzo']):
-        return 'Errore: l\'indirizzo può contenere solo lettere, numeri e /.'
-    if not (3 <= len(normaleform.cleaned_data['indirizzo']) <= 50):
-        return 'Errore: l\'indirizzo deve avere lunghezza fra 3 e 50 caratteri.'
-
-    # controllo citta
-    if not re.match("^[A-Za-z 'èòàùì]+$", normaleform.cleaned_data['citta']):
-        return 'Errore: il campo città può contenere solo lettere.'
-    if not (3 <= len(normaleform.cleaned_data['citta']) <= 50):
-        return 'Errore: la città deve avere lunghezza fra 3 e 50 caratteri.'
-
-    # controllo telefono
-    if not re.match("^[0-9]+$", normaleform.cleaned_data['telefono']):
-        return 'Errore: il telefono può contenere solo numeri.'
-    if not (3 <= len(normaleform.cleaned_data['telefono']) <= 30):
-        return 'Errore: il telefono deve avere lunghezza fra 3 e 30 caratteri.'
-
-    if not petsitter:
-        # SE E' UN UTENTE NORMALE!
-        # controllo nome pet
-        if not re.match("^[A-Za-z 'èòàùì]+$", normaleform.cleaned_data['nome_pet']):
-            return 'Errore: il nome del pet può contenere solo lettere.'
-        if not (3 <= len(normaleform.cleaned_data['nome_pet']) <= 30):
-            return 'Errore: il nome del pet deve avere lunghezza fra 3 e 30 caratteri.'
-
-        # controllo razza
-        if not re.match("^[A-Za-z -'èòàùì]+$", normaleform.cleaned_data['razza']):
-            return 'Errore: la razza del pet può contenere solo lettere e spazi.'
-        if not (3 <= len(normaleform.cleaned_data['razza']) <= 30):
-            return 'Errore: la razza del pet deve avere lunghezza fra 3 e 30 caratteri.'
-
-        # controllo eta
-        if not re.match("^[0-9]+$", str(normaleform.cleaned_data['eta'])):
-            return 'Errore: l\'età può contenere solo numeri.'
-        if not (0 <= int(normaleform.cleaned_data['eta']) <= 100):
-            return 'Errore: l\'età deve essere compresa fra 0 e 100.'
-
-        # controllo caratteristiche
-        if not re.match("^[A-Za-z0-9., 'èòàùì]+$", normaleform.cleaned_data['caratteristiche']):
-            return 'Errore: il campo caratteristiche può contenere solo lettere, numeri, punti, virgole e spazi.'
-        if not (1 <= len(normaleform.cleaned_data['caratteristiche']) <= 245):
-            return 'Errore: il campo caratteristiche deve avere lunghezza fra 1 e 245 caratteri.'
-    else:
-        # SE E' UN PETSITTER
-        # controllo descrizione
-        if not re.match("^[A-Za-z0-9., 'èòàùì]+$", normaleform.cleaned_data['descrizione']):
-            return 'Errore: il campo descrizione può contenere solo lettere, numeri, punti, virgole e spazi.'
-        if not (1 <= len(normaleform.cleaned_data['descrizione']) <= 245):
-            return 'Errore: il campo descrizione deve avere lunghezza fra 1 e 245 caratteri.'
-
-        # controllo hobby
-        if not re.match("^[A-Za-z0-9., 'èòàùì]+$", normaleform.cleaned_data['hobby']):
-            return 'Errore: il campo hobby può contenere solo lettere, numeri, punti, virgole e spazi.'
-        if not (1 <= len(normaleform.cleaned_data['hobby']) <= 95):
-            return 'Errore: il campo hobby deve avere lunghezza fra 1 e 95 caratteri.'
-
-    return True
-
 
 @login_required(login_url='/utenti/login/')
 def edit_profile(request, oid):
     context = {'base_template': 'main/base.html'}
-
+    oaut_user = False
     if int(oid) == int(request.user.pk):
-        form = UserForm(data=request.POST or None, instance=request.user)
         user_profile = User.objects.filter(id=oid).first()
+        if user_profile.has_usable_password():
+            form = UserForm(data=request.POST or None, instance=request.user, oauth_user=0)
+        else:
+            form = UserForm(data=request.POST or None, instance=request.user, oauth_user=1)
+            oaut_user = True
+
         profile = Profile.objects.filter(user=user_profile.pk).first()
 
         if not profile.pet_sitter:
@@ -274,28 +185,15 @@ def edit_profile(request, oid):
 
         if form.is_valid() and profile_form.is_valid():
 
-            # args: form, profile form, is user a petsitter
-            if not profile.pet_sitter:
-                msg = controllo_form_registrazione(form, profile_form, False)
-            else:
-                msg = controllo_form_registrazione(form, profile_form, True)
 
-            if msg is not True:
-                context = {
-                    'form': form,
-                    'profileForm': profile_form,
-                    'error_message': msg,
-                    'base_template': 'main/base.html',
-                }
-                return render(request, 'utenti/modifica_profilo.html', context)
+            if oaut_user == False:
+                if form.cleaned_data['password'] != form.cleaned_data['conferma_password']:
 
-            if form.cleaned_data['password'] != form.cleaned_data['conferma_password']:
+                    context.update({'form': form})
+                    context.update({'profileForm': profile_form})
+                    context.update({'error_message': 'Errore: le due password inserite non corrispondono'})
 
-                context.update({'form': form})
-                context.update({'profileForm': profile_form})
-                context.update({'error_message': 'Errore: le due password inserite non corrispondono'})
-
-                return render(request, 'utenti/modifica_profilo.html', context)
+                    return render(request, 'utenti/modifica_profilo.html', context)
 
             # Ottieni latitudine e longitudine
             response = requests.get('https://open.mapquestapi.com/geocoding/v1/address?'
@@ -307,15 +205,18 @@ def edit_profile(request, oid):
             profile.longitudine = latlong['results'][0]['locations'][0]['latLng']["lng"]
 
             user = form.save(commit=False)
-            password = form.cleaned_data['password']
-            user.set_password(password)
+            if oaut_user == False:
+                password = form.cleaned_data['password']
+                user.set_password(password)
             form.save()
             profile_form.save()
+            if oaut_user == False:
+                user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
 
-            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             if user is not None:
                 if user.is_active:
-                    login(request, user)
+                    if oaut_user == False:
+                        login(request, user)
                     return HttpResponseRedirect(reverse('main:index'))
         else:
             try:
@@ -328,7 +229,11 @@ def edit_profile(request, oid):
             except User.DoesNotExist:
                 print('nessun utente trovato con questo username, username valido.')
 
-            form = UserForm(instance=request.user)
+            if oaut_user:
+                form = UserForm(instance=request.user, oauth_user=1)
+            else:
+                form = UserForm(instance=request.user, oauth_user=0)
+
             if not profile.pet_sitter:
                 profile_form = UtenteNormaleForm(instance=profile)
             else:
@@ -397,22 +302,11 @@ def registrazione(request):
 
 
 def registrazione_normale(request):
-    form = UserForm(request.POST or None)
+    form = UserForm(request.POST or None, oauth_user=0)
     normaleform = UtenteNormaleForm(request.POST or None, request.FILES or None)
 
     if form.is_valid() and normaleform.is_valid() and \
             not User.objects.filter(username=form.cleaned_data['username']).exists():
-
-        # args: form, profile form, is user a petsitter
-        msg = controllo_form_registrazione(form, normaleform, False)
-        if msg is not True:
-            context = {
-                'form': form,
-                'profileForm': normaleform,
-                'error_message': msg,
-                'base_template': 'main/base_visitor.html',
-            }
-            return render(request, 'utenti/registrazione_normale.html', context)
 
         user = form.save(commit=False)
 
@@ -422,24 +316,11 @@ def registrazione_normale(request):
         user.save()
 
         profile = Profile.objects.create(user=user)
-
         try:
             profile.foto_profilo = request.FILES['foto_profilo']
-            file_type = profile.foto_profilo.url.split('.')[-1]
-            file_type = file_type.lower()
-            if file_type not in IMAGE_FILE_TYPES:
-                context = {
-                    'form': form,
-                    'profileForm': normaleform,
-                    'error_message': 'Sono accettate immagini PNG, JPG, o JPEG',
-                }
-                if not request.user.is_authenticated():
-                    context['base_template'] = 'main/base_visitor.html'
-                else:
-                    context['base_template'] = 'main/base.html'
-                return render(request, 'utenti/registrazione_normale.html', context)
         except Exception:
             profile.foto_profilo = None
+
 
         profile.indirizzo = normaleform.cleaned_data['indirizzo']
         profile.citta = normaleform.cleaned_data['citta']
@@ -451,24 +332,11 @@ def registrazione_normale(request):
         profile.razza = normaleform.cleaned_data['razza']
         profile.eta = normaleform.cleaned_data['eta']
         profile.caratteristiche = normaleform.cleaned_data['caratteristiche']
-
         try:
             profile.foto_pet = request.FILES['foto_pet']
-            file_type = profile.foto_pet.url.split('.')[-1]
-            file_type = file_type.lower()
-            if file_type not in IMAGE_FILE_TYPES:
-                context = {
-                    'form': form,
-                    'profileForm': normaleform,
-                    'error_message': 'Sono accettate immagini PNG, JPG, o JPEG',
-                }
-                if not request.user.is_authenticated():
-                    context['base_template'] = 'main/base_visitor.html'
-                else:
-                    context['base_template'] = 'main/base.html'
-                return render(request, 'utenti/registrazione_normale.html', context)
         except Exception:
             profile.foto_pet = None
+
 
         profile.descrizione = 'Null'
         profile.hobby = 'Null'
@@ -502,21 +370,11 @@ def registrazione_normale(request):
 
 
 def registrazione_petsitter(request):
-    form = UserForm(request.POST or None)
+
+    form = UserForm(request.POST or None, oauth_user = 0)
     petsitterform = UtentePetSitterForm(request.POST or None, request.FILES or None)
 
     if form.is_valid() and petsitterform.is_valid():
-
-        # args: form, profile form, is user a petsitter
-        msg = controllo_form_registrazione(form, petsitterform, True)
-        if msg is not True:
-            context = {
-                'form': form,
-                'profileForm': petsitterform,
-                'error_message': msg,
-                'base_template': 'main/base_visitor.html',
-            }
-            return render(request, 'utenti/registrazione_petsitter.html', context)
 
         user = form.save(commit=False)
 
@@ -526,24 +384,11 @@ def registrazione_petsitter(request):
         user.save()
 
         profile = Profile.objects.create(user=user)
-
         try:
             profile.foto_profilo = request.FILES['foto_profilo']
-            file_type = profile.foto_profilo.url.split('.')[-1]
-            file_type = file_type.lower()
-            if file_type not in IMAGE_FILE_TYPES:
-                context = {
-                    'form': form,
-                    'profileForm': petsitterform,
-                    'error_message': 'Sono accettate immagini PNG, JPG, o JPEG',
-                }
-                if not request.user.is_authenticated():
-                    context['base_template'] = 'main/base_visitor.html'
-                else:
-                    context['base_template'] = 'main/base.html'
-                return render(request, 'utenti/registrazione_petsitter.html', context)
         except Exception:
             profile.foto_profilo = None
+
 
         profile.indirizzo = petsitterform.cleaned_data['indirizzo']
         profile.citta = petsitterform.cleaned_data['citta']
@@ -667,19 +512,7 @@ def oauth_petsitter(request):
                 profile.foto_profilo = request.FILES['foto_profilo']
             except Exception:
                 profile.foto_profilo = None
-            # try:
-            #     profile.foto_profilo = request.FILES['foto_profilo']
-            #     file_type = profile.foto_profilo.url.split('.')[-1]
-            #     file_type = file_type.lower()
-            #     if file_type not in IMAGE_FILE_TYPES:
-            #         print("errore, formato immagine non riconosciuto")
-            #         context = {
-            #             "petsitterform": petsitterform
-            #         }
-            #         return render(request, "utenti/oauth_profilo_petsitter.html", context)
-            # except Exception:
-            #     print("errore nella foto !!!!")
-            #     profile.foto_profilo = None
+
 
             profile.indirizzo = petsitterform.cleaned_data['indirizzo']
             profile.citta = petsitterform.cleaned_data['citta']
@@ -749,19 +582,7 @@ def oauth_normale(request):
                 profile.foto_profilo = request.FILES['foto_profilo']
             except Exception:
                 profile.foto_profilo = None
-            # try:
-            #     profile.foto_profilo = request.FILES['foto_profilo']
-            #     file_type = profile.foto_profilo.url.split('.')[-1]
-            #     file_type = file_type.lower()
-            #     if file_type not in IMAGE_FILE_TYPES:
-            #         print("errore, formato immagine non riconosciuto")
-            #         context = {
-            #             "normaleform": normaleform
-            #         }
-            #         return render(request, "utenti/oauth_profilo_petsitter.html", context)
-            # except Exception:
-            #     print("errore nella foto !!!!")
-            #     profile.foto_profilo = None
+
 
             profile.indirizzo = normaleform.cleaned_data['indirizzo']
             profile.citta = normaleform.cleaned_data['citta']
@@ -777,19 +598,7 @@ def oauth_normale(request):
                 profile.foto_pet = normaleform.cleaned_data['foto_pet']
             except Exception:
                 profile.foto_pet = None
-            # try:
-            #     profile.foto_pet = request.FILES['foto_pet']
-            #     file_type = profile.foto_pet.url.split('.')[-1]
-            #     file_type = file_type.lower()
-            #     if file_type not in IMAGE_FILE_TYPES:
-            #         print("errore, formato immagine non riconosciuto")
-            #         context = {
-            #             "normaleform": normaleform
-            #         }
-            #         return render(request, "utenti/oauth_profilo_petsitter.html", context)
-            # except Exception:
-            #     print("errore nella foto !!!!")
-            #     profile.foto_pet = None
+
 
             profile.descrizione = 'Null'
             profile.hobby = 'Null'
