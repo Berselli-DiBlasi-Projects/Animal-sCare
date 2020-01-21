@@ -255,5 +255,3 @@ class UtentePetSitterForm(forms.ModelForm):
         if not (1 <= len(self.cleaned_data['hobby']) <= 95):
             raise ValidationError(_('Errore: il campo hobby deve avere lunghezza fra 1 e 95 caratteri.'))
         return self.cleaned_data['hobby']
-
-

@@ -1,5 +1,6 @@
 $.validator.methods.email = function( value, element ) {
-  return this.optional( element ) || /[a-z]+@[a-z]+\.[a-z]+/.test( value );
+    var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+    return this.optional( element ) || emailReg.test( value );
 }
 
 jQuery.validator.setDefaults({
