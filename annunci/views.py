@@ -16,6 +16,15 @@ IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 
 @login_required(login_url='/utenti/login/')
 def accetta_annuncio(request, oid):
+    """
+    Effettua le operazioni di accettazione annuncio quando un utente clicca l'omonimo button in una view Dettagli
+    annuncio. E' incluso anche l'invio di una notifica via mail al proprietario dell'annuncio.
+
+    :param request: request utente.
+    :param oid: l'id dell'annuncio accettato.
+    :return: redirect alla home.
+    """
+
     annuncio = Annuncio.objects.filter(id=oid).first()
     user_profile = Profile.objects.filter(user=request.user).first()
     inserzionista_profile = Profile.objects.filter(user=annuncio.user).first()
@@ -62,6 +71,14 @@ def accetta_annuncio(request, oid):
 
 
 def annunci_di_utente(request, username):
+    """
+    Mostra l'elenco degli annunci di un singolo utente.
+
+    :param request: request utente.
+    :param username: username dell'utente di cui mostrare gli annunci.
+    :return: render lista annunci.
+    """
+
     utente_richiesto = User.objects.filter(username=username).first()
 
     dati = recupera_annunci(request)
@@ -104,6 +121,14 @@ def annunci_di_utente(request, username):
 
 @login_required(login_url='/utenti/login/')
 def calendario(request):
+    """
+    Mostra il calendario contenente tutti gli impegni passati e futuri, aperti e chiusi (contornati in verde e in
+    rosso rispettivamente nel template) dell'utente loggato e che ha fatto la richiesta.
+
+    :param request: request utente.
+    :return: render del calendario.
+    """
+
     dati = recupera_annunci(request)
 
     annunci_autore = dati.get('annunci_validi').filter(user=request.user).exclude(user_accetta__isnull=True)
@@ -142,6 +167,14 @@ def calendario(request):
 
 @login_required(login_url='/utenti/login/')
 def conferma_annuncio(request, oid):
+    """
+    Mostra una pagina per chiedere la conferma dell'accettazione di un annuncio da parte di un utente connesso.
+
+    :param request: request utente.
+    :param oid: l'id dell'annuncio accettato.
+    :return: render di conferma annuncio.
+    """
+
     annuncio = Annuncio.objects.filter(id=oid).first()
     context = {'annuncio': annuncio, 'base_template': 'main/base.html',
                'user_profile': Profile.objects.filter(user=request.user).first()}
@@ -150,7 +183,14 @@ def conferma_annuncio(request, oid):
 
 
 def controllo_pet_coins(userprofile, pet_coins):
-    # controllo pet_coins sul saldo profilo
+    """
+    Controllo del valore dei pet coins nel saldo profilo dell'utente.
+
+    :param userprofile: profilo utente.
+    :param pet_coins: il valore in pet coins da controllare.
+    :return: True oppure un messaggio di errore.
+    """
+
     if not userprofile.pet_sitter and userprofile.pet_coins < int(pet_coins):
         return 'Errore: verifica di avere un saldo in pet coins sufficiente per inserire l\'annuncio.'
 
@@ -158,6 +198,14 @@ def controllo_pet_coins(userprofile, pet_coins):
 
 
 def dettagli_annuncio(request, oid):
+    """
+    Mostra i dettagli di un singolo annuncio.
+
+    :param request: request utente.
+    :param oid: l'id dell'annuncio.
+    :return: render della pagina dettagli_annuncio.
+     """
+
     if request.user.is_authenticated():
         context = {'base_template': 'main/base.html'}
         context.update({'user': User.objects.get(username=request.user)})
@@ -180,6 +228,13 @@ def dettagli_annuncio(request, oid):
 
 @login_required(login_url='/utenti/login/')
 def elimina_annuncio(request, oid):
+    """
+    Mostra una pagina di conferma eliminazione dell'annuncio.
+
+    :param request: request utente.
+    :param oid: l'id dell'annuncio da eliminare.
+    :return: render di conferma elimina_annuncio o redirect alla home.
+    """
 
     annuncio = Annuncio.objects.filter(id=oid).first()
     if annuncio.user == request.user:
@@ -193,6 +248,14 @@ def elimina_annuncio(request, oid):
 
 @login_required(login_url='/utenti/login/')
 def elimina_annuncio_conferma(request, oid):
+    """
+    Elimina l'annuncio.
+
+    :param request: request utente.
+    :param oid: l'id dell'annuncio da eliminare.
+    :return: redirect alla home.
+    """
+
     annuncio = Annuncio.objects.filter(id=oid).first()
 
     if annuncio.user == request.user:
@@ -204,13 +267,18 @@ def elimina_annuncio_conferma(request, oid):
 
         Annuncio.objects.filter(id=oid).delete()
 
-        return HttpResponseRedirect(reverse('annunci:lista-annunci'))
-
     return HttpResponseRedirect(reverse('main:index'))
 
 
 @login_required(login_url='/utenti/login/')
 def inserisci_annuncio(request):
+    """
+    Permette all'utente di inserire un nuovo annuncio.
+
+    :param request: request utente.
+    :return: render pagina inserisci_annuncio e redirect alla home.
+    """
+
     form = AnnuncioForm(request.POST or None, request.FILES or None)
     servizioform = ServizioForm(request.POST or None)
 
@@ -278,6 +346,13 @@ def inserisci_annuncio(request):
 
 
 def lista_annunci(request):
+    """
+    Mostra all'utente la lista degli annunci aperti.
+
+    :param request: request utente.
+    :return: render pagina lista_annunci.
+    """
+
     dati = recupera_annunci(request)
 
     annunci_validi = dati.get('annunci_validi').filter(user_accetta__isnull=True)
@@ -337,6 +412,14 @@ def lista_annunci(request):
 
 @login_required(login_url='/utenti/login/')
 def modifica_annuncio(request, oid):
+    """
+    Permette all'utente di modificare un annuncio.
+
+    :param request: request utente.
+    :param oid: id dell'annuncio da modificare.
+    :return: render pagina modifica_annuncio.
+    """
+
     annuncio = Annuncio.objects.filter(id=oid).first()
     servizi = Servizio.objects.filter(annuncio=annuncio).first()
     userprofile = Profile.objects.filter(user=request.user).first()
@@ -389,6 +472,15 @@ def modifica_annuncio(request, oid):
 
 
 def ordina_annunci(user_profile, annunci_validi, ordina):
+    """
+    Ordina gli annunci per distanza geografica secondo la selezione fatta dall'utente.
+
+    :param user_profile: profilo utente.
+    :param annunci_validi: lista degli annunci che verranno mostrati.
+    :param ordina: indica se l'ordinamento deve essere crescente, decrescente o non ordinare.
+    :return: indici degli annunci ordinati.
+    """
+
     lat_user = 0
     lng_user = 0
     if user_profile.latitudine is not None and user_profile.longitudine is not None:
@@ -434,6 +526,14 @@ def ordina_annunci(user_profile, annunci_validi, ordina):
 
 
 def recupera_annunci(request):
+    """
+    Recupera dal model tutti gli annunci che fanno match con le selezioni delle categorie effettuate dall'utente.
+    Controlla che gli annunci recuperati siano ancora aperti (non accettati) e con data di scadenza valida.
+
+    :param request: request .
+    :return: dati: dizionario contenente gli annunci validi recuperati e la configurazione attuale della view.
+    """
+
     # controllo annunci scaduti non accettati e li elimino
     annunci_validi = Annuncio.objects.all()
     for annuncio in annunci_validi:

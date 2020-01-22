@@ -8,6 +8,15 @@ from django.conf import settings
 
 @login_required(login_url='/utenti/login/')
 def contattaci(request):
+    """
+    Permette all'utente di contattare gli amministratori del sito scrivendo un titolo e un messaggio.
+    Il messaggio viene recapitato alla mailbox del sito, con mittente la mailbox del sito stessa.
+    Nel corpo della mail viene inserito lo username dell'utente così che i messaggi non siano anonimi.
+
+    :param request: request utente.
+    :return: render pagina contattaci.
+    """
+
     form = ContattaciForm(request.POST or None)
 
     context = {

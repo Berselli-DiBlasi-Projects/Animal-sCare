@@ -12,12 +12,19 @@ from django.http import HttpResponse
 import operator
 import requests
 
-
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 
 
 def calcola_lat_lon(request, profile):
-    # Ottieni latitudine e longitudine
+    """
+    Dato il profilo di un utente con i dati relativi alla sua residenza, viene fatta una query a un API esterna che
+    recupera latitudine e longitudine relative alla posizione dell'utente.
+
+    :param request: request utente.
+    :param profile: profilo utente.
+    :return: latitudine, longitudine restituite dall'API.
+    """
+
     response = requests.get('https://open.mapquestapi.com/geocoding/v1/address?'
                             'key=REupVcNAuHmBALQsTjMWgMVfp5G5hltJ&location=' + profile.indirizzo.replace("/", "")
                             + ',' + profile.citta.replace("/", "") + ',' + profile.provincia.replace("/", "") +
@@ -29,6 +36,13 @@ def calcola_lat_lon(request, profile):
 
 @login_required(login_url='/utenti/login/')
 def cassa(request):
+    """
+    Mostra la pagina cassa, dove l'utente può acquistare Pet coins (simulato nell'app).
+
+    :param request: request utente.
+    :return: render della pagina cassa.
+    """
+
     profile = Profile.objects.filter(user=request.user).first()
     context = {'base_template': 'main/base.html'}
     context.update({'user_profile': profile})
@@ -45,6 +59,12 @@ def cassa(request):
 
 
 def cerca_utenti(request):
+    """
+    Funzione di ricerca utenti tramite lo username.
+
+    :param request: request utente.
+    :return: render della pagina cerca_utenti contenente gli utenti trovati con lo username specificato.
+    """
 
     utenti = User.objects.filter(username__icontains=request.GET.get('cerca'))
     profili = {}
@@ -76,6 +96,13 @@ def cerca_utenti(request):
 
 
 def check_username(request):
+    """
+    Controlla se uno username passato come parametro GET non sia già registrato nel model.
+
+    :param request: request utente.
+    :return: False (username già registrato), True (username non registrato).
+    """
+
     if request.method == "GET":
         p = request.GET.copy()
         if 'username' in p:
@@ -89,6 +116,14 @@ def check_username(request):
 
 
 def classifica(request):
+    """
+    Mostra la classifica degli utenti con possibilità di mostrare solo gli account normali o solo gli account dei
+    petsitter e la possibilità di ordinare per voto medio o per numero di recensioni ricevute.
+
+    :param request: request utente.
+    :return: render della classifica.
+    """
+
     sel_utenti = 'tutti'
     sel_filtro = 'voti'
 
@@ -173,6 +208,15 @@ def classifica(request):
 
 @login_required(login_url='/utenti/login/')
 def edit_profile(request, oid):
+    """
+    Permette agli utenti di modificare il proprio profilo, cambiando i loro dati.
+
+    :param request: request utente.
+    :param oid: id dell'utente di cui si vuole modificare il profilo (con controllo che sia == all'id
+    dell'utente loggato).
+    :return: render pagina modifica profilo o pagina principale.
+    """
+
     context = {'base_template': 'main/base.html'}
     oaut_user = False
     if int(oid) == int(request.user.pk):
@@ -194,7 +238,6 @@ def edit_profile(request, oid):
 
             if not oaut_user:
                 if form.cleaned_data['password'] != form.cleaned_data['conferma_password']:
-
                     context.update({'form': form})
                     context.update({'profileForm': profile_form})
                     context.update({'error_message': 'Errore: le due password inserite non corrispondono'})
@@ -251,6 +294,14 @@ def edit_profile(request, oid):
 
 @login_required(login_url='/utenti/login/')
 def elimina_profilo(request, oid):
+    """
+    Permette agli utenti di eliminare il proprio profilo, mostrando prima una pagina di conferma.
+
+    :param request: request utente.
+    :param oid: id dell'utente da eliminare (con controllo che sia == all'id dell'utente loggato).
+    :return: render della pagina elimina_profilo.
+    """
+
     user = User.objects.filter(id=oid).first()
     if user == User.objects.get(username=request.user):
         context = {'user': user, 'base_template': 'main/base.html'}
@@ -260,6 +311,14 @@ def elimina_profilo(request, oid):
 
 @login_required(login_url='/utenti/login/')
 def elimina_profilo_conferma(request, oid):
+    """
+    Dopo aver confermato, elimina effettivamente il profilo utente.
+
+    :param request: request utente.
+    :param oid: id dell'utente da eliminare.
+    :return: render della pagina principale.
+    """
+
     user = User.objects.filter(id=oid).first()
 
     if user == User.objects.get(username=request.user):
@@ -269,6 +328,13 @@ def elimina_profilo_conferma(request, oid):
 
 
 def login_user(request):
+    """
+    Permette agli utenti di effettuare il login.
+
+    :param request: request utente.
+    :return: render della pagina login.
+    """
+
     if not request.user.is_authenticated():
         if request.method == "POST":
             username = request.POST['username']
@@ -289,12 +355,26 @@ def login_user(request):
 
 @login_required(login_url='/utenti/login/')
 def logout_user(request):
+    """
+    Permette agli utenti di effettuare il logout.
+
+    :param request: request utente.
+    :return: render della pagina principale.
+    """
+
     logout(request)
     return HttpResponseRedirect(reverse('main:index'))
 
 
 @login_required(login_url='/utenti/login/')
 def oauth_normale(request):
+    """
+    Permette agli utenti di creare un profilo normale utilizzando il login con Oauth di Google.
+
+    :param request: request utente.
+    :return: render della pagina di creazione profilo normale.
+    """
+
     # Se la richiesta è di tipo POST, allora possiamo processare i dati
     if request.method == "POST":
         # Creiamo l'istanza del form e la popoliamo con i dati della POST request (processo di "binding")
@@ -348,6 +428,13 @@ def oauth_normale(request):
 
 @login_required(login_url='/utenti/login/')
 def oauth_petsitter(request):
+    """
+    Permette agli utenti di creare un profilo da petsitter utilizzando il login con Oauth di Google.
+
+    :param request: request utente.
+    :return: render della pagina di creazione profilo da petsitter.
+    """
+
     # Se la richiesta è di tipo POST, allora possiamo processare i dati
     if request.method == "POST":
         # Creiamo l'istanza del form e la popoliamo con i dati della POST request (processo di "binding")
@@ -396,6 +483,13 @@ def oauth_petsitter(request):
 
 
 def registrazione(request):
+    """
+    Permette agli utenti di registrarsi al sito.
+
+    :param request: request utente.
+    :return: render della pagina di registrazione o redirect a pagina principale.
+    """
+
     if not request.user.is_authenticated():
         base_template = 'main/base_visitor.html'
         return render(request, 'utenti/registrazione.html', {'base_template': base_template})
@@ -404,6 +498,13 @@ def registrazione(request):
 
 
 def registrazione_normale(request):
+    """
+    Permette agli utenti di registrare un account utente normale.
+
+    :param request: request utente.
+    :return: render della pagina di registrazione utente normale.
+    """
+
     form = UserForm(request.POST or None, oauth_user=0)
     normaleform = UtenteNormaleForm(request.POST or None, request.FILES or None)
 
@@ -463,6 +564,12 @@ def registrazione_normale(request):
 
 
 def registrazione_petsitter(request):
+    """
+    Permette agli utenti di registrare un account utente petsitter.
+
+    :param request: request utente.
+    :return: render della pagina di registrazione utente petsitter.
+    """
 
     form = UserForm(request.POST or None, oauth_user=0)
     petsitterform = UtentePetSitterForm(request.POST or None, request.FILES or None)
@@ -519,6 +626,13 @@ def registrazione_petsitter(request):
 
 @login_required(login_url='/utenti/login/')
 def scelta_profilo_oauth(request):
+    """
+    Permette agli utenti di scegliere se creare un profilo Oauth normale o da petsitter.
+
+    :param request: request utente.
+    :return: render della pagina di scelta Oauth normale o petsitter.
+    """
+
     utente_loggato = User.objects.get(id=request.user.id)
     flag = True
     try:
@@ -533,6 +647,15 @@ def scelta_profilo_oauth(request):
 
 
 def view_profile(request, oid):
+    """
+    Mostra il profilo di un utente, con la possibilità di visualizzare i suoi annunci, le recensioni ricevute e, se
+    profilo utente == utente loggato, di modificare o eliminare il proprio profilo.
+
+    :param request: request utente.
+    :param oid: id dell'utente di cui mostrare il profilo.
+    :return: render della pagina di visualizzazione profilo utente.
+    """
+
     user = User.objects.filter(id=oid).first()
     user_profile = Profile.objects.filter(user=user.pk).first()
 
