@@ -5,10 +5,11 @@ from utenti.models import Profile
 from utenti.views import cassa, edit_profile, logout_user
 from mixer.backend.django import mixer
 import pytest
+import unittest
 
 
 @pytest.mark.django_db
-class TestViews:
+class TestViews(unittest.TestCase):
     def test_cassa_authenticated(self):
         path = reverse('utenti:cassa')
         request = RequestFactory().get(path)
@@ -32,6 +33,7 @@ class TestViews:
         mixer.blend(Profile, user=request.user)
 
         response = edit_profile(request, oid=1)
+        print(response.status_code)
         assert response.status_code == 200
 
     def test_edit_profile_unauthenticated(self):
