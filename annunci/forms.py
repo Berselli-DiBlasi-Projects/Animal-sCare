@@ -48,7 +48,6 @@ class AnnuncioForm(forms.ModelForm):
         data_inizio = self.cleaned_data['data_inizio']
         if data_inizio < datetime.now(timezone.utc) + timedelta(hours=2):
             raise ValidationError(_('Errore: la data di inizio non può essere nel passato.'))
-
         return self.cleaned_data['data_inizio']
 
     def clean_data_fine(self):
