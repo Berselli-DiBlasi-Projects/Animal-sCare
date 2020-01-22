@@ -144,43 +144,9 @@ def conferma_annuncio(request, oid):
     return render(request, 'annunci/conferma_annuncio.html', context)
 
 
-def controllo_form_annuncio(userprofile, form):
-    # controllo titolo
-    if not re.match("^[A-Za-z0-9 .,'èòàùì]+$", form.cleaned_data['titolo']):
-        return 'Errore: il titolo può contenere solo lettere, numeri e spazi.'
-    if not (1 <= len(form.cleaned_data['titolo']) <= 95):
-        return 'Errore: il titolo deve avere lunghezza fra 1 e 95 caratteri.'
-
-    # controllo sottotitolo
-    if not re.match("^[A-Za-z0-9 ,.'èòàùì]+$", form.cleaned_data['sottotitolo']):
-        return 'Errore: il sottotitolo può contenere solo lettere, numeri, punti, virgole e spazi.'
-    if not (1 <= len(form.cleaned_data['sottotitolo']) <= 95):
-        return 'Errore: il sottotitolo deve avere lunghezza fra 1 e 95 caratteri.'
-
-    # controllo descrizione
-    if not re.match("^[A-Za-z0-9 .,'èòàùì]+$", form.cleaned_data['descrizione']):
-        return 'Errore: la descrizione può contenere solo lettere, numeri, punti, virgole e spazi.'
-    if not (1 <= len(form.cleaned_data['descrizione']) <= 245):
-        return 'Errore: il titolo deve avere lunghezza fra 1 e 245 caratteri.'
-
-    # controllo se data inizio < data_fine e se data_inizio e data_fine > adesso
-    data_inizio = form.cleaned_data['data_inizio']
-    data_fine = form.cleaned_data['data_fine']
-    if data_inizio >= data_fine:
-        return 'Errore: la data di inizio deve avvenire prima della data di fine e non possono essere uguali.'
-    if data_inizio < datetime.now(timezone.utc) + timedelta(hours=2):
-        return 'Errore: la data di inizio non può essere nel passato.'
-    if data_fine < datetime.now(timezone.utc) + timedelta(hours=2):
-        return 'Errore: la data di fine non può essere nel passato.'
-
-    # controllo pet_coins
-    if not re.match("^[0-9]+$", str(form.cleaned_data['pet_coins'])):
-        return 'Errore: il campo pet coins può contenere solo numeri.'
-    if not (1 <= int(form.cleaned_data['pet_coins']) <= 100000):
-        return 'Errore: il valore in pet coins deve essere compreso tra 1 e 100000.'
-
+def controllo_pet_coins(userprofile, pet_coins):
     # controllo pet_coins sul saldo profilo
-    if not userprofile.pet_sitter and userprofile.pet_coins < int(form.cleaned_data['pet_coins']):
+    if not userprofile.pet_sitter and userprofile.pet_coins < int(pet_coins):
         return 'Errore: verifica di avere un saldo in pet coins sufficiente per inserire l\'annuncio.'
 
     return True
@@ -251,7 +217,7 @@ def inserisci_annuncio(request):
     if form.is_valid() and servizioform.is_valid():
         userprofile = Profile.objects.filter(user=request.user).first()
 
-        msg = controllo_form_annuncio(userprofile, form)
+        msg = controllo_pet_coins(userprofile, form.cleaned_data['pet_coins'])
         if msg is not True:
             context = {
                 'form': form,
@@ -392,7 +358,7 @@ def modifica_annuncio(request, oid):
 
     if form.is_valid() and servizioform.is_valid():
 
-        msg = controllo_form_annuncio(userprofile, form)
+        msg = controllo_pet_coins(userprofile, form.cleaned_data['pet_coins'])
         if msg is not True:
             context = {
                 'form': form,

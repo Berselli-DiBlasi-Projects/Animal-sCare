@@ -10,20 +10,6 @@ from django.core.urlresolvers import reverse
 import re
 
 
-def controllo_form_recensione(form):
-    # controllo titolo
-    if not re.match("^[A-Za-z0-9 .,'èòàùì]+$", form.cleaned_data['titolo']):
-        return 'Errore: il titolo può contenere solo lettere, numeri e spazi.'
-    if not (1 <= len(form.cleaned_data['titolo']) <= 95):
-        return 'Errore: il titolo deve avere lunghezza fra 1 e 95 caratteri.'
-
-    # controllo descrizione
-    if not re.match("^[A-Za-z0-9 ,.'èòàùì]+$", form.cleaned_data['descrizione']):
-        return 'Errore: la descrizione può contenere solo lettere, numeri, punti, virgole e spazi.'
-    if not (1 <= len(form.cleaned_data['sottotitolo']) <= 245):
-        return 'Errore: la descrizione deve avere lunghezza fra 1 e 245 caratteri.'
-    return True
-
 
 @login_required(login_url='/utenti/login/')
 def nuova_recensione(request, oid):
@@ -47,15 +33,7 @@ def nuova_recensione(request, oid):
         context.update({'error_message': 'Errore: hai già recensito questo utente'})
 
     if form.is_valid() and is_rece_valida:
-        msg = controllo_form_recensione(form)
 
-        if msg is not True:
-            context = {
-                'form': form,
-                'error_message': msg,
-                'base_template': 'main/base.html',
-            }
-            return render(request, 'recensioni/nuova_recensione.html', context)
 
         recensione = Recensione.objects.create(user_recensore=user_profile_corrente.user, user_recensito=user_recensito)
 
