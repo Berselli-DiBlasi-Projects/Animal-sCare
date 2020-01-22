@@ -3,7 +3,9 @@ from .models import Annuncio, Servizio
 from datetime import datetime, timedelta, timezone
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
+import mimetypes, magic
 import re
+MIME_TYPES = ['image/jpeg', 'image/png']
 
 class AnnuncioForm(forms.ModelForm):
     required_css_class = 'required'
@@ -68,6 +70,14 @@ class AnnuncioForm(forms.ModelForm):
             raise ValidationError(_('Errore: il valore in pet coins deve essere compreso tra 1 e 100000.'))
         return self.cleaned_data['pet_coins']
 
+    def clean_logo_annuncio(self):
+        files = self.files.get('logo_annuncio')
+        if files is not None:
+            file_type = magic.from_buffer(files.read(), mime=True)
+            if file_type not in MIME_TYPES:
+                raise forms.ValidationError(_("file non supportato."))
+            return files
+        return None
 
 
 

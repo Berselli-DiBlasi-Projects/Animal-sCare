@@ -251,17 +251,9 @@ def inserisci_annuncio(request):
 
             try:
                 annuncio.logo_annuncio = form.cleaned_data['logo_annuncio']
-                file_type = annuncio.logo_annuncio.url.split('.')[-1]
-                file_type = file_type.lower()
-                if file_type not in IMAGE_FILE_TYPES:
-                    context = {
-                        'form': form,
-                        'error_message': 'Sono accettate immagini PNG, JPG, o JPEG',
-                    }
-                    context.update({'base_template': 'main/base.html'})
-                    return render(request, 'annunci/inserisci_annuncio.html', context)
             except Exception:
                 annuncio.logo_annuncio = None
+
 
             annuncio.save()
 
