@@ -1,42 +1,24 @@
 from django.contrib.auth.models import User
 from django import forms
-from django.forms import TextInput
-from PIL import Image
-import operator
-
-import mimetypes, magic
-from django.db.models.fields.files import FieldFile
-
+import magic
 from .models import Profile
 from static import NamingList
 import re
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
-from django.core.files.uploadedfile import UploadedFile
-from django.db.models.fields.files import ImageFieldFile, FileField
+
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 MIME_TYPES = ['image/jpeg', 'image/png']
-# Add to your settings file
 CONTENT_TYPES = ['image', 'video']
-# 2.5MB - 2621440
-# 5MB - 5242880
-# 10MB - 10485760
-# 20MB - 20971520
-# 50MB - 5242880
-# 100MB 104857600
-# 250MB - 214958080
-# 500MB - 429916160
 MAX_UPLOAD_SIZE = "5242880"
 
-#Add to a form containing a FileField and change the field names accordingly.
-from django.template.defaultfilters import filesizeformat
 
 class UserForm(forms.ModelForm):
     required_css_class = 'required'
     first_name = forms.CharField(max_length=30, label="Nome")
     last_name = forms.CharField(max_length=30, label="Cognome")
     email = forms.EmailField(max_length=254)
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'id':'password'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'password'}))
     conferma_password = forms.CharField(widget=forms.PasswordInput())
 
     class Meta:
@@ -54,7 +36,6 @@ class UserForm(forms.ModelForm):
         if oauth_user == 1:
             del self.fields['password']
             del self.fields['conferma_password']
-
 
     def clean_username(self):
         if not re.match("^[A-Za-z0-9]+$", self.cleaned_data['username']):
@@ -100,6 +81,7 @@ class UserForm(forms.ModelForm):
             raise ValidationError(_('Errore: la mail deve essere compresa gra 5 e 50 caratteri.'))
         return self.cleaned_data['email']
 
+
 class UtenteNormaleForm(forms.ModelForm):
     required_css_class = 'required'
     caratteristiche = forms.CharField(widget=forms.Textarea)
@@ -110,6 +92,7 @@ class UtenteNormaleForm(forms.ModelForm):
     foto_pet = forms.ImageField(required=False)
     provincia = forms.ChoiceField(choices=NamingList.AnagraficaIstat.ListaProvince)
     regione = forms.ChoiceField(choices=NamingList.AnagraficaIstat.ListaRegioni)
+
     class Meta:
         model = Profile
         fields = ['indirizzo',
@@ -124,6 +107,7 @@ class UtenteNormaleForm(forms.ModelForm):
                   'eta',
                   'caratteristiche',
                   'foto_pet']
+
     def clean_indirizzo(self):
         # controllo indirizzo
         if not re.match("^[A-Za-z0-9/ 'èòàùì]+$", self.cleaned_data['indirizzo']):
@@ -131,6 +115,7 @@ class UtenteNormaleForm(forms.ModelForm):
         if not (3 <= len(self.cleaned_data['indirizzo']) <= 50):
             raise ValidationError(_('Errore: l\'indirizzo deve avere lunghezza fra 3 e 50 caratteri.'))
         return self.cleaned_data['indirizzo']
+
     def clean_citta(self):
         # controllo citta
         if not re.match("^[A-Za-z 'èòàùì]+$", self.cleaned_data['citta']):
@@ -138,6 +123,7 @@ class UtenteNormaleForm(forms.ModelForm):
         if not (3 <= len(self.cleaned_data['citta']) <= 50):
             raise ValidationError(_('Errore: la città deve avere lunghezza fra 3 e 50 caratteri.'))
         return self.cleaned_data['citta']
+
     def clean_telefono(self):
         # controllo telefono
         if not re.match("^[0-9]+$", self.cleaned_data['telefono']):
@@ -197,12 +183,14 @@ class UtenteNormaleForm(forms.ModelForm):
             return files
         return None
 
+
 class UtentePetSitterForm(forms.ModelForm):
     required_css_class = 'required'
     descrizione = forms.CharField(widget=forms.Textarea)
     foto_profilo = forms.FileField(required=False)
     provincia = forms.ChoiceField(choices=NamingList.AnagraficaIstat.ListaProvince)
     regione = forms.ChoiceField(choices=NamingList.AnagraficaIstat.ListaRegioni)
+
     class Meta:
         model = Profile
         fields = ['indirizzo',
@@ -213,6 +201,7 @@ class UtentePetSitterForm(forms.ModelForm):
                   'foto_profilo',
                   'descrizione',
                   'hobby']
+
     def clean_indirizzo(self):
         # controllo indirizzo
         if not re.match("^[A-Za-z0-9/ 'èòàùì]+$", self.cleaned_data['indirizzo']):
@@ -240,12 +229,11 @@ class UtentePetSitterForm(forms.ModelForm):
     def clean_foto_profilo(self):
         files = self.files.get('foto_profilo')
         if files is not None:
-            file_type =  magic.from_buffer(files.read(), mime=True)
+            file_type = magic.from_buffer(files.read(), mime=True)
             if file_type not in MIME_TYPES:
                 raise forms.ValidationError(_("file non supportato."))
             return files
         return None
-
 
     def clean_descrizione(self):
         # controllo descrizione

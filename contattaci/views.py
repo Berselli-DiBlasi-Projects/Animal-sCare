@@ -9,7 +9,6 @@ from django.conf import settings
 @login_required(login_url='/utenti/login/')
 def contattaci(request):
     form = ContattaciForm(request.POST or None)
-    user_profile = Profile.objects.filter(user=request.user).first()
 
     context = {
         "form": form,

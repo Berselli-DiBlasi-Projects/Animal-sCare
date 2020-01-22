@@ -81,8 +81,6 @@
         </div>
     </form>
 
-
-
     <div class="container">
         {% for annuncio, profilo in annunci.items %}
             <div class="row">
@@ -109,8 +107,11 @@
 
                                 <p>
                                     {{ annuncio.sottotitolo }}
-                                    <h6>{{ annuncio.user.first_name }} {{ annuncio.user.last_name }}, {{ profilo.indirizzo }} , {{ profilo.citta }} <br><br>
-                                <b>Data di inizio: </b>{{ annuncio.data_inizio | date:"d/m/Y" }} {{ annuncio.data_inizio | time:"H:i" }} &nbsp; <b>Data di fine: </b>{{ annuncio.data_fine | date:"d/m/Y" }} {{ annuncio.data_fine | time:"H:i" }}</h6>
+                                    <h6>{{ annuncio.user.first_name }} {{ annuncio.user.last_name }},
+                                    {{ profilo.indirizzo }} , {{ profilo.citta }} <br><br>
+                                    <b>Data di inizio: </b>{{ annuncio.data_inizio | date:"d/m/Y" }}
+                                    {{ annuncio.data_inizio | time:"H:i" }} &nbsp; <b>Data di fine: </b>
+                                    {{ annuncio.data_fine | date:"d/m/Y" }} {{ annuncio.data_fine | time:"H:i" }}</h6>
                                 </p>
                                 <hr />
                                 <div class="row rating-desc">
@@ -119,7 +120,8 @@
                                             <h6><b>Pubblicato da:</b></h6>
                                         </div>
                                         <div class="inline-block">
-                                            <a href="{% url 'utenti:view-profile' oid=annuncio.user.pk %}" >{{ annuncio.user.username }}</a>
+                                            <a href="{% url 'utenti:view-profile' oid=annuncio.user.pk %}" >
+                                                {{ annuncio.user.username }}</a>
                                         </div>
                                         <span class="separator">|</span>
                                         {% for annuncio_voto, voto in annunci_voti.items %}

@@ -4,11 +4,12 @@ from django.contrib.auth.models import User
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.conf import settings
 
+
 class Annuncio(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
     user_accetta = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='user_accetta')
 
-    annuncio_petsitter = models.BooleanField(default=True)     # Indica se l'annuncio è stato inserito da un petsitter
+    annuncio_petsitter = models.BooleanField(default=True)   # Indica se l'annuncio è stato inserito da un petsitter
     titolo = models.CharField(max_length=100)
     sottotitolo = models.CharField(max_length=100)
     descrizione = models.CharField(max_length=250)
@@ -39,4 +40,3 @@ class Servizio(models.Model):
     class Meta:
         verbose_name = 'Servizio'
         verbose_name_plural = "Servizi"
-

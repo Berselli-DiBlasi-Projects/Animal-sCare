@@ -1,4 +1,3 @@
-
 class AnagraficaIstat:
     ListaProvince = [('AG', 'AG'), ('AL', 'AL'), ('AN', 'AN'), ('AO', 'AO'), ('AP', 'AP'), ('AQ', 'AQ'), ('AR', 'AR'),
                 ('AT', 'AT'), ('AV', 'AV'), ('BA', 'BA'), ('BG', 'BG'), ('BI', 'BI'), ('BL', 'BL'), ('BN', 'BN'),
@@ -16,6 +15,7 @@ class AnagraficaIstat:
                 ('TN', 'TN'), ('TO', 'TO'), ('TP', 'TP'), ('TR', 'TR'), ('TS', 'TS'), ('TV', 'TV'), ('UD', 'UD'),
                 ('VA', 'VA'), ('VB', 'VB'), ('VC', 'VC'), ('VE', 'VE'), ('VI', 'VI'), ('VR', 'VR'), ('VT', 'VT'),
                 ('VV', 'VV')]
+
     ListaRegioni = [('Abruzzo', 'Abruzzo'), ('Basilicata', 'Basilicata'), ('Calabria', 'Calabria'),
                 ('Campania', 'Campania'), ('Emilia-Romagna', 'Emilia-Romagna'),
                 ('Friuli-Venezia Giulia', 'Friuli-Venezia Giulia'), ('Lazio', 'Lazio'), ('Liguria', 'Liguria'),
@@ -23,4 +23,3 @@ class AnagraficaIstat:
                 ('Puglia', 'Puglia'), ('Sardegna', 'Sardegna'), ('Sicilia', 'Sicilia'), ('Toscana', 'Toscana'),
                 ('Trentino-Alto Adige', 'Trentino-Alto Adige'), ('Umbria', 'Umbria'),
                 ("Valle d'Aosta", "Valle d'Aosta"), ('Veneto', 'Veneto')]
-

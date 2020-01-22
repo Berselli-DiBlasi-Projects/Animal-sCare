@@ -6,11 +6,11 @@
 {% block body %}
     <div class="container">
         <input type=text id='data-ora' name="data-ora" readonly disabled="disabled">
-        <p> </p>
+        <p></p>
     </div>
 
     <script type="text/javascript">
-        function display_c(){
+        function display_c() {
             var refresh=1000;
             mytime=setTimeout('display_ct()',refresh)
         }
@@ -18,7 +18,8 @@
         function display_ct() {
             var x = new Date()
             var x1= x.getDate() + "/" + (x.getMonth() + 1)+ "/" + x.getFullYear();
-            x1 = x1 + " - " +  ("0" + x.getHours()).slice(-2) + ":" +  ("0" + x.getMinutes()).slice(-2) + ":" +  ("0" + x.getSeconds()).slice(-2);
+            x1 = x1 + " - " +  ("0" + x.getHours()).slice(-2) + ":" +  ("0" + x.getMinutes()).slice(-2) + ":" +
+                ("0" + x.getSeconds()).slice(-2);
             document.getElementById('data-ora').value = x1;
             display_c();
          }
@@ -88,8 +89,11 @@
 
                                 <p>
                                     {{ annuncio.sottotitolo }}
-                                    <h6>{{ annuncio.user.first_name }} {{ annuncio.user.last_name }}, {{ profilo.indirizzo }} , {{ profilo.citta }} <br><br>
-                                <b>Data di inizio: </b>{{ annuncio.data_inizio | date:"d/m/Y" }} {{ annuncio.data_inizio | time:"H:i" }} &nbsp; <b>Data di fine: </b>{{ annuncio.data_fine | date:"d/m/Y" }} {{ annuncio.data_fine | time:"H:i" }}</h6>
+                                    <h6>{{ annuncio.user.first_name }} {{ annuncio.user.last_name }},
+                                    {{ profilo.indirizzo }} , {{ profilo.citta }} <br><br>
+                                    <b>Data di inizio: </b>{{ annuncio.data_inizio | date:"d/m/Y" }}
+                                    {{ annuncio.data_inizio | time:"H:i" }} &nbsp; <b>Data di fine: </b>
+                                    {{ annuncio.data_fine | date:"d/m/Y" }} {{ annuncio.data_fine | time:"H:i" }}</h6>
                                 </p>
                                 <hr />
                                 <div class="row rating-desc">

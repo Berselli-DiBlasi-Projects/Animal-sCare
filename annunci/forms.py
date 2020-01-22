@@ -3,9 +3,10 @@ from .models import Annuncio, Servizio
 from datetime import datetime, timedelta, timezone
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
-import mimetypes, magic
+import magic
 import re
 MIME_TYPES = ['image/jpeg', 'image/png']
+
 
 class AnnuncioForm(forms.ModelForm):
     required_css_class = 'required'
@@ -21,6 +22,7 @@ class AnnuncioForm(forms.ModelForm):
         model = Annuncio
         fields = ['titolo', 'sottotitolo', 'descrizione', 'data_inizio', 'data_fine',
                   'pet', 'pet_coins', 'logo_annuncio']
+
     def clean_titolo(self):
         # controllo titolo
         if not re.match("^[A-Za-z0-9 .,'èòàùì]+$", self.cleaned_data['titolo']):
@@ -31,8 +33,9 @@ class AnnuncioForm(forms.ModelForm):
 
     def clean_sottotitolo(self):
         # controllo sottotitolo
-        if not re.match("^[A-Za-z0-9 ,.'))èòàùì]+$", self.cleaned_data['sottotitolo']):
-            raise ValidationError(_('Errore: il sottotitolo può contenere solo lettere, numeri, punti, virgole e spazi.'))
+        if not re.match("^[A-Za-z0-9 ,.')èòàùì]+$", self.cleaned_data['sottotitolo']):
+            raise ValidationError(_('Errore: il sottotitolo può contenere solo lettere, '
+                                    'numeri, punti, virgole e spazi.'))
         if not (1 <= len(self.cleaned_data['sottotitolo']) <= 95):
             raise ValidationError(_('Errore: il sottotitolo deve avere lunghezza fra 1 e 95 caratteri.'))
         return self.cleaned_data['sottotitolo']
@@ -40,7 +43,8 @@ class AnnuncioForm(forms.ModelForm):
     def clean_descrizione(self):
         # controllo descrizione
         if not re.match("^[A-Za-z0-9 .,'èòàùì]+$", self.cleaned_data['descrizione']):
-            raise ValidationError(_('Errore: la descrizione può contenere solo lettere, numeri, punti, virgole e spazi.'))
+            raise ValidationError(_('Errore: la descrizione può contenere solo lettere, '
+                                    'numeri, punti, virgole e spazi.'))
         if not (1 <= len(self.cleaned_data['descrizione']) <= 245):
             raise ValidationError(_('Errore: il titolo deve avere lunghezza fra 1 e 245 caratteri.'))
         return self.cleaned_data['descrizione']
@@ -57,7 +61,8 @@ class AnnuncioForm(forms.ModelForm):
         data_inizio = self.cleaned_data['data_inizio']
         data_fine = self.cleaned_data['data_fine']
         if data_inizio >= data_fine:
-            raise ValidationError(_('Errore: la data di inizio deve avvenire prima della data di fine e non possono essere uguali.'))
+            raise ValidationError(_('Errore: la data di inizio deve avvenire prima della data di '
+                                    'fine e non possono essere uguali.'))
         if data_fine < datetime.now(timezone.utc) + timedelta(hours=2):
             raise ValidationError(_('Errore: la data di fine non può essere nel passato.'))
         return self.cleaned_data['data_fine']
@@ -80,11 +85,7 @@ class AnnuncioForm(forms.ModelForm):
         return None
 
 
-
-
-
 class ServizioForm(forms.ModelForm):
     class Meta:
         model = Servizio
         fields = ['passeggiate', 'pulizia_gabbia', 'ore_compagnia', 'cibo', 'accompagna_dal_vet']
-

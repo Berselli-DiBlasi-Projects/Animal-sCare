@@ -7,8 +7,6 @@ from annunci.models import Annuncio
 from datetime import datetime
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-import re
-
 
 
 @login_required(login_url='/utenti/login/')
@@ -33,7 +31,6 @@ def nuova_recensione(request, oid):
         context.update({'error_message': 'Errore: hai già recensito questo utente'})
 
     if form.is_valid() and is_rece_valida:
-
 
         recensione = Recensione.objects.create(user_recensore=user_profile_corrente.user, user_recensito=user_recensito)
 

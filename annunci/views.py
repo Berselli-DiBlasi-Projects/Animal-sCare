@@ -10,7 +10,6 @@ from django.db.models import Avg
 from datetime import datetime, timedelta, timezone
 from django.core.mail import EmailMessage
 from math import sin, cos, sqrt, atan2, radians
-import re
 
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 
@@ -23,6 +22,7 @@ def accetta_annuncio(request, oid):
 
     if user_profile.pet_sitter != annuncio.annuncio_petsitter:
         if user_profile.pet_sitter:
+
             user_profile.pet_coins = user_profile.pet_coins + annuncio.pet_coins
             annuncio.user_accetta = request.user
             user_profile.save()
@@ -31,9 +31,11 @@ def accetta_annuncio(request, oid):
             # manda email
             utente_inserzionista = User.objects.filter(pk=inserzionista_profile.user.pk).first()
             utente_accetta = User.objects.filter(pk=user_profile.user.pk).first()
+
             email = EmailMessage('Il tuo annuncio è stato accettato',
                                  'L\'utente ' + utente_accetta.username + ' ha accettato il tuo annuncio. Fai il '
-                                                                      'login su Animal\'sCare per controllare subito!',
+                                                                          'login su Animal\'sCare per controllare '
+                                                                          'subito!',
                                  to=[utente_inserzionista.email])
             email.send()
         else:
@@ -81,24 +83,23 @@ def annunci_di_utente(request, username):
 
         annunci_voti[annuncio] = voti.get('voto__avg')
 
+    context = {
+        'annunci': annunci,
+        'sel_categoria': sel_categoria,
+        'sel_pet': sel_pet,
+        'annunci_voti': annunci_voti,
+        'annunci_recensioni': annunci_recensioni,
+        'username': username
+    }
+
     if not request.user.is_authenticated():
-        return render(request, 'annunci/lista_annunci.html', {'base_template': 'main/base_visitor.html',
-                                                              'annunci': annunci,
-                                                              'sel_categoria': sel_categoria,
-                                                              'sel_pet': sel_pet,
-                                                              'annunci_voti': annunci_voti,
-                                                              'annunci_recensioni': annunci_recensioni,
-                                                              'username': username})
+        context.update({'base_template': 'main/base_visitor.html'})
+        return render(request, 'annunci/lista_annunci.html', context)
     else:
         user_profile = Profile.objects.filter(user=request.user).first()
-        return render(request, 'annunci/lista_annunci.html', {'base_template': 'main/base.html',
-                                                              'user_profile': user_profile,
-                                                              'annunci': annunci,
-                                                              'sel_categoria': sel_categoria,
-                                                              'sel_pet': sel_pet,
-                                                              'annunci_voti': annunci_voti,
-                                                              'annunci_recensioni': annunci_recensioni,
-                                                              'username': username})
+        context.update({'base_template': 'main/base.html'})
+        context.update({'user_profile': user_profile})
+        return render(request, 'annunci/lista_annunci.html', context)
 
 
 @login_required(login_url='/utenti/login/')
@@ -126,13 +127,17 @@ def calendario(request):
 
     user_profile = Profile.objects.filter(user=request.user).first()
 
-    return render(request, 'annunci/calendario.html', {'base_template': 'main/base.html',
-                                                       'user_profile': user_profile,
-                                                       'annunci': annunci,
-                                                       'sel_categoria': sel_categoria,
-                                                       'sel_pet': sel_pet,
-                                                       'annunci_voti': annunci_voti,
-                                                       'annunci_recensioni': annunci_recensioni})
+    context = {
+        'base_template': 'main/base.html',
+        'user_profile': user_profile,
+        'annunci': annunci,
+        'sel_categoria': sel_categoria,
+        'sel_pet': sel_pet,
+        'annunci_voti': annunci_voti,
+        'annunci_recensioni': annunci_recensioni
+    }
+
+    return render(request, 'annunci/calendario.html', context)
 
 
 @login_required(login_url='/utenti/login/')
@@ -254,7 +259,6 @@ def inserisci_annuncio(request):
             except Exception:
                 annuncio.logo_annuncio = None
 
-
             annuncio.save()
 
             servizi = Servizio.objects.create(annuncio=annuncio)
@@ -290,7 +294,7 @@ def lista_annunci(request):
     if request.user.is_authenticated():
         if ordina != 'non_ordinare':
             user_profile = Profile.objects.filter(user=request.user).first()
-            indici = ordinaAnnunci(user_profile, annunci_validi, ordina)
+            indici = ordina_annunci(user_profile, annunci_validi, ordina)
             are_ordinati = True
 
     annunci_validi = list(annunci_validi)
@@ -301,7 +305,6 @@ def lista_annunci(request):
             new_annunci_validi.append(annunci_validi[indici[i]])
         annunci_validi = new_annunci_validi
 
-
     for annuncio in annunci_validi:
         annunci[annuncio] = Profile.objects.filter(user=annuncio.user).first()
         annunci_recensioni[annuncio] = Recensione.objects.filter(user_recensito=annuncio.user).count()
@@ -311,27 +314,25 @@ def lista_annunci(request):
 
         annunci_voti[annuncio] = voti.get('voto__avg')
 
+    context = {
+        'annunci': annunci,
+        'sel_categoria': sel_categoria,
+        'sel_pet': sel_pet,
+        'annunci_voti': annunci_voti,
+        'annunci_recensioni': annunci_recensioni,
+        'are_ordinati': are_ordinati,
+        'indici': indici,
+        'ordina': ordina
+    }
+
     if not request.user.is_authenticated():
-        return render(request, 'annunci/lista_annunci.html', {'base_template': 'main/base_visitor.html',
-                                                              'annunci': annunci,
-                                                              'sel_categoria': sel_categoria,
-                                                              'sel_pet': sel_pet,
-                                                              'annunci_voti': annunci_voti,
-                                                              'annunci_recensioni': annunci_recensioni,
-                                                              'are_ordinati': are_ordinati,
-                                                              'indici': indici})
+        context.update({'base_template': 'main/base_visitor.html'})
+        return render(request, 'annunci/lista_annunci.html', context)
     else:
         user_profile = Profile.objects.filter(user=request.user).first()
-        return render(request, 'annunci/lista_annunci.html', {'base_template': 'main/base.html',
-                                                              'user_profile': user_profile,
-                                                              'annunci': annunci,
-                                                              'sel_categoria': sel_categoria,
-                                                              'sel_pet': sel_pet,
-                                                              'ordina': ordina,
-                                                              'annunci_voti': annunci_voti,
-                                                              'annunci_recensioni': annunci_recensioni,
-                                                              'are_ordinati': are_ordinati,
-                                                              'indici': indici})
+        context.update({'base_template': 'main/base.html'})
+        context.update({'user_profile': user_profile})
+        return render(request, 'annunci/lista_annunci.html', context)
 
 
 @login_required(login_url='/utenti/login/')
@@ -385,6 +386,51 @@ def modifica_annuncio(request, oid):
     context.update({'user_profile': userprofile})
 
     return render(request, 'annunci/modifica_annuncio.html', context)
+
+
+def ordina_annunci(user_profile, annunci_validi, ordina):
+    lat_user = 0
+    lng_user = 0
+    if user_profile.latitudine is not None and user_profile.longitudine is not None:
+        lat_user = user_profile.latitudine
+        lng_user = user_profile.longitudine
+    distanze = []
+    indici = []
+
+    # raggio della terra approssimato, in km
+    r = 6373.0
+
+    lat1 = radians(lat_user)
+    lon1 = radians(lng_user)
+
+    # Calcola le distanze di tutti gli annunci
+    for i, annuncio in enumerate(annunci_validi):
+        indici.append(i)
+        annuncio_profilo = Profile.objects.filter(user=annuncio.user).first()
+
+        if annuncio_profilo.latitudine is not None and annuncio_profilo.longitudine is not None:
+            lat2 = radians(annuncio_profilo.latitudine)
+            lon2 = radians(annuncio_profilo.longitudine)
+        else:
+            lat2 = 0
+            lon2 = 0
+
+        dlon = lon2 - lon1
+        dlat = lat2 - lat1
+
+        a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+        c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        distanze.append(r * c)
+
+    # Ordina in base all'order param
+    if ordina == 'crescente':
+        distanze, indici = (list(t) for t in zip(*sorted(zip(distanze, indici))))
+
+    if ordina == 'decrescente':
+        distanze, indici = (list(t) for t in zip(*sorted(zip(distanze, indici), reverse=True)))
+
+    return indici
 
 
 def recupera_annunci(request):
@@ -445,48 +491,3 @@ def recupera_annunci(request):
             'ordina': ordina}
 
     return dati
-
-
-def ordinaAnnunci(user_profile, annunci_validi, ordina):
-    lat_user = 0
-    lng_user = 0
-    if user_profile.latitudine is not None and user_profile.longitudine is not None:
-        lat_user = user_profile.latitudine
-        lng_user = user_profile.longitudine
-    distanze = []
-    indici = []
-
-    # raggio della terra approssimato, in km
-    R = 6373.0
-
-    lat1 = radians(lat_user)
-    lon1 = radians(lng_user)
-
-    # Calcola le distanze di tutti gli annunci
-    for i, annuncio in enumerate(annunci_validi):
-        indici.append(i)
-        annuncio_profilo = Profile.objects.filter(user=annuncio.user).first()
-
-        if annuncio_profilo.latitudine != None and annuncio_profilo.longitudine != None:
-            lat2 = radians(annuncio_profilo.latitudine)
-            lon2 = radians(annuncio_profilo.longitudine)
-        else:
-            lat2 = 0
-            lon2 = 0
-
-        dlon = lon2 - lon1
-        dlat = lat2 - lat1
-
-        a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
-        c = 2 * atan2(sqrt(a), sqrt(1 - a))
-
-        distanze.append(R * c)
-
-    #Ordina in base all'order param
-    if ordina == 'crescente':
-        distanze, indici = (list(t) for t in zip(*sorted(zip(distanze, indici))))
-
-    if ordina == 'decrescente':
-        distanze, indici = (list(t) for t in zip(*sorted(zip(distanze, indici), reverse=True)))
-
-    return indici

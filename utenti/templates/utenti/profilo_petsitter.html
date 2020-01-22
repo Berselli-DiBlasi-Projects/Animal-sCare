@@ -3,6 +3,7 @@
 {% block title %}Animal'sCare - Profilo{% endblock %}
 {% block profilo_active %}active{% endblock %}
 
+
 {% block body %}
 
 <script type="text/javascript" src="{% static 'map.js' %}"></script>
@@ -15,8 +16,8 @@
                 </div>
                 <div class="panel-body">
                     <div class="row">
-                        <div class="col-md-3 col-lg-3 " align="center"><img src="{{ user_profile.foto_profilo_or_default }}"
-                                                                            class="img-responsive"></div>
+                        <div class="col-md-3 col-lg-3 " align="center"><img alt="Foto profilo"
+                                src="{{ user_profile.foto_profilo_or_default }}" class="img-responsive"></div>
 
                         <div class=" col-md-9 col-lg-9 ">
                             <table class="table table-user-information">
@@ -52,10 +53,14 @@
                                     <tr>
                                         <td>Posizione</td>
                                         <td>
-                                            <input id="mappa-btn" type="button" onclick="myFunction()" value="Mostra mappa">
+                                            <input id="mappa-btn" type="button" onclick="myFunction()"
+                                                   value="Mostra mappa">
                                             <div id="mappa-div" style="display: none">
                                                 <iframe width="300" height="250" frameborder="0" style="border:0"
-                                                        src="https://www.google.com/maps/embed/v1/search?q={{ user_profile.indirizzo }}%20{{ user_profile.citta }}%20{{ user_profile.provincia }}%20{{ user_profile.regione }}&key=AIzaSyA6GQs9IyXUWEBu6vDvlKteuM0AReR4Nag"
+                                                        src="https://www.google.com/maps/embed/v1/search?q=
+                                                        {{ user_profile.indirizzo }}%20{{ user_profile.citta }}%20
+                                                        {{ user_profile.provincia }}%20{{ user_profile.regione }}
+                                                        &key=AIzaSyA6GQs9IyXUWEBu6vDvlKteuM0AReR4Nag"
                                                         allowfullscreen></iframe>
                                             </div>
                                         </td>
@@ -103,12 +108,16 @@
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <a href="{% url 'annunci:annunci_di_utente' username=view_user.username %}" class="btn btn-primary">Visualizza annunci di {{ view_user.username }}</a>
-                    <a href="{% url 'recensioni:recensioni_ricevute' username=view_user.username %}" class="btn btn-primary">Recensioni ricevute</a>
+                    <a href="{% url 'annunci:annunci_di_utente' username=view_user.username %}"
+                       class="btn btn-primary">Visualizza annunci di {{ view_user.username }}</a>
+                    <a href="{% url 'recensioni:recensioni_ricevute' username=view_user.username %}"
+                       class="btn btn-primary">Recensioni ricevute</a>
                     {% if request.user.pk == view_user.pk %}
                         <span class="pull-right">
-                            <a href="{% url 'utenti:edit-profile' oid=view_user.pk %}" class="btn btn-primary">Modifica profilo</a>
-                        <a href="{% url 'utenti:elimina_profilo' oid=user.pk %}" class="btn btn-danger">Elimina profilo</a>
+                            <a href="{% url 'utenti:edit-profile' oid=view_user.pk %}" class="btn btn-primary">
+                                Modifica profilo</a>
+                        <a href="{% url 'utenti:elimina_profilo' oid=user.pk %}" class="btn btn-danger">
+                            Elimina profilo</a>
                         </span>
                     {% endif %}
                 </div>

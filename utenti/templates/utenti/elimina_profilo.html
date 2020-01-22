@@ -12,17 +12,17 @@
                 <div class="panel-body">
                     <div style="text-align: center;">
                         <h3>Attenzione, azione potenzialmente pericolosa.</h3><br>
-                        <h4>Confermi di voler eliminare il tuo profilo e tutti gli annunci e i dati ad esso associati?</h4><br>
+                        <h4>Confermi di voler eliminare il tuo profilo e
+                            tutti gli annunci e i dati ad esso associati?</h4><br>
 
                         <a href="{% url 'utenti:view-profile' oid=user.pk %}" class="btn btn-primary">Indietro</a>&nbsp;&nbsp;
-                        <a href="{% url 'utenti:elimina_profilo_conferma' oid=user.pk %}" class="btn btn-danger">Conferma</a>
+                        <a href="{% url 'utenti:elimina_profilo_conferma' oid=user.pk %}" class="btn btn-danger">
+                            Conferma</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
-
 
 {% endblock %}

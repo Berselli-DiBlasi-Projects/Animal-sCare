@@ -2,9 +2,9 @@
 {% block title %}Animal'sCare - Log in{% endblock %}
 {% block login_active %}active{% endblock %}
 
+
 {% block body %}
 <div class="container-fluid">
-
     <div class="row">
         <div class="col-sm-12 col-md-6" style="float: none; margin: 0 auto;">
             <div class="panel panel-default">
@@ -12,11 +12,12 @@
                     <div style="text-align: center;">
                         <h3>Log in</h3>
                     </div>
-                    </br>
+                    <br>
                     {% if error_message %}
                         <p><strong>{{ error_message }}</strong></p>
                     {% endif %}
-                    <form class="form-horizontal" role="form" action="{% url 'utenti:utenti-login'%}" method="post" enctype="multipart/form-data">
+                    <form class="form-horizontal" role="form" action="{% url 'utenti:utenti-login'%}" method="post"
+                          enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="form-group">
                             <label class="control-label col-sm-2" for="id_username">
@@ -46,14 +47,16 @@
                     <br><br>
                     <h4 style="display: inline">Oppure:&nbsp;</h4>
                     <button>
-                        <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" style="width: 25px; height: 25px"/>
-                        <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.GET.next }}">&nbsp;Log in con Google</a>
+                        <img alt="Google" class="google-icon"
+                             src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                             style="width: 25px; height: 25px"/>
+                        <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.GET.next }}">&nbsp;
+                            Log in con Google</a>
                     </button>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 
 {% endblock %}

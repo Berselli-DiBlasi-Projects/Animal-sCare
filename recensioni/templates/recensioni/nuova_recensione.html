@@ -6,7 +6,6 @@
 
 {% block body %}
 <div class="container-fluid">
-
     <div class="row">
         <div class="col-sm-12 col-md-6" style="float: none; margin: 0 auto;">
             <div class="panel panel-default">
@@ -15,8 +14,9 @@
                         <div style="text-align: center;">
                             <h3>Inserisci una nuova recensione</h3>
                         </div>
-                        </br>
-                        <form id="recensione-form" class="form-horizontal" role="form" action="" method="post" enctype="multipart/form-data">
+                        <br>
+                        <form id="recensione-form" class="form-horizontal" role="form" action="" method="post"
+                              enctype="multipart/form-data">
                             {% csrf_token %}
 
                             {% for field in form %}
@@ -40,7 +40,7 @@
                         <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
                         <script type="text/javascript" src="{% static 'recensione_form_validator.js' %}"></script>
 
-                        </br>
+                        <br>
                         <p> I campi contrassegnati con <span style="color:red;">*</span> sono obbligatori.</p>
                     {% else %}
                         <p><strong>{{ error_message }}.</strong></p>
@@ -62,7 +62,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 {% endblock %}

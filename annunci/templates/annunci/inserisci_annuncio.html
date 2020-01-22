@@ -6,7 +6,6 @@
 
 {% block body %}
 <div class="container-fluid">
-
     <div class="row">
         <div class="col-sm-12 col-md-6" style="float: none; margin: 0 auto;">
             <div class="panel panel-default">
@@ -14,7 +13,7 @@
                     <div style="text-align: center;">
                         <h3>Inserisci un nuovo annuncio</h3>
                     </div>
-                    </br>
+                    <br>
                     {% if error_message %}
                         <p><strong>{{ error_message }}</strong></p>
                     {% endif %}
@@ -56,23 +55,22 @@
                     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
                     <script>
-                      $(function () {
-                        $("#id_data_inizio").datetimepicker({
-                          format: 'd/m/Y H:i',
+                        $(function () {
+                            $("#id_data_inizio").datetimepicker({
+                                format: 'd/m/Y H:i',
+                            });
+                            $("#id_data_fine").datetimepicker({
+                                format: 'd/m/Y H:i',
+                            });
                         });
-                        $("#id_data_fine").datetimepicker({
-                          format: 'd/m/Y H:i',
-                        });
-                      });
                     </script>
 
-                    </br>
+                    <br>
                     <p> I campi contrassegnati con <span style="color:red;">*</span> sono obbligatori.</p>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 
 {% endblock %}

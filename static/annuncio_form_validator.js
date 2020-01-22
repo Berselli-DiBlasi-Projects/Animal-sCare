@@ -1,5 +1,5 @@
 jQuery.validator.setDefaults({
-  success: "valid"
+    success: "valid"
 });
 
 var data_control = false;
@@ -37,55 +37,55 @@ $.validator.addMethod('lowStrict', function (value, el, param) {
 });
 
 $( "#annuncio-form" ).validate({
-  rules: {
-      'titolo':{
-        required: true,
-        maxlength: 95
-      },
-      'sottotitolo': {
-        required: true,
-        maxlength: 95
-      },
-      'descrizione':{
-        required: true,
-        maxlength: 245
-      },
-      'pet_coins':{
-        required: true,
-        number: true,
-        lowStrict: 100001
-      },
-      'data_inizio': {
-        required: true,
-        validDate: true,
-        notInThePast: true,
-        lowerThanDataFine: '#id_data_fine'
-      },
-      'data_fine': {
-        required: true,
-        validDate: true,
-        notInThePast: true,
-        greaterThanDataInizio: '#id_data_inizio'
-      }
-  },
-  messages:
+    rules: {
+        'titolo':{
+            required: true,
+            maxlength: 95
+        },
+        'sottotitolo': {
+            required: true,
+            maxlength: 95
+        },
+        'descrizione':{
+            required: true,
+            maxlength: 245
+        },
+        'pet_coins':{
+            required: true,
+            number: true,
+            lowStrict: 100001
+        },
+        'data_inizio': {
+            required: true,
+            validDate: true,
+            notInThePast: true,
+            lowerThanDataFine: '#id_data_fine'
+        },
+        'data_fine': {
+            required: true,
+            validDate: true,
+            notInThePast: true,
+            greaterThanDataInizio: '#id_data_inizio'
+        }
+    },
+    messages:
     {
         'titolo':{
-        required: "Il campo titolo è obbligatorio",
-        maxlength: "Limite di 95 caratteri superato"
-      },
-      'sottotitolo': {
-        required: "Il campo sottotitolo è obbligatorio",
-        maxlength: "Limite di 95 caratteri superato"
-      },
-      'descrizione':{
-        required: "Il campo descrizione è obbligatorio",
-        maxlength: "Limite di 245 caratteri superato"
-      },
-      'pet_coins':{
-        required: "Il campo pet coins è obbligatorio",
-        number: "Inserire un numero valido",
-        lowStrict: "Limite di 100000 pet coins superato"
-      }
+            required: "Il campo titolo è obbligatorio",
+            maxlength: "Limite di 95 caratteri superato"
+        },
+        'sottotitolo': {
+            required: "Il campo sottotitolo è obbligatorio",
+            maxlength: "Limite di 95 caratteri superato"
+        },
+        'descrizione':{
+            required: "Il campo descrizione è obbligatorio",
+            maxlength: "Limite di 245 caratteri superato"
+        },
+        'pet_coins':{
+            required: "Il campo pet coins è obbligatorio",
+            number: "Inserire un numero valido",
+            lowStrict: "Limite di 100000 pet coins superato"
+        }
     }
 });

@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.conf import settings
 
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     indirizzo = models.CharField(max_length=100)
@@ -14,7 +15,6 @@ class Profile(models.Model):
     telefono = models.CharField(max_length=20)
     pet_coins = models.IntegerField(default=0)
     foto_profilo = models.FileField(null=True, default='', blank=True)
-    # foto_profilo = models.ImageField(null=True, default='', blank=True)
 
     pet_sitter = models.BooleanField(default=False)
 
