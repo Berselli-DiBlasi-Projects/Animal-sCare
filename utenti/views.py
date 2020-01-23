@@ -307,6 +307,8 @@ def elimina_profilo(request, oid):
         context = {'user': user, 'base_template': 'main/base.html'}
 
         return render(request, 'utenti/elimina_profilo.html', context)
+    else:
+        return HttpResponseRedirect(reverse('main:index'))
 
 
 @login_required(login_url='/utenti/login/')
@@ -375,55 +377,58 @@ def oauth_normale(request):
     :return: render della pagina di creazione profilo normale.
     """
 
-    # Se la richiesta è di tipo POST, allora possiamo processare i dati
-    if request.method == "POST":
-        # Creiamo l'istanza del form e la popoliamo con i dati della POST request (processo di "binding")
-        normaleform = UtenteNormaleForm(request.POST, request.FILES)
+    if not request.user.is_authenticated():
+        # Se la richiesta è di tipo POST, allora possiamo processare i dati
+        if request.method == "POST":
+            # Creiamo l'istanza del form e la popoliamo con i dati della POST request (processo di "binding")
+            normaleform = UtenteNormaleForm(request.POST, request.FILES)
 
-        if normaleform.is_valid():
-            # a questo punto possiamo usare i dati validi
-            utente_loggato = User.objects.get(id=request.user.id)
-            profile = Profile.objects.get_or_create(user=utente_loggato)
-            profile = profile[0]
-            try:
-                profile.foto_profilo = request.FILES['foto_profilo']
-            except Exception:
-                profile.foto_profilo = None
+            if normaleform.is_valid():
+                # a questo punto possiamo usare i dati validi
+                utente_loggato = User.objects.get(id=request.user.id)
+                profile = Profile.objects.get_or_create(user=utente_loggato)
+                profile = profile[0]
+                try:
+                    profile.foto_profilo = request.FILES['foto_profilo']
+                except Exception:
+                    profile.foto_profilo = None
 
-            profile.indirizzo = normaleform.cleaned_data['indirizzo']
-            profile.citta = normaleform.cleaned_data['citta']
-            profile.provincia = normaleform.cleaned_data['provincia']
-            profile.regione = normaleform.cleaned_data['regione']
-            profile.telefono = normaleform.cleaned_data['telefono']
-            profile.nome_pet = normaleform.cleaned_data['nome_pet']
-            profile.pet = normaleform.cleaned_data['pet']
-            profile.razza = normaleform.cleaned_data['razza']
-            profile.eta = normaleform.cleaned_data['eta']
-            profile.caratteristiche = normaleform.cleaned_data['caratteristiche']
-            try:
-                profile.foto_pet = normaleform.cleaned_data['foto_pet']
-            except Exception:
-                profile.foto_pet = None
+                profile.indirizzo = normaleform.cleaned_data['indirizzo']
+                profile.citta = normaleform.cleaned_data['citta']
+                profile.provincia = normaleform.cleaned_data['provincia']
+                profile.regione = normaleform.cleaned_data['regione']
+                profile.telefono = normaleform.cleaned_data['telefono']
+                profile.nome_pet = normaleform.cleaned_data['nome_pet']
+                profile.pet = normaleform.cleaned_data['pet']
+                profile.razza = normaleform.cleaned_data['razza']
+                profile.eta = normaleform.cleaned_data['eta']
+                profile.caratteristiche = normaleform.cleaned_data['caratteristiche']
+                try:
+                    profile.foto_pet = normaleform.cleaned_data['foto_pet']
+                except Exception:
+                    profile.foto_pet = None
 
-            profile.descrizione = 'Null'
-            profile.hobby = 'Null'
+                profile.descrizione = 'Null'
+                profile.hobby = 'Null'
 
-            profile.latitudine, profile.longitudine = calcola_lat_lon(request, profile)
+                profile.latitudine, profile.longitudine = calcola_lat_lon(request, profile)
 
-            profile.save()
-            if utente_loggato is not None:
-                if utente_loggato.is_active:
-                    # login(request, utente_loggato)
-                    return HttpResponseRedirect(reverse('main:index'))
+                profile.save()
+                if utente_loggato is not None:
+                    if utente_loggato.is_active:
+                        # login(request, utente_loggato)
+                        return HttpResponseRedirect(reverse('main:index'))
+        else:
+            normaleform = UtenteNormaleForm()
+
+        # arriviamo a questo punto se si tratta della prima volta che la pagina viene richiesta(con metodo GET),
+        # o se il form non è valido e ha errori
+        context = {
+            "normaleform": normaleform
+        }
+        return render(request, 'utenti/oauth_profilo_normale.html', context)
     else:
-        normaleform = UtenteNormaleForm()
-
-    # arriviamo a questo punto se si tratta della prima volta che la pagina viene richiesta(con metodo GET),
-    # o se il form non è valido e ha errori
-    context = {
-        "normaleform": normaleform
-    }
-    return render(request, 'utenti/oauth_profilo_normale.html', context)
+        return HttpResponseRedirect(reverse('main:index'))
 
 
 @login_required(login_url='/utenti/login/')
@@ -435,51 +440,54 @@ def oauth_petsitter(request):
     :return: render della pagina di creazione profilo da petsitter.
     """
 
-    # Se la richiesta è di tipo POST, allora possiamo processare i dati
-    if request.method == "POST":
-        # Creiamo l'istanza del form e la popoliamo con i dati della POST request (processo di "binding")
-        petsitterform = UtentePetSitterForm(request.POST, request.FILES)
+    if not request.user.is_authenticated():
+        # Se la richiesta è di tipo POST, allora possiamo processare i dati
+        if request.method == "POST":
+            # Creiamo l'istanza del form e la popoliamo con i dati della POST request (processo di "binding")
+            petsitterform = UtentePetSitterForm(request.POST, request.FILES)
 
-        if petsitterform.is_valid():
-            # a questo punto possiamo usare i dati validi
-            utente_loggato = User.objects.get(id=request.user.id)
-            profile = Profile.objects.get_or_create(user=utente_loggato)
-            profile = profile[0]
+            if petsitterform.is_valid():
+                # a questo punto possiamo usare i dati validi
+                utente_loggato = User.objects.get(id=request.user.id)
+                profile = Profile.objects.get_or_create(user=utente_loggato)
+                profile = profile[0]
 
-            try:
-                profile.foto_profilo = request.FILES['foto_profilo']
-            except Exception:
-                profile.foto_profilo = None
+                try:
+                    profile.foto_profilo = request.FILES['foto_profilo']
+                except Exception:
+                    profile.foto_profilo = None
 
-            profile.indirizzo = petsitterform.cleaned_data['indirizzo']
-            profile.citta = petsitterform.cleaned_data['citta']
-            profile.provincia = petsitterform.cleaned_data['provincia']
-            profile.regione = petsitterform.cleaned_data['regione']
-            profile.telefono = petsitterform.cleaned_data['telefono']
-            profile.descrizione = petsitterform.cleaned_data['descrizione']
-            profile.hobby = petsitterform.cleaned_data['hobby']
-            profile.pet_sitter = True
-            profile.nome_pet = 'Null'
-            profile.pet = 'Null'
-            profile.razza = 'Null'
-            profile.eta = 0
+                profile.indirizzo = petsitterform.cleaned_data['indirizzo']
+                profile.citta = petsitterform.cleaned_data['citta']
+                profile.provincia = petsitterform.cleaned_data['provincia']
+                profile.regione = petsitterform.cleaned_data['regione']
+                profile.telefono = petsitterform.cleaned_data['telefono']
+                profile.descrizione = petsitterform.cleaned_data['descrizione']
+                profile.hobby = petsitterform.cleaned_data['hobby']
+                profile.pet_sitter = True
+                profile.nome_pet = 'Null'
+                profile.pet = 'Null'
+                profile.razza = 'Null'
+                profile.eta = 0
 
-            profile.latitudine, profile.longitudine = calcola_lat_lon(request, profile)
+                profile.latitudine, profile.longitudine = calcola_lat_lon(request, profile)
 
-            profile.save()
-            if utente_loggato is not None:
-                if utente_loggato.is_active:
-                    return HttpResponseRedirect(reverse('main:index'))
+                profile.save()
+                if utente_loggato is not None:
+                    if utente_loggato.is_active:
+                        return HttpResponseRedirect(reverse('main:index'))
+        else:
+            petsitterform = UtentePetSitterForm()
+
+        # arriviamo a questo punto se si tratta della prima volta che la pagina viene richiesta(con metodo GET),
+        # o se il form non è valido e ha errori
+        context = {
+            "petsitterform": petsitterform
+        }
+
+        return render(request, "utenti/oauth_profilo_petsitter.html", context)
     else:
-        petsitterform = UtentePetSitterForm()
-
-    # arriviamo a questo punto se si tratta della prima volta che la pagina viene richiesta(con metodo GET),
-    # o se il form non è valido e ha errori
-    context = {
-        "petsitterform": petsitterform
-    }
-
-    return render(request, "utenti/oauth_profilo_petsitter.html", context)
+        return HttpResponseRedirect(reverse('main:index'))
 
 
 def registrazione(request):
