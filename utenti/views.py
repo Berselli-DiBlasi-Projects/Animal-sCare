@@ -665,6 +665,9 @@ def view_profile(request, oid):
     """
 
     user = User.objects.filter(id=oid).first()
+    if user is None:
+        return HttpResponseRedirect(reverse('main:index'))
+
     user_profile = Profile.objects.filter(user=user.pk).first()
 
     recensioni_num = Recensione.objects.filter(user_recensito=user).count()

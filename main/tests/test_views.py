@@ -51,17 +51,17 @@ class TestViews(TestCase):
         )
         self.user_petsitter_login.login(username='petsitter', password='12345')
 
-    def test_contattaci_normale(self):
-        response = self.user_normale_login.get(reverse('contattaci:contattaci'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'contattaci.html')
-
-    def test_contattaci_petsitter(self):
-        response = self.user_petsitter_login.get(reverse('contattaci:contattaci'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'contattaci.html')
-
-    def test_contattaci_unauthenticated(self):
-        response = self.user_unauthenticated.get(reverse('contattaci:contattaci'))
+    def test_index_normale(self):
+        response = self.user_normale_login.get(reverse('main:index'))
         self.assertEqual(response.status_code, 302)
-        assert '/utenti/login/' in response.url
+        assert '/annunci/' in response.url
+
+    def test_index_petsitter(self):
+        response = self.user_petsitter_login.get(reverse('main:index'))
+        self.assertEqual(response.status_code, 302)
+        assert '/annunci/' in response.url
+
+    def test_index_unauthenticated(self):
+        response = self.user_unauthenticated.get(reverse('main:index'))
+        self.assertEqual(response.status_code, 302)
+        assert '/annunci/' in response.url

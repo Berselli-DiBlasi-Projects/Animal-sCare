@@ -24,6 +24,9 @@ def nuova_recensione(request, oid):
     user_profile_corrente = Profile.objects.filter(user=request.user).first()
     user_recensito = User.objects.filter(pk=oid).first()
 
+    if user_recensito is None:
+        return HttpResponseRedirect(reverse('main:index'))
+
     context = {
         "form": form,
     }
@@ -67,7 +70,10 @@ def recensioni_ricevute(request, username):
     """
     utente_richiesto = User.objects.filter(username=username).first()
 
-    recensioni = Recensione.objects.filter(user_recensito=utente_richiesto.pk)
+    try:
+        recensioni = Recensione.objects.filter(user_recensito=utente_richiesto.pk)
+    except Exception:
+        return HttpResponseRedirect(reverse('main:index'))
 
     context = {
         'recensioni': recensioni,

@@ -27,7 +27,10 @@ def accetta_annuncio(request, oid):
 
     annuncio = Annuncio.objects.filter(id=oid).first()
     user_profile = Profile.objects.filter(user=request.user).first()
-    inserzionista_profile = Profile.objects.filter(user=annuncio.user).first()
+    try:
+        inserzionista_profile = Profile.objects.filter(user=annuncio.user).first()
+    except Exception:
+        return HttpResponseRedirect(reverse('main:index'))
 
     if user_profile.pet_sitter != annuncio.annuncio_petsitter:
         if user_profile.pet_sitter:
@@ -81,6 +84,9 @@ def annunci_di_utente(request, username):
 
     utente_richiesto = User.objects.filter(username=username).first()
 
+    if utente_richiesto is None:
+        return HttpResponseRedirect(reverse('main:index'))
+
     dati = recupera_annunci(request)
 
     annunci_validi = dati.get('annunci_validi').filter(user=utente_richiesto, user_accetta__isnull=True)
@@ -111,12 +117,12 @@ def annunci_di_utente(request, username):
 
     if not request.user.is_authenticated():
         context.update({'base_template': 'main/base_visitor.html'})
-        return render(request, 'annunci/lista_annunci.html', context)
     else:
         user_profile = Profile.objects.filter(user=request.user).first()
         context.update({'base_template': 'main/base.html'})
         context.update({'user_profile': user_profile})
-        return render(request, 'annunci/lista_annunci.html', context)
+
+    return render(request, 'annunci/lista_annunci.html', context)
 
 
 @login_required(login_url='/utenti/login/')
@@ -176,6 +182,9 @@ def conferma_annuncio(request, oid):
     """
 
     annuncio = Annuncio.objects.filter(id=oid).first()
+    if annuncio is None:
+        return HttpResponseRedirect(reverse('main:index'))
+
     context = {'annuncio': annuncio, 'base_template': 'main/base.html',
                'user_profile': Profile.objects.filter(user=request.user).first()}
 
@@ -537,7 +546,7 @@ def recupera_annunci(request):
     # controllo annunci scaduti non accettati e li elimino
     annunci_validi = Annuncio.objects.all()
     for annuncio in annunci_validi:
-        if annuncio.user_accetta is None and annuncio.data_fine < datetime.now(timezone.utc) + timedelta(hours=2):
+        if annuncio.user_accetta is None and annuncio.data_fine < datetime.now():
             # se l'inserzionista è un utente normale, restituisci i suoi pet coins
             temp_profile = Profile.objects.filter(user=annuncio.user).first()
             if not temp_profile.pet_sitter:

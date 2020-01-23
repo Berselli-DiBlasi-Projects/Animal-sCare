@@ -52,7 +52,7 @@ class AnnuncioForm(forms.ModelForm):
     def clean_data_inizio(self):
         # controllo se data inizio < data_fine e se data_inizio e data_fine > adesso
         data_inizio = self.cleaned_data['data_inizio']
-        if data_inizio < datetime.now(timezone.utc) + timedelta(hours=2):
+        if data_inizio < datetime.now():
             raise ValidationError(_('Errore: la data di inizio non può essere nel passato.'))
         return self.cleaned_data['data_inizio']
 
@@ -63,7 +63,7 @@ class AnnuncioForm(forms.ModelForm):
         if data_inizio >= data_fine:
             raise ValidationError(_('Errore: la data di inizio deve avvenire prima della data di '
                                     'fine e non possono essere uguali.'))
-        if data_fine < datetime.now(timezone.utc) + timedelta(hours=2):
+        if data_fine < datetime.now():
             raise ValidationError(_('Errore: la data di fine non può essere nel passato.'))
         return self.cleaned_data['data_fine']
 
