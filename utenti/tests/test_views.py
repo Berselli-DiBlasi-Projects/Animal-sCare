@@ -22,7 +22,12 @@ class TestViews(TestCase):
             telefono=3391234567,
             pet_coins=100,
             foto_profilo=None,
-            pet_sitter=False
+            pet_sitter=False,
+            nome_pet='Ugo',
+            pet='Cane',
+            razza='Shihtzu',
+            eta=12,
+            caratteristiche='Allergico a quasi tutto'
         )
         self.user_normale_login.login(username='normale', password='12345')
 
@@ -492,4 +497,3 @@ class TestViews(TestCase):
         response = self.user_oauth_login.get(reverse('utenti:view_profile', kwargs={'oid': 1}))
         self.assertEqual(response.status_code, 302)
         assert '/utenti/scegli_profilo/' in response.url
-
