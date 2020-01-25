@@ -1,3 +1,4 @@
+from main import views as main_views
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf import settings
@@ -13,6 +14,9 @@ urlpatterns = [
     url(r'^recensioni/', include('recensioni.urls')),
     url('', include('social_django.urls', namespace='social')),
 ]
+
+handler404 = main_views.handler404
+handler500 = main_views.handler500
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

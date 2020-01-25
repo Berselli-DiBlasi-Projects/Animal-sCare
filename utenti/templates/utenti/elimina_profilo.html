@@ -15,7 +15,7 @@
                         <h4>Confermi di voler eliminare il tuo profilo e
                             tutti gli annunci e i dati ad esso associati?</h4><br>
 
-                        <a href="{% url 'utenti:view-profile' oid=user.pk %}" class="btn btn-primary">Indietro</a>&nbsp;&nbsp;
+                        <a href="{% url 'utenti:view_profile' oid=user.pk %}" class="btn btn-primary">Indietro</a>&nbsp;&nbsp;
                         <a href="{% url 'utenti:elimina_profilo_conferma' oid=user.pk %}" class="btn btn-danger">
                             Conferma</a>
                     </div>

@@ -51,6 +51,10 @@ class TestViews(TestCase):
         )
         self.user_petsitter_login.login(username='petsitter', password='12345')
 
+        self.user_oauth_login = Client()
+        self.user_oauth = User.objects.create_user(username='oauth', password='12345')
+        self.user_oauth_login.login(username='oauth', password='12345')
+
     def test_contattaci_normale(self):
         response = self.user_normale_login.get(reverse('contattaci:contattaci'))
         self.assertEqual(response.status_code, 200)
@@ -65,3 +69,8 @@ class TestViews(TestCase):
         response = self.user_unauthenticated.get(reverse('contattaci:contattaci'))
         self.assertEqual(response.status_code, 302)
         assert '/utenti/login/' in response.url
+
+    def test_contattaci_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('contattaci:contattaci'))
+        self.assertEqual(response.status_code, 302)
+        assert '/utenti/scegli_profilo/' in response.url

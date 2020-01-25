@@ -16,7 +16,7 @@
                     {% if error_message %}
                         <p><strong>{{ error_message }}</strong></p>
                     {% endif %}
-                    <form class="form-horizontal" role="form" action="{% url 'utenti:utenti-login'%}" method="post"
+                    <form class="form-horizontal" role="form" action="{% url 'utenti:utenti_login'%}" method="post"
                           enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="form-group">

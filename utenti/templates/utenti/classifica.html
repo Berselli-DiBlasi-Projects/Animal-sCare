@@ -44,7 +44,7 @@
                                 <a href="#" >
                                     {% for profilo in utenti_profilo_sorted %}
                                             {% if profilo.0 == utente.0 %}
-                                                <a href="{% url 'utenti:view-profile' oid=utente.0.pk %}">
+                                                <a href="{% url 'utenti:view_profile' oid=utente.0.pk %}">
                                                     <img src="{{ profilo.1.foto_profilo_or_default }}" alt="bootsnipp"
                                                          class="img-rounded img-responsive" /></a>
                                             {% endif %}
@@ -56,7 +56,7 @@
                                     <h3>[{{ forloop.counter }}°] {{ utente.0.first_name }} {{ utente.0.last_name }}</h3>
                                 </div> &nbsp;
                                 <div class="inline-block">
-                                    <a href="{% url 'utenti:view-profile' oid=utente.0.pk %}" target="_blank">
+                                    <a href="{% url 'utenti:view_profile' oid=utente.0.pk %}" target="_blank">
                                     <span class="glyphicon glyphicon-new-window" style="font-size:20px;">
                                     </span></a>
                                 </div>
@@ -82,7 +82,7 @@
                                             <h6><b>Profilo:</b></h6>
                                         </div>
                                         <div class="inline-block">
-                                            <a href="{% url 'utenti:view-profile' oid=utente.0.pk %}" >
+                                            <a href="{% url 'utenti:view_profile' oid=utente.0.pk %}" >
                                                 {{ utente.0.username }}</a>
                                         </div>
                                         <span class="separator">|</span>

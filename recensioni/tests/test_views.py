@@ -51,6 +51,10 @@ class TestViews(TestCase):
         )
         self.user_petsitter_login.login(username='petsitter', password='12345')
 
+        self.user_oauth_login = Client()
+        self.user_oauth = User.objects.create_user(username='oauth', password='12345')
+        self.user_oauth_login.login(username='oauth', password='12345')
+
     def test_nuova_recensione_normale(self):
         response = self.user_normale_login.get(reverse('recensioni:nuova_recensione', kwargs={'oid': 1}))
         self.assertEqual(response.status_code, 200)
@@ -68,13 +72,13 @@ class TestViews(TestCase):
 
     def test_nuova_recensione_normale_errato(self):
         response = self.user_normale_login.get(reverse('recensioni:nuova_recensione', kwargs={'oid': 10}))
-        self.assertEqual(response.status_code, 302)
-        assert '/' == response.url
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, '404.html')
 
     def test_nuova_recensione_petsitter_errato(self):
         response = self.user_petsitter_login.get(reverse('recensioni:nuova_recensione', kwargs={'oid': 10}))
-        self.assertEqual(response.status_code, 302)
-        assert '/' == response.url
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, '404.html')
 
     def test_nuova_recensione_unauthenticated_errato(self):
         response = self.user_unauthenticated.get(reverse('recensioni:nuova_recensione', kwargs={'oid': 10}))
@@ -108,17 +112,34 @@ class TestViews(TestCase):
     def test_recensioni_ricevute_authenticated_normale_errato(self):
         path = reverse('recensioni:recensioni_ricevute', kwargs={'username': 'errato'})
         response = self.user_petsitter_login.get(path)
-        self.assertEqual(response.status_code, 302)
-        assert '/' == response.url
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, '404.html')
 
     def test_recensioni_ricevute_authenticated_petsitter_errato(self):
         path = reverse('recensioni:recensioni_ricevute', kwargs={'username': 'errato'})
         response = self.user_petsitter_login.get(path)
-        self.assertEqual(response.status_code, 302)
-        assert '/' == response.url
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, '404.html')
 
     def test_recensioni_ricevute_unauthenticated_errato(self):
         path = reverse('recensioni:recensioni_ricevute', kwargs={'username': 'errato'})
         response = self.user_petsitter_login.get(path)
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, '404.html')
+
+    def test_nuova_recensione_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('recensioni:nuova_recensione', kwargs={'oid': 1}))
         self.assertEqual(response.status_code, 302)
-        assert '/' == response.url
+        assert '/utenti/scegli_profilo/' in response.url
+
+    def test_recensioni_ricevute_oauth_no_profilo_to_normale(self):
+        path = reverse('recensioni:recensioni_ricevute', kwargs={'username': 'normale'})
+        response = self.user_oauth_login.get(path)
+        self.assertEqual(response.status_code, 302)
+        assert '/utenti/scegli_profilo/' in response.url
+
+    def test_recensioni_ricevute_oauth_no_profilo_to_petsitter(self):
+        path = reverse('recensioni:recensioni_ricevute', kwargs={'username': 'petsitter'})
+        response = self.user_oauth_login.get(path)
+        self.assertEqual(response.status_code, 302)
+        assert '/utenti/scegli_profilo/' in response.url

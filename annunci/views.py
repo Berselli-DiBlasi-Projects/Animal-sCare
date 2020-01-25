@@ -7,9 +7,11 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from .forms import AnnuncioForm, ServizioForm
 from django.db.models import Avg
-from datetime import datetime, timedelta, timezone
+from django.http import Http404
+from datetime import datetime
 from django.core.mail import EmailMessage
 from math import sin, cos, sqrt, atan2, radians
+from main.views import nega_accesso_senza_profilo
 
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 
@@ -25,12 +27,15 @@ def accetta_annuncio(request, oid):
     :return: redirect alla home.
     """
 
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     annuncio = Annuncio.objects.filter(id=oid).first()
     user_profile = Profile.objects.filter(user=request.user).first()
     try:
-        inserzionista_profile = Profile.objects.filter(user=annuncio.user).first()
+        inserzionista_profile = Profile.objects.filter(user=annuncio.user.id).first()
     except Exception:
-        return HttpResponseRedirect(reverse('main:index'))
+        raise Http404
 
     if user_profile.pet_sitter != annuncio.annuncio_petsitter:
         if user_profile.pet_sitter:
@@ -68,9 +73,9 @@ def accetta_annuncio(request, oid):
                                                                               'subito!',
                                      to=[utente_inserzionista.email])
                 email.send()
-            else:
-                return HttpResponseRedirect(reverse('main:index'))
-    return HttpResponseRedirect(reverse('main:index'))
+
+        return HttpResponseRedirect(reverse('main:index'))
+    raise Http404
 
 
 def annunci_di_utente(request, username):
@@ -82,10 +87,13 @@ def annunci_di_utente(request, username):
     :return: render lista annunci.
     """
 
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     utente_richiesto = User.objects.filter(username=username).first()
 
     if utente_richiesto is None:
-        return HttpResponseRedirect(reverse('main:index'))
+        raise Http404
 
     dati = recupera_annunci(request)
 
@@ -135,6 +143,9 @@ def calendario(request):
     :return: render del calendario.
     """
 
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     dati = recupera_annunci(request)
 
     annunci_autore = dati.get('annunci_validi').filter(user=request.user).exclude(user_accetta__isnull=True)
@@ -181,9 +192,12 @@ def conferma_annuncio(request, oid):
     :return: render di conferma annuncio.
     """
 
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     annuncio = Annuncio.objects.filter(id=oid).first()
     if annuncio is None:
-        return HttpResponseRedirect(reverse('main:index'))
+        raise Http404
 
     context = {'annuncio': annuncio, 'base_template': 'main/base.html',
                'user_profile': Profile.objects.filter(user=request.user).first()}
@@ -215,6 +229,9 @@ def dettagli_annuncio(request, oid):
     :return: render della pagina dettagli_annuncio.
      """
 
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     if request.user.is_authenticated():
         context = {'base_template': 'main/base.html'}
         context.update({'user': User.objects.get(username=request.user)})
@@ -223,6 +240,9 @@ def dettagli_annuncio(request, oid):
         context = {'base_template': 'main/base_visitor.html'}
 
     annuncio = Annuncio.objects.filter(id=oid).first()
+    if annuncio is None:
+        raise Http404
+
     context['annuncio'] = annuncio
     context['annuncio_utente'] = annuncio.user
     context['annuncio_profilo'] = Profile.objects.filter(user=annuncio.user).first()
@@ -245,14 +265,17 @@ def elimina_annuncio(request, oid):
     :return: render di conferma elimina_annuncio o redirect alla home.
     """
 
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     annuncio = Annuncio.objects.filter(id=oid).first()
-    if annuncio.user == request.user:
+    if annuncio is not None and annuncio.user == request.user:
         context = {'annuncio': annuncio, 'base_template': 'main/base.html',
                    'user_profile': Profile.objects.filter(user=request.user).first()}
 
         return render(request, 'annunci/elimina_annuncio.html', context)
-
-    return HttpResponseRedirect(reverse('main:index'))
+    else:
+        raise Http404
 
 
 @login_required(login_url='/utenti/login/')
@@ -262,12 +285,15 @@ def elimina_annuncio_conferma(request, oid):
 
     :param request: request utente.
     :param oid: l'id dell'annuncio da eliminare.
-    :return: redirect alla home.
+    :return: redirect alla home o errore 404.
     """
+
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
 
     annuncio = Annuncio.objects.filter(id=oid).first()
 
-    if annuncio.user == request.user:
+    if annuncio is not None and annuncio.user == request.user:
         Annuncio.objects.filter(id=oid).first().logo_annuncio.delete(save=True)
         if not annuncio.annuncio_petsitter:
             userprofile = Profile.objects.filter(user=request.user).first()
@@ -275,8 +301,9 @@ def elimina_annuncio_conferma(request, oid):
             userprofile.save()
 
         Annuncio.objects.filter(id=oid).delete()
+        return HttpResponseRedirect(reverse('main:index'))
 
-    return HttpResponseRedirect(reverse('main:index'))
+    raise Http404
 
 
 @login_required(login_url='/utenti/login/')
@@ -287,6 +314,9 @@ def inserisci_annuncio(request):
     :param request: request utente.
     :return: render pagina inserisci_annuncio e redirect alla home.
     """
+
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
 
     form = AnnuncioForm(request.POST or None, request.FILES or None)
     servizioform = ServizioForm(request.POST or None)
@@ -362,6 +392,9 @@ def lista_annunci(request):
     :return: render pagina lista_annunci.
     """
 
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     dati = recupera_annunci(request)
 
     annunci_validi = dati.get('annunci_validi').filter(user_accetta__isnull=True)
@@ -429,55 +462,62 @@ def modifica_annuncio(request, oid):
     :return: render pagina modifica_annuncio.
     """
 
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     annuncio = Annuncio.objects.filter(id=oid).first()
-    servizi = Servizio.objects.filter(annuncio=annuncio).first()
-    userprofile = Profile.objects.filter(user=request.user).first()
-    pet_coins_iniziali = 0
-    context = {}
 
-    if not annuncio.annuncio_petsitter:
-        pet_coins_iniziali = annuncio.pet_coins
-
-    form = AnnuncioForm(data=request.POST or None, instance=annuncio, files=request.FILES)
-    servizioform = ServizioForm(data=request.POST or None, instance=servizi)
-
-    if form.is_valid() and servizioform.is_valid():
-
-        msg = controllo_pet_coins(userprofile, form.cleaned_data['pet_coins'])
-        if msg is not True:
-            context = {
-                'form': form,
-                'servizioForm': servizioform,
-                'error_message': msg,
-                'user_profile': userprofile,
-                'base_template': 'main/base.html',
-            }
-            return render(request, 'annunci/modifica_annuncio.html', context)
+    if annuncio is not None and annuncio.user == request.user:
+        servizi = Servizio.objects.filter(annuncio=annuncio).first()
+        userprofile = Profile.objects.filter(user=request.user).first()
+        pet_coins_iniziali = 0
+        context = {}
 
         if not annuncio.annuncio_petsitter:
-            costo = form.cleaned_data['pet_coins'] - pet_coins_iniziali
-            if costo > userprofile.pet_coins:
-                context.update({'error_message': 'Errore: pet coins insufficienti per inserire l\'annuncio'})
+            pet_coins_iniziali = annuncio.pet_coins
+
+        form = AnnuncioForm(data=request.POST or None, instance=annuncio, files=request.FILES)
+        servizioform = ServizioForm(data=request.POST or None, instance=servizi)
+
+        if form.is_valid() and servizioform.is_valid():
+
+            msg = controllo_pet_coins(userprofile, form.cleaned_data['pet_coins'])
+            if msg is not True:
+                context = {
+                    'form': form,
+                    'servizioForm': servizioform,
+                    'error_message': msg,
+                    'user_profile': userprofile,
+                    'base_template': 'main/base.html',
+                }
+                return render(request, 'annunci/modifica_annuncio.html', context)
+
+            if not annuncio.annuncio_petsitter:
+                costo = form.cleaned_data['pet_coins'] - pet_coins_iniziali
+                if costo > userprofile.pet_coins:
+                    context.update({'error_message': 'Errore: pet coins insufficienti per inserire l\'annuncio'})
+                else:
+                    userprofile.pet_coins = userprofile.pet_coins - costo
+                    userprofile.save()
+                    form.save()
+                    servizioform.save()
+                    return HttpResponseRedirect(reverse('annunci:lista_annunci'))
             else:
-                userprofile.pet_coins = userprofile.pet_coins - costo
-                userprofile.save()
                 form.save()
                 servizioform.save()
-                return HttpResponseRedirect(reverse('annunci:lista-annunci'))
+                return HttpResponseRedirect(reverse('annunci:lista_annunci'))
         else:
-            form.save()
-            servizioform.save()
-            return HttpResponseRedirect(reverse('annunci:lista-annunci'))
+            form = AnnuncioForm(instance=annuncio)
+            servizioform = ServizioForm(instance=servizi)
+
+        context.update({'form': form})
+        context.update({'servizioForm': servizioform})
+        context.update({'base_template': 'main/base.html'})
+        context.update({'user_profile': userprofile})
+
+        return render(request, 'annunci/modifica_annuncio.html', context)
     else:
-        form = AnnuncioForm(instance=annuncio)
-        servizioform = ServizioForm(instance=servizi)
-
-    context.update({'form': form})
-    context.update({'servizioForm': servizioform})
-    context.update({'base_template': 'main/base.html'})
-    context.update({'user_profile': userprofile})
-
-    return render(request, 'annunci/modifica_annuncio.html', context)
+        raise Http404
 
 
 def ordina_annunci(user_profile, annunci_validi, ordina):

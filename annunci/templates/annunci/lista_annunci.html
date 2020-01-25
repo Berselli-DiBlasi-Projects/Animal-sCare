@@ -11,7 +11,7 @@
     </div>
     <form action = "
     {% if username is None %}
-        {% url 'annunci:lista-annunci'  %}
+        {% url 'annunci:lista_annunci'  %}
     {% else %}
         {% url 'annunci:annunci_di_utente' username  %}
     {% endif %}
@@ -120,7 +120,7 @@
                                             <h6><b>Pubblicato da:</b></h6>
                                         </div>
                                         <div class="inline-block">
-                                            <a href="{% url 'utenti:view-profile' oid=annuncio.user.pk %}" >
+                                            <a href="{% url 'utenti:view_profile' oid=annuncio.user.pk %}" >
                                                 {{ annuncio.user.username }}</a>
                                         </div>
                                         <span class="separator">|</span>

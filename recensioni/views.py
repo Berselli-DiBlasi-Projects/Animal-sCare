@@ -5,8 +5,10 @@ from .forms import RecensioneForm
 from utenti.models import User, Profile
 from annunci.models import Annuncio
 from datetime import datetime
+from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from main.views import nega_accesso_senza_profilo
 
 
 @login_required(login_url='/utenti/login/')
@@ -20,12 +22,16 @@ def nuova_recensione(request, oid):
     :param oid: id dell'utente recensito.
     :return: render della pagina nuova_recensione.
     """
+
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     form = RecensioneForm(request.POST or None)
     user_profile_corrente = Profile.objects.filter(user=request.user).first()
     user_recensito = User.objects.filter(pk=oid).first()
 
     if user_recensito is None:
-        return HttpResponseRedirect(reverse('main:index'))
+        raise Http404
 
     context = {
         "form": form,
@@ -68,12 +74,16 @@ def recensioni_ricevute(request, username):
     :param username: username dell'utente di cui mostrare le recensioni ricevute.
     :return: render della pagina recensioni_ricevute.
     """
+
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     utente_richiesto = User.objects.filter(username=username).first()
 
     try:
         recensioni = Recensione.objects.filter(user_recensito=utente_richiesto.pk)
     except Exception:
-        return HttpResponseRedirect(reverse('main:index'))
+        raise Http404
 
     context = {
         'recensioni': recensioni,

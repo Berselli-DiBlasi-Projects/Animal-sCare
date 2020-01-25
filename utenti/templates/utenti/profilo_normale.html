@@ -132,7 +132,7 @@
                        class="btn btn-primary">Recensioni ricevute</a>
                     {% if request.user.pk == view_user.pk %}
                         <span class="pull-right">
-                            <a href="{% url 'utenti:edit-profile' oid=user.pk %}" class="btn btn-primary">
+                            <a href="{% url 'utenti:edit_profile' oid=user.pk %}" class="btn btn-primary">
                                 Modifica profilo</a>
                             <a href="{% url 'utenti:elimina_profilo' oid=user.pk %}" class="btn btn-danger">
                                 Elimina profilo</a>

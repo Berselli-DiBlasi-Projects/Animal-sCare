@@ -1,6 +1,6 @@
 from django import forms
 from .models import Annuncio, Servizio
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 import magic

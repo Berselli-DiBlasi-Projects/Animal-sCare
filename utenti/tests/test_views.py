@@ -51,6 +51,10 @@ class TestViews(TestCase):
         )
         self.user_petsitter_login.login(username='petsitter', password='12345')
 
+        self.user_oauth_login = Client()
+        self.user_oauth = User.objects.create_user(username='oauth', password='12345')
+        self.user_oauth_login.login(username='oauth', password='12345')
+
     def test_cassa_authenticated_normale(self):
         response = self.user_normale_login.get(reverse('utenti:cassa'))
         self.assertEqual(response.status_code, 200)
@@ -67,46 +71,48 @@ class TestViews(TestCase):
         assert 'utenti/login' in response.url
 
     def test_edit_profile_authenticated_normale(self):
-        path = reverse('utenti:edit-profile', kwargs={'oid': 1})
+        path = reverse('utenti:edit_profile', kwargs={'oid': 1})
         response = self.user_normale_login.get(path)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'utenti/modifica_profilo.html')
 
     def test_edit_profile_authenticated_normale_errato(self):
-        path = reverse('utenti:edit-profile', kwargs={'oid': 2})
+        path = reverse('utenti:edit_profile', kwargs={'oid': 2})
         response = self.user_normale_login.get(path)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, '404.html')
 
     def test_edit_profile_authenticated_petsitter_errato(self):
-        path = reverse('utenti:edit-profile', kwargs={'oid': 1})
+        path = reverse('utenti:edit_profile', kwargs={'oid': 1})
         response = self.user_petsitter_login.get(path)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, '404.html')
 
     def test_edit_profile_authenticated_petsitter_corretto(self):
-        path = reverse('utenti:edit-profile', kwargs={'oid': 2})
+        path = reverse('utenti:edit_profile', kwargs={'oid': 2})
         response = self.user_petsitter_login.get(path)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'utenti/modifica_profilo.html')
 
     def test_edit_profile_unauthenticated(self):
-        path = reverse('utenti:edit-profile', kwargs={'oid': 1})
+        path = reverse('utenti:edit_profile', kwargs={'oid': 1})
         response = self.user_unauthenticated.get(path)
         self.assertEqual(response.status_code, 302)
         assert 'utenti/login' in response.url
 
     def test_logout_user_unauthenticated(self):
-        path = reverse('utenti:utenti-logout')
+        path = reverse('utenti:utenti_logout')
         response = self.user_unauthenticated.get(path)
         assert 'utenti/login' in response.url
 
     def test_logout_user_authenticated_normale(self):
-        path = reverse('utenti:utenti-logout')
+        path = reverse('utenti:utenti_logout')
         response = self.user_normale_login.get(path)
         self.assertEqual(response.status_code, 302)
         assert '/' == response.url
 
     def test_logout_user_authenticated_petsitter(self):
-        path = reverse('utenti:utenti-logout')
+        path = reverse('utenti:utenti_logout')
         response = self.user_petsitter_login.get(path)
         self.assertEqual(response.status_code, 302)
         assert '/' == response.url
@@ -194,8 +200,8 @@ class TestViews(TestCase):
     def test_elimina_profilo_authenticated_petsitter_errato(self):
         path = reverse('utenti:elimina_profilo', kwargs={'oid': 1})
         response = self.user_petsitter_login.get(path)
-        self.assertEqual(response.status_code, 302)
-        assert '/' == response.url
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, '404.html')
 
     def test_elimina_profilo_unauthenticated(self):
         path = reverse('utenti:elimina_profilo', kwargs={'oid': 1})
@@ -218,8 +224,8 @@ class TestViews(TestCase):
     def test_elimina_profilo_conferma_authenticated_petsitter_errato(self):
         path = reverse('utenti:elimina_profilo_conferma', kwargs={'oid': 1})
         response = self.user_petsitter_login.get(path)
-        self.assertEqual(response.status_code, 302)
-        assert '/' == response.url
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, '404.html')
 
     def test_elimina_profilo_conferma_unauthenticated(self):
         path = reverse('utenti:elimina_profilo', kwargs={'oid': 1})
@@ -228,19 +234,19 @@ class TestViews(TestCase):
         assert '/utenti/login/' in response.url
 
     def test_login_user_unauthenticated(self):
-        path = reverse('utenti:utenti-login')
+        path = reverse('utenti:utenti_login')
         response = self.user_unauthenticated.get(path)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'utenti/login.html')
 
     def test_login_user_authenticated_normale(self):
-        path = reverse('utenti:utenti-login')
+        path = reverse('utenti:utenti_login')
         response = self.user_normale_login.get(path)
         self.assertEqual(response.status_code, 302)
         assert '/' == response.url
 
     def test_login_user_authenticated_petsitter(self):
-        path = reverse('utenti:utenti-login')
+        path = reverse('utenti:utenti_login')
         response = self.user_petsitter_login.get(path)
         self.assertEqual(response.status_code, 302)
         assert '/' == response.url
@@ -300,37 +306,37 @@ class TestViews(TestCase):
         assert '/' == response.url
 
     def test_registrazione_normale_unauthenticated(self):
-        path = reverse('utenti:registrazione-normale')
+        path = reverse('utenti:registrazione_normale')
         response = self.user_unauthenticated.get(path)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'utenti/registrazione_normale.html')
 
     def test_registrazione_normale_authenticated_normale(self):
-        path = reverse('utenti:registrazione-normale')
+        path = reverse('utenti:registrazione_normale')
         response = self.user_normale_login.get(path)
         self.assertEqual(response.status_code, 302)
         assert '/' == response.url
 
     def test_registrazione_normale_authenticated_petsitter(self):
-        path = reverse('utenti:registrazione-normale')
+        path = reverse('utenti:registrazione_normale')
         response = self.user_petsitter_login.get(path)
         self.assertEqual(response.status_code, 302)
         assert '/' == response.url
 
     def test_registrazione_petsitter_unauthenticated(self):
-        path = reverse('utenti:registrazione-petsitter')
+        path = reverse('utenti:registrazione_petsitter')
         response = self.user_unauthenticated.get(path)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'utenti/registrazione_petsitter.html')
 
     def test_registrazione_petsitter_authenticated_normale(self):
-        path = reverse('utenti:registrazione-petsitter')
+        path = reverse('utenti:registrazione_petsitter')
         response = self.user_normale_login.get(path)
         self.assertEqual(response.status_code, 302)
         assert '/' == response.url
 
     def test_registrazione_petsitter_authenticated_petsitter(self):
-        path = reverse('utenti:registrazione-petsitter')
+        path = reverse('utenti:registrazione_petsitter')
         response = self.user_petsitter_login.get(path)
         self.assertEqual(response.status_code, 302)
         assert '/' == response.url
@@ -354,55 +360,136 @@ class TestViews(TestCase):
         assert '/' == response.url
 
     def test_view_profile_authenticated_normale_to_normale(self):
-        path = reverse('utenti:view-profile', kwargs={'oid': 1})
+        path = reverse('utenti:view_profile', kwargs={'oid': 1})
         response = self.user_normale_login.get(path)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'utenti/profilo_normale.html')
 
     def test_view_profile_unauthenticated_to_normale(self):
-        path = reverse('utenti:view-profile', kwargs={'oid': 1})
+        path = reverse('utenti:view_profile', kwargs={'oid': 1})
         response = self.user_unauthenticated.get(path)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'utenti/profilo_normale.html')
 
     def test_view_profile_authenticated_petsitter_to_normale(self):
-        path = reverse('utenti:view-profile', kwargs={'oid': 1})
+        path = reverse('utenti:view_profile', kwargs={'oid': 1})
         response = self.user_petsitter_login.get(path)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'utenti/profilo_normale.html')
 
     def test_view_profile_authenticated_normale_to_petsitter(self):
-        path = reverse('utenti:view-profile', kwargs={'oid': 2})
+        path = reverse('utenti:view_profile', kwargs={'oid': 2})
         response = self.user_normale_login.get(path)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'utenti/profilo_petsitter.html')
 
     def test_view_profile_unauthenticated_to_petsitter(self):
-        path = reverse('utenti:view-profile', kwargs={'oid': 2})
+        path = reverse('utenti:view_profile', kwargs={'oid': 2})
         response = self.user_unauthenticated.get(path)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'utenti/profilo_petsitter.html')
 
     def test_view_profile_authenticated_petsitter_to_petsitter(self):
-        path = reverse('utenti:view-profile', kwargs={'oid': 2})
+        path = reverse('utenti:view_profile', kwargs={'oid': 2})
         response = self.user_petsitter_login.get(path)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'utenti/profilo_petsitter.html')
 
     def test_view_profile_authenticated_normale_errato(self):
-        path = reverse('utenti:view-profile', kwargs={'oid': 10})
+        path = reverse('utenti:view_profile', kwargs={'oid': 10})
         response = self.user_normale_login.get(path)
-        self.assertEqual(response.status_code, 302)
-        assert '/' == response.url
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, '404.html')
 
     def test_view_profile_unauthenticated_errato(self):
-        path = reverse('utenti:view-profile', kwargs={'oid': 10})
+        path = reverse('utenti:view_profile', kwargs={'oid': 10})
         response = self.user_unauthenticated.get(path)
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, '404.html')
+
+    def test_view_profile_authenticated_petsitter_errato(self):
+        path = reverse('utenti:view_profile', kwargs={'oid': 10})
+        response = self.user_petsitter_login.get(path)
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, '404.html')
+
+    def test_cassa_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:cassa'))
+        self.assertEqual(response.status_code, 302)
+        assert '/utenti/scegli_profilo/' in response.url
+
+    def test_cerca_utenti_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:cerca_utenti'))
+        self.assertEqual(response.status_code, 302)
+        assert '/utenti/scegli_profilo/' in response.url
+
+    def test_check_username_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:check_username'))
+        self.assertEqual(response.status_code, 302)
+        assert '/utenti/scegli_profilo/' in response.url
+
+    def test_classifica_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:classifica'))
+        self.assertEqual(response.status_code, 302)
+        assert '/utenti/scegli_profilo/' in response.url
+
+    def test_edit_profile_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:edit_profile', kwargs={'oid': 1}))
+        self.assertEqual(response.status_code, 302)
+        assert '/utenti/scegli_profilo/' in response.url
+
+    def test_elimina_profilo_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:elimina_profilo', kwargs={'oid': 1}))
+        self.assertEqual(response.status_code, 302)
+        assert '/utenti/scegli_profilo/' in response.url
+
+    def test_elimina_profilo_conferma_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:elimina_profilo_conferma', kwargs={'oid': 1}))
+        self.assertEqual(response.status_code, 302)
+        assert '/utenti/scegli_profilo/' in response.url
+
+    def test_login_user_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:utenti_login'))
         self.assertEqual(response.status_code, 302)
         assert '/' == response.url
 
-    def test_view_profile_authenticated_petsitter_errato(self):
-        path = reverse('utenti:view-profile', kwargs={'oid': 10})
-        response = self.user_petsitter_login.get(path)
+    def test_logout_user_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:utenti_logout'))
         self.assertEqual(response.status_code, 302)
-        assert '/' == response.url
+        assert '/utenti/scegli_profilo/' in response.url
+
+    def test_oauth_petsitter_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:oauth_petsitter'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'utenti/oauth_profilo_petsitter.html')
+
+    def test_oauth_normale_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:oauth_normale'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'utenti/oauth_profilo_normale.html')
+
+    def test_registrazione_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:registrazione'))
+        self.assertEqual(response.status_code, 302)
+        assert '/utenti/scegli_profilo/' in response.url
+
+    def test_registrazione_normale_user_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:registrazione_normale'))
+        self.assertEqual(response.status_code, 302)
+        assert '/utenti/scegli_profilo/' in response.url
+
+    def test_registrazione_petsitter_user_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:registrazione_petsitter'))
+        self.assertEqual(response.status_code, 302)
+        assert '/utenti/scegli_profilo/' in response.url
+
+    def test_scelta_profilo_oauth_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:scelta_profilo_oauth'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'utenti/scelta_utente_oauth.html')
+
+    def test_view_profilo_oauth_no_profilo(self):
+        response = self.user_oauth_login.get(reverse('utenti:view_profile', kwargs={'oid': 1}))
+        self.assertEqual(response.status_code, 302)
+        assert '/utenti/scegli_profilo/' in response.url
+

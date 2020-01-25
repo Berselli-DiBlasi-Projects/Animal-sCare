@@ -57,7 +57,7 @@
 
             <ul class="nav navbar-nav navbar-right">
                 <li class="{% block profilo_active %}{% endblock %}">
-                    <a href="{% url 'utenti:view-profile' oid=user.pk %}">
+                    <a href="{% url 'utenti:view_profile' oid=user.pk %}">
                         <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp; Profilo
                     </a>
                 </li>
@@ -82,7 +82,7 @@
                     </a>
                 </li>
                 <li class="">
-                    <a href="{% url 'utenti:utenti-logout' %}">
+                    <a href="{% url 'utenti:utenti_logout' %}">
                         <span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp; Logout
                     </a>
                 </li>

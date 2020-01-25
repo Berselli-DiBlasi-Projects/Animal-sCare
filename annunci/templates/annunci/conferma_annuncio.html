@@ -10,7 +10,7 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div style="text-align: center;">
-                        <h4>Accetti l'annuncio dell'utente <a href="{% url 'utenti:view-profile' oid=annuncio.user.pk %}" >
+                        <h4>Accetti l'annuncio dell'utente <a href="{% url 'utenti:view_profile' oid=annuncio.user.pk %}" >
                                         {{ annuncio.user.username }}</a>&nbsp?</h4>
                         <a href="{% url 'annunci:dettagli_annuncio' oid=annuncio.pk %}" class="btn btn-primary">Indietro</a>&nbsp;&nbsp;
                         <a href="{% url 'annunci:accetta_annuncio' oid=annuncio.pk %}" class="btn btn-primary">Conferma</a>

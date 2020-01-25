@@ -49,7 +49,7 @@
                             <dt>Pubblicato da</dt>
                         </div>&nbsp;
                         <div class="inline-block">
-                            <dd><a href="{% url 'utenti:view-profile' oid=annuncio.user.pk %}" >
+                            <dd><a href="{% url 'utenti:view_profile' oid=annuncio.user.pk %}" >
                                 {{ annuncio.user.username }}</a>&nbsp;
                                 {% if annuncio_profilo.pet_sitter %}
                                     (petsitter)
@@ -65,7 +65,7 @@
                                 <dt>Accettato da</dt>
                             </div>&nbsp;
                             <div class="inline-block">
-                                <dd><a href="{% url 'utenti:view-profile' oid=annuncio.user_accetta.pk %}" >
+                                <dd><a href="{% url 'utenti:view_profile' oid=annuncio.user_accetta.pk %}" >
                                     {{ annuncio.user_accetta.username }}</a>&nbsp;
                                 {% if annuncio_accetta_profilo.pet_sitter %}
                                     (petsitter)

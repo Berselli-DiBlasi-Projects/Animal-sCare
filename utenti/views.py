@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from recensioni.models import Recensione
 from django.db.models import Avg
 from django.http import HttpResponse
+from django.http import Http404
+from main.views import nega_accesso_senza_profilo
 import operator
 import requests
 
@@ -31,7 +33,7 @@ def calcola_lat_lon(request, profile):
                             ',' + profile.regione.replace("/", ""))
     latlong = response.json()
     return latlong['results'][0]['locations'][0]['latLng']["lat"], \
-           latlong['results'][0]['locations'][0]['latLng']["lng"]
+        latlong['results'][0]['locations'][0]['latLng']["lng"]
 
 
 @login_required(login_url='/utenti/login/')
@@ -42,6 +44,9 @@ def cassa(request):
     :param request: request utente.
     :return: render della pagina cassa.
     """
+
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
 
     profile = Profile.objects.filter(user=request.user).first()
     context = {'base_template': 'main/base.html'}
@@ -65,6 +70,9 @@ def cerca_utenti(request):
     :param request: request utente.
     :return: render della pagina cerca_utenti contenente gli utenti trovati con lo username specificato.
     """
+
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
 
     utenti = User.objects.filter(username__icontains=request.GET.get('cerca'))
     profili = {}
@@ -103,6 +111,9 @@ def check_username(request):
     :return: False (username già registrato), True (username non registrato).
     """
 
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     if request.method == "GET":
         p = request.GET.copy()
         if 'username' in p:
@@ -123,6 +134,9 @@ def classifica(request):
     :param request: request utente.
     :return: render della classifica.
     """
+
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
 
     sel_utenti = 'tutti'
     sel_filtro = 'voti'
@@ -214,8 +228,11 @@ def edit_profile(request, oid):
     :param request: request utente.
     :param oid: id dell'utente di cui si vuole modificare il profilo (con controllo che sia == all'id
     dell'utente loggato).
-    :return: render pagina modifica profilo o pagina principale.
+    :return: render pagina modifica profilo o errore 404.
     """
+
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
 
     context = {'base_template': 'main/base.html'}
     oaut_user = False
@@ -289,7 +306,7 @@ def edit_profile(request, oid):
         return render(request, 'utenti/modifica_profilo.html', context)
 
     else:
-        return HttpResponseRedirect(reverse('main:index'))
+        raise Http404
 
 
 @login_required(login_url='/utenti/login/')
@@ -302,13 +319,16 @@ def elimina_profilo(request, oid):
     :return: render della pagina elimina_profilo.
     """
 
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     user = User.objects.filter(id=oid).first()
     if user == User.objects.get(username=request.user):
         context = {'user': user, 'base_template': 'main/base.html'}
 
         return render(request, 'utenti/elimina_profilo.html', context)
     else:
-        return HttpResponseRedirect(reverse('main:index'))
+        raise Http404
 
 
 @login_required(login_url='/utenti/login/')
@@ -321,10 +341,15 @@ def elimina_profilo_conferma(request, oid):
     :return: render della pagina principale.
     """
 
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     user = User.objects.filter(id=oid).first()
 
     if user == User.objects.get(username=request.user):
         User.objects.filter(id=oid).delete()
+    else:
+        raise Http404
 
     return HttpResponseRedirect(reverse('main:index'))
 
@@ -364,6 +389,9 @@ def logout_user(request):
     :return: render della pagina principale.
     """
 
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     logout(request)
     return HttpResponseRedirect(reverse('main:index'))
 
@@ -377,58 +405,62 @@ def oauth_normale(request):
     :return: render della pagina di creazione profilo normale.
     """
 
-    if not request.user.is_authenticated():
-        # Se la richiesta è di tipo POST, allora possiamo processare i dati
-        if request.method == "POST":
-            # Creiamo l'istanza del form e la popoliamo con i dati della POST request (processo di "binding")
-            normaleform = UtenteNormaleForm(request.POST, request.FILES)
-
-            if normaleform.is_valid():
-                # a questo punto possiamo usare i dati validi
-                utente_loggato = User.objects.get(id=request.user.id)
-                profile = Profile.objects.get_or_create(user=utente_loggato)
-                profile = profile[0]
-                try:
-                    profile.foto_profilo = request.FILES['foto_profilo']
-                except Exception:
-                    profile.foto_profilo = None
-
-                profile.indirizzo = normaleform.cleaned_data['indirizzo']
-                profile.citta = normaleform.cleaned_data['citta']
-                profile.provincia = normaleform.cleaned_data['provincia']
-                profile.regione = normaleform.cleaned_data['regione']
-                profile.telefono = normaleform.cleaned_data['telefono']
-                profile.nome_pet = normaleform.cleaned_data['nome_pet']
-                profile.pet = normaleform.cleaned_data['pet']
-                profile.razza = normaleform.cleaned_data['razza']
-                profile.eta = normaleform.cleaned_data['eta']
-                profile.caratteristiche = normaleform.cleaned_data['caratteristiche']
-                try:
-                    profile.foto_pet = normaleform.cleaned_data['foto_pet']
-                except Exception:
-                    profile.foto_pet = None
-
-                profile.descrizione = 'Null'
-                profile.hobby = 'Null'
-
-                profile.latitudine, profile.longitudine = calcola_lat_lon(request, profile)
-
-                profile.save()
-                if utente_loggato is not None:
-                    if utente_loggato.is_active:
-                        # login(request, utente_loggato)
-                        return HttpResponseRedirect(reverse('main:index'))
-        else:
-            normaleform = UtenteNormaleForm()
-
-        # arriviamo a questo punto se si tratta della prima volta che la pagina viene richiesta(con metodo GET),
-        # o se il form non è valido e ha errori
-        context = {
-            "normaleform": normaleform
-        }
-        return render(request, 'utenti/oauth_profilo_normale.html', context)
-    else:
+    try:
+        # Se questo utente ha già un profilo, viene rediretto alla home, altrimenti può registrarne uno nuovo
+        Profile.objects.get(user=request.user.id)
         return HttpResponseRedirect(reverse('main:index'))
+    except Exception:
+        pass
+
+    # Se la richiesta è di tipo POST, allora possiamo processare i dati
+    if request.method == "POST":
+        # Creiamo l'istanza del form e la popoliamo con i dati della POST request (processo di "binding")
+        normaleform = UtenteNormaleForm(request.POST, request.FILES)
+
+        if normaleform.is_valid():
+            # a questo punto possiamo usare i dati validi
+            utente_loggato = User.objects.get(id=request.user.id)
+            profile = Profile.objects.get_or_create(user=utente_loggato)
+            profile = profile[0]
+            try:
+                profile.foto_profilo = request.FILES['foto_profilo']
+            except Exception:
+                profile.foto_profilo = None
+
+            profile.indirizzo = normaleform.cleaned_data['indirizzo']
+            profile.citta = normaleform.cleaned_data['citta']
+            profile.provincia = normaleform.cleaned_data['provincia']
+            profile.regione = normaleform.cleaned_data['regione']
+            profile.telefono = normaleform.cleaned_data['telefono']
+            profile.nome_pet = normaleform.cleaned_data['nome_pet']
+            profile.pet = normaleform.cleaned_data['pet']
+            profile.razza = normaleform.cleaned_data['razza']
+            profile.eta = normaleform.cleaned_data['eta']
+            profile.caratteristiche = normaleform.cleaned_data['caratteristiche']
+            try:
+                profile.foto_pet = normaleform.cleaned_data['foto_pet']
+            except Exception:
+                profile.foto_pet = None
+
+            profile.descrizione = 'Null'
+            profile.hobby = 'Null'
+
+            profile.latitudine, profile.longitudine = calcola_lat_lon(request, profile)
+
+            profile.save()
+            if utente_loggato is not None:
+                if utente_loggato.is_active:
+                    return HttpResponseRedirect(reverse('main:index'))
+    else:
+        normaleform = UtenteNormaleForm()
+
+    # arriviamo a questo punto se si tratta della prima volta che la pagina viene richiesta(con metodo GET),
+    # o se il form non è valido e ha errori
+    context = {
+        "normaleform": normaleform,
+        "base_template": "main/base_oauth.html"
+    }
+    return render(request, 'utenti/oauth_profilo_normale.html', context)
 
 
 @login_required(login_url='/utenti/login/')
@@ -440,54 +472,59 @@ def oauth_petsitter(request):
     :return: render della pagina di creazione profilo da petsitter.
     """
 
-    if not request.user.is_authenticated():
-        # Se la richiesta è di tipo POST, allora possiamo processare i dati
-        if request.method == "POST":
-            # Creiamo l'istanza del form e la popoliamo con i dati della POST request (processo di "binding")
-            petsitterform = UtentePetSitterForm(request.POST, request.FILES)
-
-            if petsitterform.is_valid():
-                # a questo punto possiamo usare i dati validi
-                utente_loggato = User.objects.get(id=request.user.id)
-                profile = Profile.objects.get_or_create(user=utente_loggato)
-                profile = profile[0]
-
-                try:
-                    profile.foto_profilo = request.FILES['foto_profilo']
-                except Exception:
-                    profile.foto_profilo = None
-
-                profile.indirizzo = petsitterform.cleaned_data['indirizzo']
-                profile.citta = petsitterform.cleaned_data['citta']
-                profile.provincia = petsitterform.cleaned_data['provincia']
-                profile.regione = petsitterform.cleaned_data['regione']
-                profile.telefono = petsitterform.cleaned_data['telefono']
-                profile.descrizione = petsitterform.cleaned_data['descrizione']
-                profile.hobby = petsitterform.cleaned_data['hobby']
-                profile.pet_sitter = True
-                profile.nome_pet = 'Null'
-                profile.pet = 'Null'
-                profile.razza = 'Null'
-                profile.eta = 0
-
-                profile.latitudine, profile.longitudine = calcola_lat_lon(request, profile)
-
-                profile.save()
-                if utente_loggato is not None:
-                    if utente_loggato.is_active:
-                        return HttpResponseRedirect(reverse('main:index'))
-        else:
-            petsitterform = UtentePetSitterForm()
-
-        # arriviamo a questo punto se si tratta della prima volta che la pagina viene richiesta(con metodo GET),
-        # o se il form non è valido e ha errori
-        context = {
-            "petsitterform": petsitterform
-        }
-
-        return render(request, "utenti/oauth_profilo_petsitter.html", context)
-    else:
+    try:
+        # Se questo utente ha già un profilo, viene rediretto alla home, altrimenti può registrarne uno nuovo
+        Profile.objects.get(user=request.user.id)
         return HttpResponseRedirect(reverse('main:index'))
+    except Exception:
+        pass
+
+    # Se la richiesta è di tipo POST, allora possiamo processare i dati
+    if request.method == "POST":
+        # Creiamo l'istanza del form e la popoliamo con i dati della POST request (processo di "binding")
+        petsitterform = UtentePetSitterForm(request.POST, request.FILES)
+
+        if petsitterform.is_valid():
+            # a questo punto possiamo usare i dati validi
+            utente_loggato = User.objects.get(id=request.user.id)
+            profile = Profile.objects.get_or_create(user=utente_loggato)
+            profile = profile[0]
+
+            try:
+                profile.foto_profilo = request.FILES['foto_profilo']
+            except Exception:
+                profile.foto_profilo = None
+
+            profile.indirizzo = petsitterform.cleaned_data['indirizzo']
+            profile.citta = petsitterform.cleaned_data['citta']
+            profile.provincia = petsitterform.cleaned_data['provincia']
+            profile.regione = petsitterform.cleaned_data['regione']
+            profile.telefono = petsitterform.cleaned_data['telefono']
+            profile.descrizione = petsitterform.cleaned_data['descrizione']
+            profile.hobby = petsitterform.cleaned_data['hobby']
+            profile.pet_sitter = True
+            profile.nome_pet = 'Null'
+            profile.pet = 'Null'
+            profile.razza = 'Null'
+            profile.eta = 0
+
+            profile.latitudine, profile.longitudine = calcola_lat_lon(request, profile)
+
+            profile.save()
+            if utente_loggato is not None:
+                if utente_loggato.is_active:
+                    return HttpResponseRedirect(reverse('main:index'))
+    else:
+        petsitterform = UtentePetSitterForm()
+
+    # arriviamo a questo punto se si tratta della prima volta che la pagina viene richiesta(con metodo GET),
+    # o se il form non è valido e ha errori
+    context = {
+        "petsitterform": petsitterform,
+        "base_template": "main/base_oauth.html"
+    }
+
+    return render(request, "utenti/oauth_profilo_petsitter.html", context)
 
 
 def registrazione(request):
@@ -497,6 +534,9 @@ def registrazione(request):
     :param request: request utente.
     :return: render della pagina di registrazione o redirect a pagina principale.
     """
+
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
 
     if not request.user.is_authenticated():
         base_template = 'main/base_visitor.html'
@@ -512,6 +552,9 @@ def registrazione_normale(request):
     :param request: request utente.
     :return: render della pagina di registrazione utente normale.
     """
+
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
 
     form = UserForm(request.POST or None, oauth_user=0)
     normaleform = UtenteNormaleForm(request.POST or None, request.FILES or None)
@@ -579,6 +622,9 @@ def registrazione_petsitter(request):
     :return: render della pagina di registrazione utente petsitter.
     """
 
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     form = UserForm(request.POST or None, oauth_user=0)
     petsitterform = UtentePetSitterForm(request.POST or None, request.FILES or None)
 
@@ -641,17 +687,12 @@ def scelta_profilo_oauth(request):
     :return: render della pagina di scelta Oauth normale o petsitter.
     """
 
-    utente_loggato = User.objects.get(id=request.user.id)
-    flag = True
     try:
-        Profile.objects.get(user=utente_loggato)
-    except Exception:
-        flag = False
-
-    if flag:
+        Profile.objects.get(user=request.user.id)
         return HttpResponseRedirect(reverse('main:index'))
-    else:
-        return render(request, 'utenti/scelta_utente_oauth.html')
+    except Exception:
+        context = {'base_template': 'main/base_oauth.html'}
+        return render(request, 'utenti/scelta_utente_oauth.html', context=context)
 
 
 def view_profile(request, oid):
@@ -664,9 +705,12 @@ def view_profile(request, oid):
     :return: render della pagina di visualizzazione profilo utente.
     """
 
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
+
     user = User.objects.filter(id=oid).first()
     if user is None:
-        return HttpResponseRedirect(reverse('main:index'))
+        raise Http404
 
     user_profile = Profile.objects.filter(user=user.pk).first()
 

@@ -6,7 +6,7 @@ app_name = 'annunci'
 urlpatterns = [
 
     # /annunci/
-    url(r'^$', views.lista_annunci, name='lista-annunci'),
+    url(r'^$', views.lista_annunci, name='lista_annunci'),
 
     # /annunci/nuovo/
     url(r'nuovo/$', views.inserisci_annuncio, name='inserisci_annuncio'),

@@ -7,7 +7,7 @@ import unittest
 class TestUrls(unittest.TestCase):
 
     def test_lista_annunci_url(self):
-        path = reverse('annunci:lista-annunci')
+        path = reverse('annunci:lista_annunci')
         self.assertEquals(resolve(path).func, lista_annunci)
 
     def test_inserisci_annuncio_url(self):

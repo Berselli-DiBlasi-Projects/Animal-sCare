@@ -6,25 +6,25 @@ app_name = 'utenti'
 urlpatterns = [
 
     # /utenti/login/
-    url(r'login/$', views.login_user, name='utenti-login'),
+    url(r'login/$', views.login_user, name='utenti_login'),
 
     # /utenti/registrazione/
     url(r'registrazione/$', views.registrazione, name='registrazione'),
 
     # /utenti/registrazione/normale
-    url(r'registrazione/normale$', views.registrazione_normale, name='registrazione-normale'),
+    url(r'registrazione/normale$', views.registrazione_normale, name='registrazione_normale'),
 
     # /utenti/registrazione/petsitter
-    url(r'registrazione/petsitter$', views.registrazione_petsitter, name='registrazione-petsitter'),
+    url(r'registrazione/petsitter$', views.registrazione_petsitter, name='registrazione_petsitter'),
 
     # /utenti/logout/
-    url(r'logout/$', views.logout_user, name='utenti-logout'),
+    url(r'logout/$', views.logout_user, name='utenti_logout'),
 
     # /utenti/profilo/#user
-    url(r'profilo/(?P<oid>[0-9]+)/$', views.view_profile, name='view-profile'),
+    url(r'profilo/(?P<oid>[0-9]+)/$', views.view_profile, name='view_profile'),
 
     # /utenti/profilo/#user/modifica/
-    url(r'profilo/(?P<oid>[0-9]+)/modifica/$', views.edit_profile, name='edit-profile'),
+    url(r'profilo/(?P<oid>[0-9]+)/modifica/$', views.edit_profile, name='edit_profile'),
 
     # /utenti/profilo/#user/elimina/
     url(r'profilo/(?P<oid>[0-9]+)/elimina/$', views.elimina_profilo, name='elimina_profilo'),

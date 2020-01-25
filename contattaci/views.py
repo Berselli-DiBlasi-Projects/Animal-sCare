@@ -1,9 +1,12 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 from utenti.models import Profile
 from django.shortcuts import render
+from django.core.urlresolvers import reverse
 from .forms import ContattaciForm
 from django.core.mail import EmailMessage
 from django.conf import settings
+from main.views import nega_accesso_senza_profilo
 
 
 @login_required(login_url='/utenti/login/')
@@ -16,6 +19,9 @@ def contattaci(request):
     :param request: request utente.
     :return: render pagina contattaci.
     """
+
+    if nega_accesso_senza_profilo(request):
+        return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
 
     form = ContattaciForm(request.POST or None)
 

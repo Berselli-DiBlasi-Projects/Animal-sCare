@@ -8,7 +8,7 @@ import unittest
 class TestUrls(unittest.TestCase):
 
     def test_login_url(self):
-        path = reverse('utenti:utenti-login')
+        path = reverse('utenti:utenti_login')
         self.assertEquals(resolve(path).func, login_user)
 
     def test_registrazione_url(self):
@@ -16,23 +16,23 @@ class TestUrls(unittest.TestCase):
         self.assertEquals(resolve(path).func, registrazione)
 
     def test_registrazione_normale_url(self):
-        path = reverse('utenti:registrazione-normale')
+        path = reverse('utenti:registrazione_normale')
         self.assertEquals(resolve(path).func, registrazione_normale)
 
     def test_registrazione_petsitter_url(self):
-        path = reverse('utenti:registrazione-petsitter')
+        path = reverse('utenti:registrazione_petsitter')
         self.assertEquals(resolve(path).func, registrazione_petsitter)
 
     def test_logout_url(self):
-        path = reverse('utenti:utenti-logout')
+        path = reverse('utenti:utenti_logout')
         self.assertEquals(resolve(path).func, logout_user)
 
     def test_view_profile_url(self):
-        path = reverse('utenti:view-profile', kwargs={'oid': 1})
+        path = reverse('utenti:view_profile', kwargs={'oid': 1})
         self.assertEquals(resolve(path).func, view_profile)
 
     def test_edit_profile_url(self):
-        path = reverse('utenti:edit-profile', kwargs={'oid': 1})
+        path = reverse('utenti:edit_profile', kwargs={'oid': 1})
         self.assertEquals(resolve(path).func, edit_profile)
 
     def test_cassa_url(self):
