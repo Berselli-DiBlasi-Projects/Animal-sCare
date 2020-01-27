@@ -136,9 +136,9 @@
                         </div>
                     </div>
                     <hr>
-                    {% if user is not None %}
+                    {% if user is not None and user.id is not None %}
                         {% if user.id != annuncio_utente.id %}
-                            {% if user.pet_sitter != annuncio_profilo.pet_sitter and annuncio.user_accetta is None %}
+                            {% if user_profile.pet_sitter != annuncio_profilo.pet_sitter and annuncio.user_accetta is None %}
                                 <a href="{% url 'annunci:conferma_annuncio' oid=annuncio.pk %}" class="btn btn-primary">Accetta annuncio</a>
                             {% endif %}
                         {% else %}

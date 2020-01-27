@@ -75,6 +75,12 @@ def cerca_utenti(request):
         return HttpResponseRedirect(reverse('utenti:scelta_profilo_oauth'))
 
     utenti = User.objects.filter(username__icontains=request.GET.get('cerca'))
+
+    # Escludi dall'elenco gli utenti oauth che non hanno completato il profilo
+    for utente in utenti:
+        if Profile.objects.filter(user=utente.pk).first() is None:
+            utenti = utenti.exclude(pk=utente.pk)
+
     profili = {}
     utenti_recensioni = {}
     utenti_voti = {}
@@ -167,6 +173,11 @@ def classifica(request):
         else:
             sel_utenti = 'tutti'
             utenti = User.objects.all()
+
+    # Escludi dall'elenco gli utenti oauth che non hanno completato il profilo
+    for utente in utenti:
+        if Profile.objects.filter(user=utente.pk).first() is None:
+            utenti = utenti.exclude(pk=utente.pk)
 
     utenti_recensioni = {}
     utenti_voti = {}
@@ -713,6 +724,8 @@ def view_profile(request, oid):
         raise Http404
 
     user_profile = Profile.objects.filter(user=user.pk).first()
+    if user_profile is None:
+        raise Http404
 
     recensioni_num = Recensione.objects.filter(user_recensito=user).count()
     voti = Recensione.objects.all().filter(user_recensito=user).aggregate(Avg('voto'))
