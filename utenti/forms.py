@@ -136,6 +136,11 @@ class UtenteNormaleForm(forms.ModelForm):
         files = self.files.get('foto_profilo')
 
         if files is not None:
+            file_size = files.size
+            limit_MB = 5
+            if file_size > limit_MB * 1024 * 1024:
+                raise ValidationError("La dimensione massima per le immagini è %s MB" % limit_MB)
+
             file_type = magic.from_buffer(files.read(), mime=True)
             if file_type not in MIME_TYPES:
                 raise forms.ValidationError(_("file non supportato."))
@@ -177,6 +182,11 @@ class UtenteNormaleForm(forms.ModelForm):
     def clean_foto_pet(self):
         files = self.files.get('foto_pet')
         if files is not None:
+            file_size = files.size
+            limit_MB = 5
+            if file_size > limit_MB * 1024 * 1024:
+                raise ValidationError("La dimensione massima per le immagini è %s MB" % limit_MB)
+
             file_type = magic.from_buffer(files.read(), mime=True)
             if file_type not in MIME_TYPES:
                 raise forms.ValidationError(_("file non supportato."))
@@ -229,6 +239,11 @@ class UtentePetSitterForm(forms.ModelForm):
     def clean_foto_profilo(self):
         files = self.files.get('foto_profilo')
         if files is not None:
+            file_size = files.size
+            limit_MB = 5
+            if file_size > limit_MB * 1024 * 1024:
+                raise ValidationError("La dimensione massima per le immagini è %s MB" % limit_MB)
+
             file_type = magic.from_buffer(files.read(), mime=True)
             if file_type not in MIME_TYPES:
                 raise forms.ValidationError(_("file non supportato."))
