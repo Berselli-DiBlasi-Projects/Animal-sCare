@@ -53,12 +53,17 @@ def cassa(request):
     context.update({'user_profile': profile})
 
     if request.POST.get("value") is not None:
-        pet_coins_attuali = profile.pet_coins + int(request.POST.get("value"))
-        if pet_coins_attuali >= 0:
-            profile.pet_coins = pet_coins_attuali
-            profile.save()
-        else:
-            context.update({'error_message': 'Errore: fondi insufficienti'})
+        value = int(request.POST.get("value"))
+        if value == 50 or value == 100 or value == 200 or value == -50 or value == -100 or value == -200:
+            pet_coins_attuali = profile.pet_coins + value
+            if pet_coins_attuali >= 0:
+                if pet_coins_attuali <= 10000:
+                    profile.pet_coins = pet_coins_attuali
+                    profile.save()
+                else:
+                    context.update({'error_message': 'Errore: hai raggiunto il limite massimo di Pet Coins'})
+            else:
+                context.update({'error_message': 'Errore: fondi insufficienti'})
 
     return render(request, 'utenti/cassa.html', context)
 
