@@ -12,7 +12,7 @@ import Cassa from './Pages/Cassa';
 import Contattaci from './Pages/Contattaci';
 import Login from './Pages/Login';
 import * as Font from 'expo-font';
-import logo from './assets/favicon.png'
+import logo from './assets/favicon.png';
 
 const {width, height} = Dimensions.get('window');
 const CustomDrawerNavigation = (props) => {
@@ -116,8 +116,7 @@ export default class App extends React.Component {
   async componentDidMount() {
     await Font.loadAsync({
       'satisfy': require('./assets/fonts/satisfy.ttf'),
-      'typold-medium': require('./assets/fonts/typold-medium.otf'),
-      'animalscare': require('./assets/fonts/animalscare.ttf')
+      'typold-medium': require('./assets/fonts/typold-medium.otf')
     });
 
     this.setState({ fontLoaded: true });
