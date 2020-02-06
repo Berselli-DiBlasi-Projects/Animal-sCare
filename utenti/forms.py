@@ -40,8 +40,8 @@ class UserForm(forms.ModelForm):
     def clean_username(self):
         if not re.match("^[A-Za-z0-9]+$", self.cleaned_data['username']):
             return 'Errore: lo username può contenere solo lettere e numeri.'
-        if not (3 <= len(self.cleaned_data['username']) <= 15):
-            return 'Errore: lo username deve avere lunghezza fra 3 e 15 caratteri.'
+        if not (3 <= len(self.cleaned_data['username']) <= 30):
+            return 'Errore: lo username deve avere lunghezza fra 3 e 30 caratteri.'
         return self.cleaned_data['username']
 
     def clean_password(self):

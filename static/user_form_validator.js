@@ -33,7 +33,7 @@ $( '#user-form' ).validate({
         'username':{
             required: true,
             minlength: 3,
-            maxlength: 15,
+            maxlength: 30,
             username_unique: true
         },
         'email':{
@@ -115,7 +115,7 @@ $( '#user-form' ).validate({
         'username':{
             required: "Il campo username è obbligatorio",
             minlength: "Scegli un username di almeno 3 lettere",
-            maxlength: "Limite di 15 caratteri superato"
+            maxlength: "Limite di 30 caratteri superato"
             },
         'email':{
             required: "Il campo email è obbligatorio",
