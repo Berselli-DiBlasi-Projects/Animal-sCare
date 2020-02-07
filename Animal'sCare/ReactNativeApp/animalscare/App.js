@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, SafeAreaView, ScrollView, Dimensions, Image } from 'react-native';
 import { createAppContainer } from 'react-navigation';
+import {createStackNavigator} from 'react-navigation-stack';
 import { createDrawerNavigator, DrawerItems } from 'react-navigation-drawer';
 import ListaAnnunci from './Pages/ListaAnnunci';
 import InserisciAnnuncio from './Pages/InserisciAnnuncio';
@@ -11,10 +12,14 @@ import Calendario from './Pages/Calendario';
 import Cassa from './Pages/Cassa';
 import Contattaci from './Pages/Contattaci';
 import Login from './Pages/Login';
+import DettagliAnnuncio from './Pages/DettagliAnnuncio';
+import AccettaAnnuncioConferma from './Pages/AccettaAnnuncioConferma';
+import EliminaAnnuncioConferma from './Pages/EliminaAnnuncioConferma';
 import * as Font from 'expo-font';
 import logo from './assets/favicon.png';
 
 const {width, height} = Dimensions.get('window');
+
 const CustomDrawerNavigation = (props) => {
   return (
   <SafeAreaView style={{ flex: 1 }}>
@@ -92,7 +97,25 @@ const Drawer = createDrawerNavigator({
   Login: {
     screen: Login,
     navigationOptions: {
-      title: 'Log in'
+      title: 'Login'
+    }
+  },
+  DettagliAnnuncio: {
+    screen: DettagliAnnuncio,
+    navigationOptions: {
+      title: 'Dettagli annuncio'
+    }
+  },
+  AccettaAnnuncioConferma: {
+    screen: AccettaAnnuncioConferma,
+    navigationOptions: {
+      title: 'Accetta annuncio conferma'
+    }
+  },
+  EliminaAnnuncioConferma: {
+    screen: EliminaAnnuncioConferma,
+    navigationOptions: {
+      title: 'Elimina annuncio conferma'
     }
   }
 },
@@ -105,7 +128,7 @@ const Drawer = createDrawerNavigator({
   drawerWidth: (width / 3) * 2
 });
 
-const AppContainer = createAppContainer(Drawer);
+const AppContainer = createAppContainer(Drawer)
 
 export default class App extends React.Component {
   

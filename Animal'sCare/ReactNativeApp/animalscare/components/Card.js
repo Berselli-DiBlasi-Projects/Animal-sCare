@@ -7,8 +7,7 @@ return <View style={{...styles.card, ...props.style}}>{props.children}</View>
 
 const styles = StyleSheet.create({
     card: {
-        width: 300,
-        maxWidth: '80%',
+        maxWidth: '96%',
         alignItems: 'center',
         elevation: 5,
         backgroundColor: 'white',

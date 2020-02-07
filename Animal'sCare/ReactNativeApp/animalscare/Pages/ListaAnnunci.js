@@ -1,11 +1,20 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Button, Image } from 'react-native';
+import { View, Text, StyleSheet, Button, Image, Dimensions } from 'react-native';
 import CustomHeader from '../components/Header';
 import Card from '../components/Card'
 import logo from '../assets/favicon.png';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
+import {Picker} from 'native-base';
+
+const {width, height} = Dimensions.get('window');
 
 class ListaAnnunci extends Component {
+
+    state = {
+        categorie: "tutto",
+        animali: "tutto",
+        ordina: "non_ordinare"
+    };
 
     render() {
         return (
@@ -19,8 +28,49 @@ class ListaAnnunci extends Component {
             
 
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    <View style={styles.screen}>   
-                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8}>
+                    <View style={styles.screen}>
+
+                        <Picker
+                            style={styles.picker} itemStyle={styles.pickerItem}
+                            selectedValue={this.state.categorie}
+                            onValueChange={(itemValue) => this.setState({categorie: itemValue})}
+                            >
+                            <Picker.Item label="Tutte le categorie di annunci" value="tutto" />
+                            <Picker.Item label="Cerco un petsitter" value="petsitter" />
+                            <Picker.Item label="Cerco un pet" value="pet" />
+                        </Picker>
+
+                        <View style={{paddingBottom: 5}}></View>
+
+                        <Picker
+                            style={styles.picker} itemStyle={styles.pickerItem}
+                            selectedValue={this.state.animali}
+                            onValueChange={(itemValue) => this.setState({animali: itemValue})}
+                            >
+                            <Picker.Item label="Tutti gli animali" value="tutto" />
+                            <Picker.Item label="Cani" value="cani" />
+                            <Picker.Item label="Gatti" value="gatti" />
+                            <Picker.Item label="Conigli" value="conigli" />
+                            <Picker.Item label="Volatili" value="volatili" />
+                            <Picker.Item label="Rettili" value="rettili" />
+                            <Picker.Item label="Altro" value="altro" />
+                        </Picker>
+
+                        <View style={{paddingBottom: 5}}></View>
+
+                        <Picker
+                            style={styles.picker} itemStyle={styles.pickerItem}
+                            selectedValue={this.state.ordina}
+                            onValueChange={(itemValue) => this.setState({ordina: itemValue})}
+                            >
+                            <Picker.Item label="Non ordinare gli annunci" value="non_ordinare" />
+                            <Picker.Item label="Distanza geografica crescente" value="crescente" />
+                            <Picker.Item label="Distanza geografica decrescente" value="decrescente" />
+                        </Picker>
+
+                        <View style={{paddingBottom: 2}}></View>
+
+                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('DettagliAnnuncio', {id_annuncio: '1'})}>
                             <Card style={styles.inputContainer}>
                                 <View style={styles.image}>
                                     <Image source={logo} style={styles.annuncioLogo}  />
@@ -43,7 +93,7 @@ class ListaAnnunci extends Component {
                             </Card>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8}>
+                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('DettagliAnnuncio', {id_annuncio: '2'})}>
                             <Card style={styles.inputContainer}>
                                 <View style={styles.image}>
                                     <Image source={logo} style={styles.annuncioLogo}  />
@@ -65,7 +115,7 @@ class ListaAnnunci extends Component {
                                 </View>
                             </Card>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8}>
+                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('DettagliAnnuncio', {id_annuncio: '3'})}>
                             <Card style={styles.inputContainer}>
                                 <View style={styles.image}>
                                     <Image source={logo} style={styles.annuncioLogo}  />
@@ -87,7 +137,7 @@ class ListaAnnunci extends Component {
                                 </View>
                             </Card>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8}>
+                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('DettagliAnnuncio', {id_annuncio: '4'})}>
                             <Card style={styles.inputContainer}>
                                 <View style={styles.image}>
                                     <Image source={logo} style={styles.annuncioLogo}  />
@@ -109,7 +159,7 @@ class ListaAnnunci extends Component {
                                 </View>
                             </Card>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8}>
+                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('DettagliAnnuncio', {id_annuncio: '5'})}>
                             <Card style={styles.inputContainer}>
                                 <View style={styles.image}>
                                     <Image source={logo} style={styles.annuncioLogo}  />
@@ -131,7 +181,7 @@ class ListaAnnunci extends Component {
                                 </View>
                             </Card>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8}>
+                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('DettagliAnnuncio', {id_annuncio: '6'})}>
                             <Card style={styles.inputContainer}>
                                 <View style={styles.image}>
                                     <Image source={logo} style={styles.annuncioLogo}  />
@@ -181,10 +231,10 @@ const styles = StyleSheet.create({
     annuncioTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        width: 220
+        width: width - width / 2.6
     },
     annuncioSubtitle: {
-        width: 220
+        width: width - width / 2.6
     },
     data: {
         flex: 1
@@ -197,6 +247,16 @@ const styles = StyleSheet.create({
     },
     touchableopacity: {
         alignItems: 'center'
+    },
+    picker: {
+        width: '90%',
+        height: 45,
+        backgroundColor: '#e7e7e7',
+        borderColor: 'black',
+        borderWidth: 3
+    },
+    pickerItem: {
+        color: 'white'
     }
 });
 
