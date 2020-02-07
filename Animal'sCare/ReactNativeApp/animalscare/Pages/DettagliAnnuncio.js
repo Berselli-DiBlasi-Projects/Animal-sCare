@@ -16,7 +16,7 @@ class DettagliAnnuncio extends Component {
 
     render() {
         id_annuncio = this.props.navigation.state.params.id_annuncio;
-
+        
         return (
             <View style={styles.screen}>
                 
