@@ -25,6 +25,12 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "android": {
+      "package": "com.bersellidiblasi.animalscare",
+      "versionCode": 1,
+      "permissions": [],
+      "icon": "./assets/favicon.png"
     }
   }
 }
