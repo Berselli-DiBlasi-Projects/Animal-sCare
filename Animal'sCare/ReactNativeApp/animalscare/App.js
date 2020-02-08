@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, createContext } from 'react';
 import { Text, View, SafeAreaView, ScrollView, Image } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import * as Font from 'expo-font';

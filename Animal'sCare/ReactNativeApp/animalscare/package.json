@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@freakycoder/react-native-helpers": "^0.1.2",
     "@react-native-community/masked-view": "^0.1.5",
     "expo": "~36.0.0",
     "expo-font": "~8.0.0",
@@ -17,6 +18,8 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-36.0.0.tar.gz",
     "react-native-auto-height-image": "^3.0.0",
     "react-native-circle-button": "^1.0.9",
+    "react-native-dynamic-search-bar": "^0.3.1",
+    "react-native-dynamic-vector-icons": "github:WrathChaos/react-native-dynamic-vector-icons#expo",
     "react-native-elements": "^1.2.7",
     "react-native-gesture-handler": "^1.5.6",
     "react-native-paper": "^3.6.0",

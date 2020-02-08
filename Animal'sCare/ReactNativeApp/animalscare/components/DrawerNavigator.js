@@ -7,7 +7,8 @@ import ListaAnnunci from '../Pages/ListaAnnunci';
 import InserisciAnnuncio from '../Pages/InserisciAnnuncio';
 import Classifica from '../Pages/Classifica';
 import CercaUtente from '../Pages/CercaUtente';
-import Profilo from '../Pages/Profilo';
+import ProfiloNormale from '../Pages/ProfiloNormale';
+import ProfiloPetsitter from '../Pages/ProfiloPetsitter';
 import Calendario from '../Pages/Calendario';
 import Cassa from '../Pages/Cassa';
 import Contattaci from '../Pages/Contattaci';
@@ -23,18 +24,18 @@ const CustomDrawerNavigation = (props) => {
     
     return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ height: 250, backgroundColor: '#d2d2d2', opacity: 0.9 }}>
+      <View style={{ height: 250, backgroundColor: '#cfe3f3', opacity: 0.9 }}>
         <View style={{ height: 200, backgroundColor: 'Green', alignItems: 'center', justifyContent: 'center' }}>
           <Image source={require('../assets/no-image.png')} style={{ height: 150, width: 150, borderRadius: 60 }} />
         </View>
         <View style={{ height: 50, backgroundColor: 'Green', alignItems: 'center', justifyContent: 'center' }}>
-          <Text>John Doe</Text>
+          <Text>Utente non registrato</Text>
         </View>
       </View>
       <ScrollView>
         <DrawerItems {...props}/>
       </ScrollView>
-      <View style={{ alignItems: "center", backgroundColor: '#c4c4c4' }}>
+      <View style={{ alignItems: "center", backgroundColor: '#e7e7e7' }}>
         <View style={{ flexDirection: 'row' }}>
           <Image source={logo} style={{ width: 25, height: 25 }}  />
           <Text style={{paddingTop: 2, fontFamily: 'typold-medium', color: '#7e7777'}}> BERSELLI, DI BLASI</Text>
@@ -84,15 +85,24 @@ const Drawer = createDrawerNavigator({
           )
         }
     },
-    Profilo: {
-        screen: Profilo,
+    ProfiloNormale: {
+        screen: ProfiloNormale,
         navigationOptions: {
-        title: 'Profilo',
+        title: 'Profilo normale',
         drawerIcon: ({ tintColor }) => (
             <Icon name = "md-person" />
           )
         }
     },
+    ProfiloPetsitter: {
+      screen: ProfiloPetsitter,
+      navigationOptions: {
+      title: 'Profilo petsitter',
+      drawerIcon: ({ tintColor }) => (
+          <Icon name = "md-person" />
+        )
+      }
+  },
     Calendario: {
         screen: Calendario,
         navigationOptions: {

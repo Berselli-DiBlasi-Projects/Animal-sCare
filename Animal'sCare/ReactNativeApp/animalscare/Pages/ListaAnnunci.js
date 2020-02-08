@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     },
     picker: {
         width: '90%',
-        height: 45,
+        height: 40,
         backgroundColor: '#e7e7e7',
         borderColor: 'black',
         borderWidth: 3
