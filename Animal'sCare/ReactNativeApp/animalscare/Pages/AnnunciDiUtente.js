@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Button, Image, Dimensions } from 'react-native';
 import CustomHeader from '../components/Header';
-import Card from '../components/Card';
+import Card from '../components/Card'
 import logo from '../assets/favicon.png';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import {Picker} from 'native-base';
+import { IconButton } from 'react-native-paper';
 
 const {width, height} = Dimensions.get('window');
 
-class ListaAnnunci extends Component {
+class AnnunciDiUtente extends Component {
 
     state = {
         categorie: "tutto",
-        animali: "tutto",
-        ordina: "non_ordinare"
+        animali: "tutto"
     };
 
     render() {
@@ -23,10 +23,16 @@ class ListaAnnunci extends Component {
                 
                 <CustomHeader parent={this.props} />
                 
-                <Text style={styles.title}>Annunci</Text>
+                <View style={styles.contentbar}>
+                    <View style={styles.leftcontainer}>
+                        <IconButton icon="arrow-left" onPress={() => this.props.navigation.goBack(null)} />
+                    </View>
+                    <Text style={styles.title}>
+                        Annunci di utente
+                    </Text>
+                    <View style={styles.rightcontainer}></View>
+                </View>
                 
-            
-
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.screen}>
 
@@ -55,20 +61,6 @@ class ListaAnnunci extends Component {
                             <Picker.Item label="Rettili" value="rettili" />
                             <Picker.Item label="Altro" value="altro" />
                         </Picker>
-
-                        <View style={{paddingBottom: 5}}></View>
-
-                        <Picker
-                            style={styles.picker} itemStyle={styles.pickerItem}
-                            selectedValue={this.state.ordina}
-                            onValueChange={(itemValue) => this.setState({ordina: itemValue})}
-                            >
-                            <Picker.Item label="Non ordinare gli annunci" value="non_ordinare" />
-                            <Picker.Item label="Distanza geografica crescente" value="crescente" />
-                            <Picker.Item label="Distanza geografica decrescente" value="decrescente" />
-                        </Picker>
-
-                        <View style={{paddingBottom: 2}}></View>
 
                         <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('DettagliAnnuncio', {id_annuncio: '1'})}>
                             <Card style={styles.inputContainer}>
@@ -257,7 +249,24 @@ const styles = StyleSheet.create({
     },
     pickerItem: {
         color: 'white'
+    },
+    contentbar: {
+        height: 50,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      },
+    leftcontainer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-start'
+    },
+    rightcontainer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center'
     }
 });
 
-export default ListaAnnunci;
+export default AnnunciDiUtente;

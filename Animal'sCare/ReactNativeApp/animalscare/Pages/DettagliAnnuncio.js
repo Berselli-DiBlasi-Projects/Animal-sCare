@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Button, Image } from 'react-native';
 import CustomHeader from '../components/Header';
-import Card from '../components/Card'
+import Card from '../components/Card';
 import logo from '../assets/fac-simile.jpg';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import AutoHeightImage from 'react-native-auto-height-image';
@@ -24,10 +24,10 @@ class DettagliAnnuncio extends Component {
                 
                 <View style={styles.contentbar}>
                     <View style={styles.leftcontainer}>
-                        <IconButton icon="arrow-left" onPress={() => this.props.navigation.navigate('ListaAnnunci')} />
+                        <IconButton icon="arrow-left" onPress={() => this.props.navigation.goBack(null)} />
                     </View>
                     <Text style={styles.title}>
-                        Articolo n. {id_annuncio}
+                        Annuncio n. {id_annuncio}
                     </Text>
                     <View style={styles.rightcontainer}></View>
                 </View>
@@ -76,7 +76,7 @@ class DettagliAnnuncio extends Component {
                                         <Button title="Accetta annuncio" onPress={() => this.props.navigation.navigate('AccettaAnnuncioConferma', {id_annuncio: id_annuncio})}/>
                                     </View>
                                     <View style={styles.buttonview}>
-                                        <Button title="Modifica annuncio"/>
+                                        <Button title="Modifica annuncio" onPress={() => this.props.navigation.navigate('ModificaAnnuncio')}/>
                                     </View>
                                     <View style={styles.buttonview}>
                                         <Button title="Elimina annuncio" color='red' onPress={() => this.props.navigation.navigate('EliminaAnnuncioConferma', {id_annuncio: id_annuncio})} />

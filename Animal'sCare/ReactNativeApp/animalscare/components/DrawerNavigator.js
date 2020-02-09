@@ -7,18 +7,19 @@ import ListaAnnunci from '../Pages/ListaAnnunci';
 import InserisciAnnuncio from '../Pages/InserisciAnnuncio';
 import Classifica from '../Pages/Classifica';
 import CercaUtente from '../Pages/CercaUtente';
-import ProfiloNormale from '../Pages/ProfiloNormale';
-import ProfiloPetsitter from '../Pages/ProfiloPetsitter';
 import Calendario from '../Pages/Calendario';
 import Cassa from '../Pages/Cassa';
 import Contattaci from '../Pages/Contattaci';
 import Login from '../Pages/Login';
 import logo from '../assets/favicon.png';
-import CustomStackNavigator from './StackNavigator';
+import RegistrazioneStackNavigator from './RegistrazioneStackNavigator';
+import AnnuncioStackNavigator from './AnnuncioStackNavigator';
+import ProfiloNormaleStackNavigator from './ProfiloNormaleStackNavigator';
+import ProfiloPetsitterStackNavigator from './ProfiloPetsitterStackNavigator';
 
 const {width, height} = Dimensions.get('window');
 
-const hiddenDrawerItems = ['CustomStackNavigator'];
+const hiddenDrawerItems = ['NestedDrawerNavigator'];
 
 const CustomDrawerNavigation = (props) => {
     
@@ -85,24 +86,24 @@ const Drawer = createDrawerNavigator({
           )
         }
     },
-    ProfiloNormale: {
-        screen: ProfiloNormale,
-        navigationOptions: {
+    ProfiloNormaleStackNavigator: {
+      screen: ProfiloNormaleStackNavigator,
+      navigationOptions: {
         title: 'Profilo normale',
         drawerIcon: ({ tintColor }) => (
             <Icon name = "md-person" />
           )
         }
     },
-    ProfiloPetsitter: {
-      screen: ProfiloPetsitter,
+    ProfiloPetsitterStackNavigator: {
+      screen: ProfiloPetsitterStackNavigator,
       navigationOptions: {
-      title: 'Profilo petsitter',
-      drawerIcon: ({ tintColor }) => (
-          <Icon name = "md-person" />
-        )
-      }
-  },
+        title: 'Profilo petsitter',
+        drawerIcon: ({ tintColor }) => (
+            <Icon name = "md-person" />
+          )
+        }
+    },
     Calendario: {
         screen: Calendario,
         navigationOptions: {
@@ -139,13 +140,22 @@ const Drawer = createDrawerNavigator({
           )
         }
     },
-    CustomStackNavigator: {
-        screen: CustomStackNavigator,
-        navigationOptions: ({navigation}) => {
-            return {
-                drawerLabel: () => null,
-            }
+    RegistrazioneStackNavigator: {
+      screen: RegistrazioneStackNavigator,
+        navigationOptions: {
+        title: 'Registrazione',
+        drawerIcon: ({ tintColor }) => (
+            <Icon name = "md-person-add" />
+          )
         }
+    },
+    AnnuncioStackNavigator: {
+      screen: AnnuncioStackNavigator,
+      navigationOptions: ({navigation}) => {
+          return {
+              drawerLabel: () => null,
+          }
+      }
     }
 },
 {

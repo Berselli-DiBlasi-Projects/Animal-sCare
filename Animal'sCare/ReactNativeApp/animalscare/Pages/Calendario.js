@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Button, Image, Dimensions } from 'react-native';
 import CustomHeader from '../components/Header';
-import Card from '../components/Card'
+import Card from '../components/Card';
 import logo from '../assets/favicon.png';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import {Picker} from 'native-base';
@@ -24,7 +24,7 @@ class Calendario extends Component {
                 
                 <View style={styles.contentbar}>
                     <View style={styles.leftcontainer}>
-                        <IconButton icon="arrow-left" onPress={() => this.props.navigation.navigate('ListaAnnunci')} />
+                        <IconButton icon="arrow-left" onPress={() => this.props.navigation.goBack(null)} />
                     </View>
                     <Text style={styles.title}>
                         Calendario

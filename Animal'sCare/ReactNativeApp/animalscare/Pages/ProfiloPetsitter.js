@@ -1,7 +1,7 @@
 import React, { Component, useContext } from 'react';
 import { View, Text, StyleSheet, Button, Image } from 'react-native';
 import CustomHeader from '../components/Header';
-import Card from '../components/Card'
+import Card from '../components/Card';
 import profile_image from '../assets/profile_img2.png';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import AutoHeightImage from 'react-native-auto-height-image';
@@ -24,7 +24,7 @@ class ProfiloPetsitter extends Component {
                 
                 <View style={styles.contentbar}>
                     <View style={styles.leftcontainer}>
-                        <IconButton icon="arrow-left" onPress={() => this.props.navigation.navigate('ListaAnnunci')} />
+                        <IconButton icon="arrow-left" onPress={() => this.props.navigation.goBack(null)} />
                     </View>
                     <Text style={styles.title}>
                         Profilo con id {id_utente}
@@ -93,18 +93,18 @@ class ProfiloPetsitter extends Component {
 
                                 <View style={styles.controlli}>
                                     <View style={styles.buttonview}>
-                                        <Button title="Annunci di laura" onPress={() => this.props.navigation.navigate('ListaAnnunci')}/>
+                                        <Button title="Annunci di laura" onPress={() => this.props.navigation.navigate('AnnunciDiUtentePetsitter')}/>
                                     </View>
                                     <View style={styles.buttonview}>
-                                        <Button title="Recensioni ricevute"/>
+                                        <Button title="Recensioni ricevute" onPress={() => this.props.navigation.navigate('RecensioniRicevutePetsitter', {id_utente: id_utente})}/>
                                     </View>
                                 </View>
                                 <View style={styles.controlli}>
                                     <View style={styles.buttonview}>
-                                        <Button title="Modifica profilo"/>
+                                        <Button title="Modifica profilo" onPress={() => this.props.navigation.navigate('ModificaProfiloPetsitter')} />
                                     </View>
                                     <View style={styles.buttonview}>
-                                        <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConferma', {id_utente: id_utente})} />
+                                        <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConfermaPetsitter', {id_utente: id_utente})} />
                                     </View>
                                 </View>
                             </View>

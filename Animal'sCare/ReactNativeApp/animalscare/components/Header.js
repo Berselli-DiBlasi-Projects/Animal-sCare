@@ -1,5 +1,4 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
 import { Header } from 'react-native-elements';
 import { Icon } from 'native-base';
 

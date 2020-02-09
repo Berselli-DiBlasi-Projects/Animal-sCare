@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, Button, Image, Dimensions } from 'react-native';
 import SearchBar from "react-native-dynamic-search-bar";
 import CustomHeader from '../components/Header';
-import Card from '../components/Card'
-import logo from '../assets/favicon.png';
+import Card from '../components/Card';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
-import {Picker} from 'native-base';
 import profile_image from '../assets/profile_img.jpg';
 import { IconButton } from 'react-native-paper';
 
@@ -14,7 +12,7 @@ const {width, height} = Dimensions.get('window');
 class CercaUtente extends Component {
 
     state = {
-        search: '',
+        search: ''
     };
 
     updateSearch = search => {
@@ -63,13 +61,12 @@ class CercaUtente extends Component {
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.screen}>
 
-                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('ProfiloNormale', {id_profilo: '1'})}>
+                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.goBack(null)}>
+                            
                             <Card style={styles.inputContainer}>
                                 <View style={styles.image}>
                                     <Image source={profile_image} style={styles.profileLogo}  />
                                 </View>
-                                
-
                                 <View style={styles.data}>
                                     <Text style={styles.profileName} numberOfLines={1}>Werther Berselli</Text>
                                     
@@ -84,6 +81,102 @@ class CercaUtente extends Component {
                                     </View>
                                 </View>
                             </Card>
+
+                            <Card style={styles.inputContainer}>
+                                <View style={styles.image}>
+                                    <Image source={profile_image} style={styles.profileLogo}  />
+                                </View>
+                                <View style={styles.data}>
+                                    <Text style={styles.profileName} numberOfLines={1}>Werther Berselli</Text>
+                                    
+                                    <Text style={styles.profileData} numberOfLines={2}>Utente normale, Via Secchia 1/B, Formigine</Text>
+                                    <View style={styles.textInline}>
+                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Voto medio: </Text>
+                                        <Text>5/5</Text>
+                                    </View>
+                                    <View style={styles.textInline}>
+                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Recensioni ricevute: </Text>
+                                        <Text>1</Text>
+                                    </View>
+                                </View>
+                            </Card>
+
+                            <Card style={styles.inputContainer}>
+                                <View style={styles.image}>
+                                    <Image source={profile_image} style={styles.profileLogo}  />
+                                </View>
+                                <View style={styles.data}>
+                                    <Text style={styles.profileName} numberOfLines={1}>Werther Berselli</Text>
+                                    
+                                    <Text style={styles.profileData} numberOfLines={2}>Utente normale, Via Secchia 1/B, Formigine</Text>
+                                    <View style={styles.textInline}>
+                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Voto medio: </Text>
+                                        <Text>5/5</Text>
+                                    </View>
+                                    <View style={styles.textInline}>
+                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Recensioni ricevute: </Text>
+                                        <Text>1</Text>
+                                    </View>
+                                </View>
+                            </Card>
+
+                            <Card style={styles.inputContainer}>
+                                <View style={styles.image}>
+                                    <Image source={profile_image} style={styles.profileLogo}  />
+                                </View>
+                                <View style={styles.data}>
+                                    <Text style={styles.profileName} numberOfLines={1}>Werther Berselli</Text>
+                                    
+                                    <Text style={styles.profileData} numberOfLines={2}>Utente normale, Via Secchia 1/B, Formigine</Text>
+                                    <View style={styles.textInline}>
+                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Voto medio: </Text>
+                                        <Text>5/5</Text>
+                                    </View>
+                                    <View style={styles.textInline}>
+                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Recensioni ricevute: </Text>
+                                        <Text>1</Text>
+                                    </View>
+                                </View>
+                            </Card>
+
+                            <Card style={styles.inputContainer}>
+                                <View style={styles.image}>
+                                    <Image source={profile_image} style={styles.profileLogo}  />
+                                </View>
+                                <View style={styles.data}>
+                                    <Text style={styles.profileName} numberOfLines={1}>Werther Berselli</Text>
+                                    
+                                    <Text style={styles.profileData} numberOfLines={2}>Utente normale, Via Secchia 1/B, Formigine</Text>
+                                    <View style={styles.textInline}>
+                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Voto medio: </Text>
+                                        <Text>5/5</Text>
+                                    </View>
+                                    <View style={styles.textInline}>
+                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Recensioni ricevute: </Text>
+                                        <Text>1</Text>
+                                    </View>
+                                </View>
+                            </Card>
+
+                            <Card style={styles.inputContainer}>
+                                <View style={styles.image}>
+                                    <Image source={profile_image} style={styles.profileLogo}  />
+                                </View>
+                                <View style={styles.data}>
+                                    <Text style={styles.profileName} numberOfLines={1}>Werther Berselli</Text>
+                                    
+                                    <Text style={styles.profileData} numberOfLines={2}>Utente normale, Via Secchia 1/B, Formigine</Text>
+                                    <View style={styles.textInline}>
+                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Voto medio: </Text>
+                                        <Text>5/5</Text>
+                                    </View>
+                                    <View style={styles.textInline}>
+                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Recensioni ricevute: </Text>
+                                        <Text>1</Text>
+                                    </View>
+                                </View>
+                            </Card>
+
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
@@ -128,16 +221,6 @@ const styles = StyleSheet.create({
     },
     touchableopacity: {
         alignItems: 'center'
-    },
-    picker: {
-        width: '90%',
-        height: 45,
-        backgroundColor: '#e7e7e7',
-        borderColor: 'black',
-        borderWidth: 3
-    },
-    pickerItem: {
-        color: 'white'
     },
     contentbar: {
         height: 50,

@@ -1,7 +1,7 @@
 import React, { Component, useContext } from 'react';
 import { View, Text, StyleSheet, Button, Image } from 'react-native';
 import CustomHeader from '../components/Header';
-import Card from '../components/Card'
+import Card from '../components/Card';
 import profile_image from '../assets/profile_img.jpg';
 import pet_image from '../assets/pet_img.jpg';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
@@ -25,7 +25,7 @@ class ProfiloNormale extends Component {
                 
                 <View style={styles.contentbar}>
                     <View style={styles.leftcontainer}>
-                        <IconButton icon="arrow-left" onPress={() => this.props.navigation.navigate('ListaAnnunci')} />
+                        <IconButton icon="arrow-left" onPress={() => this.props.navigation.goBack(null)} />
                     </View>
                     <Text style={styles.title}>
                         Profilo con id {id_utente}
@@ -109,18 +109,18 @@ class ProfiloNormale extends Component {
 
                                 <View style={styles.controlli}>
                                     <View style={styles.buttonview}>
-                                        <Button title="Annunci di werther" onPress={() => this.props.navigation.navigate('ListaAnnunci')}/>
+                                        <Button title="Annunci di werther" onPress={() => this.props.navigation.navigate('AnnunciDiUtenteNormale')} />
                                     </View>
                                     <View style={styles.buttonview}>
-                                        <Button title="Recensioni ricevute"/>
+                                        <Button title="Recensioni ricevute" onPress={() => this.props.navigation.navigate('RecensioniRicevuteNormale', {id_utente: id_utente})}/>
                                     </View>
                                 </View>
                                 <View style={styles.controlli}>
                                     <View style={styles.buttonview}>
-                                        <Button title="Modifica profilo"/>
+                                        <Button title="Modifica profilo" onPress={() => this.props.navigation.navigate('ModificaProfiloNormale')} />
                                     </View>
                                     <View style={styles.buttonview}>
-                                        <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConferma', {id_utente: id_utente})} />
+                                        <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConfermaNormale', {id_utente: id_utente})} />
                                     </View>
                                 </View>
                             </View>

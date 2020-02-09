@@ -10,7 +10,7 @@ import PickerAnimali from '../components/PickerAnimali';
 
 const {width, height} = Dimensions.get('window');
 
-class InserisciAnnuncio extends Component {
+class ModificaAnnuncio extends Component {
 
     state = {
         chk1: false,
@@ -31,7 +31,7 @@ class InserisciAnnuncio extends Component {
                         <IconButton icon="arrow-left" onPress={() => this.props.navigation.goBack(null)} />
                     </View>
                     <Text style={styles.title}>
-                        Inserisci un nuovo annuncio
+                        Modifica annuncio
                     </Text>
                     <View style={styles.rightcontainer}></View>
                 </View>
@@ -176,7 +176,7 @@ class InserisciAnnuncio extends Component {
                                 </View>
                                 <View style={styles.controlli}>
                                     <View style={styles.buttonview}>
-                                        <Button title="Inserisci annuncio" />
+                                        <Button title="Modifica annuncio" />
                                     </View>
                                 </View>
 
@@ -274,4 +274,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default InserisciAnnuncio;
+export default ModificaAnnuncio;

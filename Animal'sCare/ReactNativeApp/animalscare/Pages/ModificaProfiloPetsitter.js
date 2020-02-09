@@ -5,20 +5,12 @@ import Card from '../components/Card';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import { Dimensions } from 'react-native';
 import { IconButton } from 'react-native-paper';
-import CheckBox from 'react-native-check-box'
-import PickerAnimali from '../components/PickerAnimali';
+import PickerProvince from '../components/PickerProvince';
+import PickerRegioni from '../components/PickerRegioni';
 
 const {width, height} = Dimensions.get('window');
 
-class InserisciAnnuncio extends Component {
-
-    state = {
-        chk1: false,
-        chk2: false,
-        chk3: false,
-        chk4: false,
-        chk5: false
-    };
+class ModificaProfiloPetsitter extends Component {
 
     render() {
         return (
@@ -31,7 +23,7 @@ class InserisciAnnuncio extends Component {
                         <IconButton icon="arrow-left" onPress={() => this.props.navigation.goBack(null)} />
                     </View>
                     <Text style={styles.title}>
-                        Inserisci un nuovo annuncio
+                        Modifica profilo (petsitter)
                     </Text>
                     <View style={styles.rightcontainer}></View>
                 </View>
@@ -43,50 +35,59 @@ class InserisciAnnuncio extends Component {
                                 <View style={{flexDirection: 'row'}}>
                                     <View>
                                         <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Titolo:</Text>
+                                            <Text style={styles.textTitle}>Username:</Text>
                                             <Text style={styles.asteriskStyle}>*</Text>
                                         </View>
                                         <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Sottotitolo: </Text>
+                                            <Text style={styles.textTitle}>Password: </Text>
                                             <Text style={styles.asteriskStyle}>*</Text>
+                                        </View>
+                                        <View style={styles.entryTitle}>
+                                            <Text style={styles.textTitle}>Conferma password: </Text>
+                                            <Text style={styles.asteriskStyle}>*</Text>
+                                        </View>
+                                        <View style={styles.entryTitle}>
+                                            <Text style={styles.textTitle}>Nome: </Text>
+                                            <Text style={styles.asteriskStyle}>*</Text>
+                                        </View>
+                                        <View style={styles.entryTitle}>
+                                            <Text style={styles.textTitle}>Cognome: </Text>
+                                            <Text style={styles.asteriskStyle}>*</Text>
+                                        </View>
+                                        <View style={styles.entryTitle}>
+                                            <Text style={styles.textTitle}>Email: </Text>
+                                            <Text style={styles.asteriskStyle}>*</Text>
+                                        </View>
+                                        <View style={styles.entryTitle}>
+                                            <Text style={styles.textTitle}>Indirizzo: </Text>
+                                            <Text style={styles.asteriskStyle}>*</Text>
+                                        </View>
+                                        <View style={styles.entryTitle}>
+                                            <Text style={styles.textTitle}>Città: </Text>
+                                            <Text style={styles.asteriskStyle}>*</Text>
+                                        </View>
+                                        <View style={styles.entryTitle}>
+                                            <Text style={styles.textTitle}>Provincia: </Text>
+                                            <Text style={styles.asteriskStyle}>*</Text>
+                                        </View>
+                                        <View style={styles.entryTitle}>
+                                            <Text style={styles.textTitle}>Regione: </Text>
+                                            <Text style={styles.asteriskStyle}>*</Text>
+                                        </View>
+                                        <View style={styles.entryTitle}>
+                                            <Text style={styles.textTitle}>Telefono: </Text>
+                                            <Text style={styles.asteriskStyle}>*</Text>
+                                        </View>
+                                        <View style={styles.entryTitle}>
+                                            <Text style={styles.textTitle}>Foto profilo: </Text>
                                         </View>
                                         <View style={styles.entryTitle}>
                                             <Text style={styles.textTitle}>Descrizione: </Text>
                                             <Text style={styles.asteriskStyle}>*</Text>
                                         </View>
                                         <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Data inizio: </Text>
+                                            <Text style={styles.textTitle}>Hobby: </Text>
                                             <Text style={styles.asteriskStyle}>*</Text>
-                                        </View>
-                                        <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Data fine: </Text>
-                                            <Text style={styles.asteriskStyle}>*</Text>
-                                        </View>
-                                        <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Pet: </Text>
-                                            <Text style={styles.asteriskStyle}>*</Text>
-                                        </View>
-                                        <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Pet coins: </Text>
-                                            <Text style={styles.asteriskStyle}>*</Text>
-                                        </View>
-                                        <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Logo annuncio: </Text>
-                                        </View>
-                                        <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Passeggiate: </Text>
-                                        </View>
-                                        <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Pulizia gabbia: </Text>
-                                        </View>
-                                        <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Ore compagnia: </Text>
-                                        </View>
-                                        <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Cibo: </Text>
-                                        </View>
-                                        <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Accompagna dal vet: </Text>
                                         </View>
                                     </View>
 
@@ -98,85 +99,44 @@ class InserisciAnnuncio extends Component {
                                             <TextInput editable maxLength={95} />
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={245} multiline={true} />
+                                            <TextInput editable maxLength={95} />
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={20} multiline={true} />
+                                            <TextInput editable maxLength={95} />
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={20} multiline={true} />
-                                        </View>
-                                        <View>
-                                            <PickerAnimali />
+                                            <TextInput editable maxLength={95} />
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={10} multiline={true} />
+                                            <TextInput editable maxLength={95} />
+                                        </View>
+                                        <View style={styles.textContainer}>
+                                            <TextInput editable maxLength={95} />
+                                        </View>
+                                        <View style={styles.textContainer}>
+                                            <TextInput editable maxLength={95} />
+                                        </View>
+                                        <PickerProvince />
+                                        <PickerRegioni />
+                                        <View style={styles.textContainer}>
+                                            <TextInput editable maxLength={95} />
                                         </View>
                                         <View>
                                             <TouchableOpacity style={styles.caricaStyle}>
                                                 <Text style={{marginTop: 2}}>Browse...</Text>
                                             </TouchableOpacity>
                                         </View>
-                                        <View style={styles.checkBoxStyle}>
-                                            <CheckBox
-                                                title='chk1'
-                                                onClick={()=>{
-                                                    this.setState({
-                                                        chk1:!this.state.chk1
-                                                    })
-                                                }}
-                                                isChecked={this.state.chk1}
-                                            />
+                                        <View style={styles.textContainer}>
+                                            <TextInput editable maxLength={95} />
                                         </View>
-                                        <View style={styles.checkBoxStyle}>
-                                            <CheckBox
-                                                title='chk2'
-                                                onClick={()=>{
-                                                    this.setState({
-                                                        chk2:!this.state.chk2
-                                                    })
-                                                }}
-                                                isChecked={this.state.chk2}
-                                            />
-                                        </View>
-                                        <View style={styles.checkBoxStyle}>
-                                            <CheckBox
-                                                title='chk3'
-                                                onClick={()=>{
-                                                    this.setState({
-                                                        chk3:!this.state.chk3
-                                                    })
-                                                }}
-                                                isChecked={this.state.chk3}
-                                            />
-                                        </View>
-                                        <View style={styles.checkBoxStyle}>
-                                            <CheckBox
-                                                title='chk4'
-                                                onClick={()=>{
-                                                    this.setState({
-                                                        chk4:!this.state.chk4
-                                                    })
-                                                }}
-                                                isChecked={this.state.chk4}
-                                            />
-                                        </View>
-                                        <View style={styles.checkBoxStyle}>
-                                            <CheckBox
-                                                title='chk5'
-                                                onClick={()=>{
-                                                    this.setState({
-                                                        chk5:!this.state.chk5
-                                                    })
-                                                }}
-                                                isChecked={this.state.chk5}
-                                            />
+                                        <View style={styles.textContainer}>
+                                            <TextInput editable maxLength={95} />
                                         </View>
                                     </View>
                                 </View>
                                 <View style={styles.controlli}>
                                     <View style={styles.buttonview}>
-                                        <Button title="Inserisci annuncio" />
+                                        <Button title="Registrati" />
                                     </View>
                                 </View>
 
@@ -254,18 +214,13 @@ const styles = StyleSheet.create({
         marginTop: 3
     },
     caricaStyle: {
-        marginBottom: 3,
-        marginTop: 3,
+        marginBottom: 1,
+        marginTop: 1,
         height: 28,
         width: 100,
         marginLeft: 10,
         borderWidth: 1,
         alignItems: 'center'
-    },
-    checkBoxStyle: {
-        marginLeft: 10,
-        marginBottom: 6,
-        marginTop: 3
     },
     asteriskStyle: {
         marginLeft: 3,
@@ -274,4 +229,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default InserisciAnnuncio;
+export default ModificaProfiloPetsitter;
