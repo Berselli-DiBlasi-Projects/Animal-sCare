@@ -585,7 +585,7 @@ def registrazione_normale(request):
         user.set_password(password)
         user.save()
 
-        profile = Profile.objects.create(user=user)
+        profile = Profile.objects.get(user=user)
         try:
             profile.foto_profilo = request.FILES['foto_profilo']
         except Exception:
@@ -653,7 +653,7 @@ def registrazione_petsitter(request):
         user.set_password(password)
         user.save()
 
-        profile = Profile.objects.create(user=user)
+        profile = Profile.objects.get(user=user)
         try:
             profile.foto_profilo = request.FILES['foto_profilo']
         except Exception:

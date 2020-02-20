@@ -12,7 +12,12 @@ urlpatterns = [
     url(r'^contattaci/', include('contattaci.urls')),
     url(r'^utenti/', include('utenti.urls')),
     url(r'^recensioni/', include('recensioni.urls')),
+    url(r'^API/', include('API.urls')),
     url('', include('social_django.urls', namespace='social')),
+
+    url("api-auth/", include("rest_framework.urls")),
+    url("api/rest-auth/", include("rest_auth.urls")),
+    url("api/rest-auth/registration/", include("rest_auth.registration.urls")),
 ]
 
 handler404 = main_views.handler404
