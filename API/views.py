@@ -16,7 +16,7 @@ from API.serializers import (AnagraficaSerializer,
                              AnnuncioConServizi,
                              DatiUtenteCompleti,
                              )
-from annunci.views import recupera_annunci
+from annunci.views import ordina_annunci as ordina_geograficamente
 from datetime import datetime
 
 from django.core.exceptions import PermissionDenied
@@ -107,12 +107,94 @@ class listaAnnunci(generics.ListAPIView):
      Questa view restituisce la lista completa di tutti gli annunci
      """
     # queryset = Annuncio.objects.all()
-    serializer_class = AnnuncioConServizi
+    serializer_class = AnnuncioSerializer
 
     def get_queryset(self):
         # data_odierna = datetime.now();
         # return Annuncio.objects.filter(user_accetta=None)
-        return Servizio.objects.filter(annuncio__user_accetta__isnull=True)
+        return Annuncio.objects.filter(user_accetta__isnull=True)
+
+
+class filtraAnnunciPetsitter(generics.ListAPIView):
+    serializer_class = AnnuncioSerializer
+    def get_queryset(self):
+        return Annuncio.objects.filter(user_accetta__isnull=True, annuncio_petsitter=True)
+
+
+class filtraAnnunciUtentiNormali(generics.ListAPIView):
+    serializer_class = AnnuncioConServizi
+    def get_queryset(self):
+        return Servizio.objects.filter(annuncio__user_accetta__isnull=True, annuncio__annuncio_petsitter=False)
+
+
+class filtraAnnunciPerCane(generics.ListAPIView):
+    serializer_class = AnnuncioSerializer
+    def get_queryset(self):
+        return Annuncio.objects.filter(user_accetta__isnull=True, pet='Cane')
+
+
+class filtraAnnunciPerGatto(generics.ListAPIView):
+    serializer_class = AnnuncioSerializer
+    def get_queryset(self):
+        return Annuncio.objects.filter(user_accetta__isnull=True, pet='Gatto')
+
+
+class filtraAnnunciPerConiglio(generics.ListAPIView):
+    serializer_class = AnnuncioSerializer
+    def get_queryset(self):
+        return Annuncio.objects.filter(user_accetta__isnull=True, pet='Coniglio')
+
+
+class filtraAnnunciPerVolatile(generics.ListAPIView):
+    serializer_class = AnnuncioSerializer
+    def get_queryset(self):
+        return Annuncio.objects.filter(user_accetta__isnull=True, pet='Volatile')
+
+
+class filtraAnnunciPerRettile(generics.ListAPIView):
+    serializer_class = AnnuncioSerializer
+    def get_queryset(self):
+        return Annuncio.objects.filter(user_accetta__isnull=True, pet='Rettile')
+
+
+class filtraAnnunciPerAltro(generics.ListAPIView):
+    serializer_class = AnnuncioSerializer
+    def get_queryset(self):
+        return Annuncio.objects.filter(accetta__isnull=True, pet='Altro')
+
+
+class ordinaAnnunciDistanzaCrescente(generics.ListAPIView):
+    serializer_class = AnnuncioSerializer
+    def get_queryset(self):
+        lista = Annuncio.objects.filter(user_accetta__isnull=True)
+        profilo_utente = Profile.objects.get(user=self.request.user)
+        indici = []
+        indici = ordina_geograficamente(profilo_utente, lista, 'crescente')
+
+        lista = list(lista)
+        new_annunci_validi = list()
+        # Ordina annunci_validi
+        for i, annuncio in enumerate(lista):
+            new_annunci_validi.append(lista[indici[i]])
+
+        return new_annunci_validi
+
+
+class ordinaAnnunciDistanzaDecrescente(generics.ListAPIView):
+    serializer_class = AnnuncioSerializer
+    def get_queryset(self):
+        lista = Annuncio.objects.filter(user_accetta__isnull=True)
+        profilo_utente = Profile.objects.get(user=self.request.user)
+        indici = []
+        indici = ordina_geograficamente(profilo_utente, lista, 'decrescente')
+
+        lista = list(lista)
+        new_annunci_validi = list()
+        # Ordina annunci_validi
+        for i, annuncio in enumerate(lista):
+            new_annunci_validi.append(lista[indici[i]])
+
+        return new_annunci_validi
 
 
 class dettaglioAnnuncio(generics.RetrieveUpdateDestroyAPIView):

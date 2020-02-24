@@ -27,6 +27,44 @@ urlpatterns = [
     # /API/annunci/  metodi ammessi  GET : a tutti gli utenti
     url(r'annunci/$', views.listaAnnunci.as_view(), name='API-lista-annunci'),
 
+    # /API/annunci/filtra-per-cane/  metodi ammessi  GET : a tutti gli utenti
+    url(r'annunci/filtra-per-cane/$', views.filtraAnnunciPerCane.as_view(), name='API-filtra-annunci-per-cane'),
+
+    # /API/annunci/filtra-per-gatto/  metodi ammessi  GET : a tutti gli utenti
+    url(r'annunci/filtra-per-gatto/$', views.filtraAnnunciPerGatto.as_view(), name='API-filtra-annunci-per-gatto'),
+
+    # /API/annunci/filtra-per-coniglio/  metodi ammessi  GET : a tutti gli utenti
+    url(r'annunci/filtra-per-coniglio/$', views.filtraAnnunciPerConiglio.as_view(),
+        name='API-filtra-annunci-per-coniglio'),
+
+    # /API/annunci/filtra-per-volatile/  metodi ammessi  GET : a tutti gli utenti
+    url(r'annunci/filtra-per-volatile/$', views.filtraAnnunciPerVolatile.as_view(),
+        name='API-filtra-annunci-per-volatile'),
+
+    # /API/annunci/filtra-per-rettile/  metodi ammessi  GET : a tutti gli utenti
+    url(r'annunci/filtra-per-rettile/$', views.filtraAnnunciPerRettile.as_view(),
+        name='API-filtra-annunci-per-rettile'),
+
+    # /API/annunci/filtra-per-altro/  metodi ammessi  GET : a tutti gli utenti
+    url(r'annunci/filtra-per-altro/$', views.filtraAnnunciPerAltro.as_view(),
+        name='API-filtra-annunci-per-altro'),
+
+    # /API/annunci/filtra-per-petsitter/  metodi ammessi  GET : a tutti gli utenti
+    url(r'annunci/filtra-per-petsitter/$', views.filtraAnnunciPetsitter.as_view(),
+        name='API-filtra-annunci-petsitter'),
+
+    # /API/annunci/filtra-per-petsitter/  metodi ammessi  GET : a tutti gli utenti
+    url(r'annunci/filtra-per-utenti-normali/$', views.filtraAnnunciUtentiNormali.as_view(),
+        name='API-filtra-annunci-utenti-normali'),
+
+    # /API/annunci/ordina-per-dist-crescente/  metodi ammessi  GET : a tutti gli utenti
+    url(r'annunci/ordina-per-dist-crescente/$', views.ordinaAnnunciDistanzaCrescente.as_view(),
+        name='API-ordina-annunci-distanza-crescente'),
+
+    # /API/annunci/filtra-per-dist-decrescente/  metodi ammessi  GET : a tutti gli utenti
+    url(r'annunci/ordina-per-dist-decrescente/$', views.ordinaAnnunciDistanzaDecrescente.as_view(),
+        name='API-ordina-annunci-distanza-decrescente'),
+
     # /API/annunci/<int:oid>/dettagli' GET : a tutti gli utenti | POST/PUT/DELETE solo ai proprietari
     url(r'annunci/(?P<pk>[0-9]+)/dettagli/$', views.dettaglioAnnuncio.as_view(), name='API-dettaglio-annuncio'),
 
