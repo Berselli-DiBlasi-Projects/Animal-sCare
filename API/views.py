@@ -16,6 +16,7 @@ from API.serializers import (AnagraficaSerializer,
                              AnnuncioConServizi,
                              DatiUtenteCompleti,
                              )
+from annunci.views import recupera_annunci
 from datetime import datetime
 
 from django.core.exceptions import PermissionDenied
@@ -111,7 +112,7 @@ class listaAnnunci(generics.ListAPIView):
     def get_queryset(self):
         # data_odierna = datetime.now();
         # return Annuncio.objects.filter(user_accetta=None)
-        return Servizio.objects.filter(annuncio__user_accetta=None)
+        return Servizio.objects.filter(annuncio__user_accetta__isnull=True)
 
 
 class dettaglioAnnuncio(generics.RetrieveUpdateDestroyAPIView):
@@ -119,7 +120,7 @@ class dettaglioAnnuncio(generics.RetrieveUpdateDestroyAPIView):
     Questa view restituisce l'annuncio avente ID passato tramite URL
     e ne permette la modifica
     """
-    permission_classes = [IsAnnuncioPossessorOrReadOnly,IsUserLogged]
+    permission_classes = [IsAnnuncioPossessorOrReadOnly]
     serializer_class = AnnuncioConServizi
     def get_object(self):
         """
@@ -234,28 +235,28 @@ class accettaAnnuncio(generics.RetrieveUpdateAPIView):
     #     serializer.save(user_accetta=user_accetta)
 
 
-# class calendarioUtente(generics.ListAPIView):
-#     permission_classes = [IsUserLogged]
-#     serializer_class = AnnuncioConServizi
-#     def get_queryset(self):
-#         user_request = self.request.user
-#         print("user", user_request)
-#
-#         user = Profile.objects.get(user=user_request)
-#
-#         if user.pet_sitter == True:
-#             # return Servizio.objects.filter(annuncio__user=oid, annuncio__user_accetta=None)
-#             queryset = Servizio.objects.filter(annuncio__user_accetta=None, annuncio__annuncio_petsitter=False)
-#         else:
-#             queryset = Servizio.objects.filter(annuncio__user_accetta=None, annuncio__annuncio_petsitter=True)
-#         print("queryset ", queryset)
-#
-#         return queryset
+class calendarioUtente(generics.ListAPIView):
+    permission_classes = [IsUserLogged]
+    serializer_class = AnnuncioSerializer
+    def get_queryset(self):
+        user_request = self.request.user
+        print("user", user_request)
 
+        queryset = Annuncio.objects.filter(user_accetta=user_request)
+        print("queryset ", queryset)
 
+        return queryset
 
-
-
+class cercaUtente(generics.RetrieveAPIView):
+    permission_classes = [IsUserLogged]
+    serializer_class = DatiUtenteCompleti
+    def get_object(self):
+        name = self.kwargs['name']
+        print(name)
+        username_cercato = User.objects.get(username=name)
+        profilo = Profile.objects.get(user=username_cercato)
+        profilo.user.password=""
+        return profilo
 
 # #################################################
 #                          DA CANCELLARE

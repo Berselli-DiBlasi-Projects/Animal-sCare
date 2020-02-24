@@ -9,7 +9,7 @@ class Annuncio(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
     user_accetta = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='user_accetta')
 
-    annuncio_petsitter = models.BooleanField(default=True)   # Indica se l'annuncio è stato inserito da un petsitter
+    annuncio_petsitter = models.BooleanField(default=True)   # Indica se l'annuncio e' stato inserito da un petsitter
     titolo = models.CharField(max_length=100)
     sottotitolo = models.CharField(max_length=100)
     descrizione = models.CharField(max_length=250)
@@ -27,6 +27,9 @@ class Annuncio(models.Model):
     class Meta:
         verbose_name = 'Annuncio'
         verbose_name_plural = "Annunci"
+
+    def __str__(self):
+        return self.titolo
 
 
 class Servizio(models.Model):

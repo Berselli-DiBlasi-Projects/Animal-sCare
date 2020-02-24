@@ -12,7 +12,7 @@ urlpatterns = [
     url(r'^contattaci/', include('contattaci.urls')),
     url(r'^utenti/', include('utenti.urls')),
     url(r'^recensioni/', include('recensioni.urls')),
-    url(r'^API/', include('API.urls')),
+    url(r'^api/', include('API.urls')),
     url('', include('social_django.urls', namespace='social')),
 
     url("api-auth/", include("rest_framework.urls")),

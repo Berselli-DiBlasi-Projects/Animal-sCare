@@ -47,9 +47,10 @@ urlpatterns = [
 
 
     # /API/annunci/<int:oid>/elenco' GET : a tutti gli utenti
-    # url(r'annunci/calendario/$', views.calendarioUtente.as_view(), name='API-calendario-utente'),
+    url(r'annunci/calendario/$', views.calendarioUtente.as_view(), name='API-calendario-utente'),
 
-
+    # /API/utenti/cerca/<char:name>' GET : tutti gli utenti
+    url(r'utenti/cerca/(?P<name>[A-Za-z0-9èòàùì]+)/$', views.cercaUtente.as_view(), name='API-cerca-utente'),
 
     #
     # # /API/lista-utenti/<int:oid>'

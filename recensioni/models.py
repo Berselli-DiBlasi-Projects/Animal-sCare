@@ -12,3 +12,6 @@ class Recensione(models.Model):
     class Meta:
         verbose_name = 'Recensione'
         verbose_name_plural = "Recensioni"
+
+    def __str__(self):
+        return self.titolo
