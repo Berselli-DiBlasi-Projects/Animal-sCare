@@ -40,11 +40,11 @@ from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_MET
 #         oid = self.kwargs['pk']
 #         return User.objects.filter(id=oid)
 
-class userInfoLogin(generics.RetrieveUpdateAPIView):
+class userInfoLogin(generics.RetrieveAPIView):
     """
     Questa view restituisce la lista completa degli utenti registrati
     """
-    permission_classes = [IsSameUserOrReadOnly,IsUserLogged]
+    # permission_classes = [IsSameUserOrReadOnly,IsUserLogged]
     serializer_class = DatiUtenteCompleti
     def get_object(self):
         """
@@ -54,7 +54,16 @@ class userInfoLogin(generics.RetrieveUpdateAPIView):
         oid = self.kwargs['pk']
         return Profile.objects.get(user=oid)
 
+class selfUserInfoLogin(generics.RetrieveUpdateAPIView):
+    '''
+    restituisco di default il profilo dell'utente loggato
+    '''
+    permission_classes = [IsSameUserOrReadOnly, IsUserLogged]
+    serializer_class = DatiUtenteCompleti
 
+    def get_object(self):
+
+        return Profile.objects.get(user=self.request.user)
 
 
 # class anagraficaUtente(generics.RetrieveUpdateAPIView):

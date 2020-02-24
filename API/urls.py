@@ -21,6 +21,9 @@ urlpatterns = [
     # /API/utenti/profilo/<int:oid> metodi ammessi :GET / PUT
     url(r'utenti/profilo/(?P<pk>[0-9]+)/$', views.userInfoLogin.as_view(), name='API-user-info'),
 
+    # /API/utenti/profilo/<int:oid> metodi ammessi :GET / PUT
+    url(r'utenti/profilo/$', views.selfUserInfoLogin.as_view(), name='API-self-user-info'),
+
     # /API/utenti/profilo/<int:oid>/anagrafica   metodi ammessi : GET / PUT
     # url(r'utenti/profilo/(?P<pk>[0-9]+)/anagrafica/$', views.anagraficaUtente.as_view(), name='API-anagrafica-utente'),
 
