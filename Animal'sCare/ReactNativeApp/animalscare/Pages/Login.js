@@ -5,10 +5,41 @@ import Card from '../components/Card';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import { Dimensions } from 'react-native';
 import { IconButton } from 'react-native-paper';
-
 const {width, height} = Dimensions.get('window');
 
 class Login extends Component {
+
+    constructor(props){
+        super(props);
+        this.state ={ 
+            username: "",
+            password: ""
+        }
+    }
+
+    loginExecute = () => {
+        fetch('http://2.224.160.133.xip.io/api/rest-auth/login/',
+            {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                username: this.state.username,
+                password: this.state.password,
+              }),
+            })
+            .then(res => res.json())
+            .then((res) => {
+                console.log('the response is:', res);
+            })
+            .then(obj =>  {
+              callback(obj)
+            })
+            .catch((error) => {
+            })
+    }
 
     render() {
         return (
@@ -42,16 +73,18 @@ class Login extends Component {
 
                                     <View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95} 
+                                                onChangeText={(value) => this.setState({username: value})} />
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95} 
+                                                onChangeText={(value) => this.setState({password: value})} />
                                         </View>
                                     </View>
                                 </View>
                                 <View style={styles.controlli}>
                                     <View style={styles.buttonview}>
-                                        <Button title="Accedi" />
+                                        <Button title="Accedi" onPress={ this.loginExecute } />
                                     </View>
                                 </View>
 

@@ -11,6 +11,7 @@ import Calendario from '../Pages/Calendario';
 import Cassa from '../Pages/Cassa';
 import Contattaci from '../Pages/Contattaci';
 import Login from '../Pages/Login';
+import Logout from '../Pages/Logout';
 import logo from '../assets/favicon.png';
 import RegistrazioneStackNavigator from './RegistrazioneStackNavigator';
 import AnnuncioStackNavigator from './AnnuncioStackNavigator';
@@ -23,6 +24,17 @@ const hiddenDrawerItems = ['NestedDrawerNavigator'];
 
 const CustomDrawerNavigation = (props) => {
     
+    var label_utente = "";
+    if (!global.logged_in) {
+      label_utente = "Utente anonimo";
+    } else {
+      if (global.is_petsitter) {
+        label_utente = "Petsitter";
+      } else {
+        label_utente = "Utente normale";
+      }
+    }
+
     return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ height: 250, backgroundColor: '#cfe3f3', opacity: 0.9 }}>
@@ -30,7 +42,7 @@ const CustomDrawerNavigation = (props) => {
           <Image source={require('../assets/no-image.png')} style={{ height: 150, width: 150, borderRadius: 60 }} />
         </View>
         <View style={{ height: 50, backgroundColor: 'Green', alignItems: 'center', justifyContent: 'center' }}>
-          <Text>Utente non registrato</Text>
+        <Text>{label_utente}</Text>
         </View>
       </View>
       <ScrollView>
@@ -61,11 +73,19 @@ const Drawer = createDrawerNavigator({
     },
     InserisciAnnuncio: {
         screen: InserisciAnnuncio,
-        navigationOptions: {
-        title: 'Inserisci annuncio',
-        drawerIcon: ({ tintColor }) => (
-            <Icon name = "md-add" />
-          )
+        navigationOptions: ({navigation}) => {
+          if(!global.logged_in) {
+            return {
+              drawerLabel: () => null
+            }
+          } else {
+            return {
+              title: 'Inserisci annuncio',
+              drawerIcon: ({ tintColor }) => (
+                <Icon name = "md-add" />
+              )
+            }
+          }
         }
     },
     Classifica: {
@@ -88,71 +108,144 @@ const Drawer = createDrawerNavigator({
     },
     ProfiloNormaleStackNavigator: {
       screen: ProfiloNormaleStackNavigator,
-      navigationOptions: {
-        title: 'Profilo normale',
-        drawerIcon: ({ tintColor }) => (
-            <Icon name = "md-person" />
-          )
+      navigationOptions: ({navigation}) => {
+        if(!global.logged_in) {
+          return {
+            drawerLabel: () => null
+          }
+        } else {
+          return {
+            title: 'Profilo normale',
+            drawerIcon: ({ tintColor }) => (
+              <Icon name = "md-person" />
+            )
+          }
         }
+      }
     },
     ProfiloPetsitterStackNavigator: {
       screen: ProfiloPetsitterStackNavigator,
-      navigationOptions: {
-        title: 'Profilo petsitter',
-        drawerIcon: ({ tintColor }) => (
-            <Icon name = "md-person" />
-          )
+      navigationOptions: ({navigation}) => {
+        if(!global.logged_in) {
+          return {
+            drawerLabel: () => null
+          }
+        } else {
+          return {
+            title: 'Profilo petsitter',
+            drawerIcon: ({ tintColor }) => (
+              <Icon name = "md-person" />
+            )
+          }
         }
+      }
     },
     Calendario: {
         screen: Calendario,
-        navigationOptions: {
-        title: 'Calendario',
-        drawerIcon: ({ tintColor }) => (
-            <Icon name = "calendar" />
-          )
+        navigationOptions: ({navigation}) => {
+          if(!global.logged_in) {
+            return {
+              drawerLabel: () => null
+            }
+          } else {
+            return {
+              title: 'Calendario',
+              drawerIcon: ({ tintColor }) => (
+                <Icon name = "calendar" />
+              )
+            }
+          }
         }
     },
     Cassa: {
         screen: Cassa,
-        navigationOptions: {
-        title: 'Cassa',
-        drawerIcon: ({ tintColor }) => (
-            <Icon name = "md-cart" />
-          )
+        navigationOptions: ({navigation}) => {
+          if(!global.logged_in) {
+            return {
+              drawerLabel: () => null
+            }
+          } else {
+            return {
+              title: 'Cassa',
+              drawerIcon: ({ tintColor }) => (
+                <Icon name = "md-cart" />
+              )
+            }
+          }
         }
     },
     Contattaci: {
         screen: Contattaci,
-        navigationOptions: {
-        title: 'Contattaci',
-        drawerIcon: ({ tintColor }) => (
-            <Icon name = "md-mail" />
-          )
-        }
-    },
-    Login: {
-        screen: Login,
-        navigationOptions: {
-        title: 'Login',
-        drawerIcon: ({ tintColor }) => (
-            <Icon name = "md-power" />
-          )
+        navigationOptions: ({navigation}) => {
+          if(!global.logged_in) {
+            return {
+              drawerLabel: () => null
+            }
+          } else {
+            return {
+              title: 'Contattaci',
+              drawerIcon: ({ tintColor }) => (
+                <Icon name = "md-mail" />
+              )
+            }
+          }
         }
     },
     RegistrazioneStackNavigator: {
       screen: RegistrazioneStackNavigator,
-        navigationOptions: {
-        title: 'Registrazione',
-        drawerIcon: ({ tintColor }) => (
-            <Icon name = "md-person-add" />
-          )
+        navigationOptions: ({navigation}) => {
+          if(global.logged_in) {
+            return {
+              drawerLabel: () => null
+            }
+          } else {
+            return {
+              title: 'Registrazione',
+              drawerIcon: ({ tintColor }) => (
+                <Icon name = "md-person-add" />
+              )
+            }
+          }
         }
     },
+    Login: {
+        screen: Login,
+        navigationOptions: ({navigation}) => {
+          if(global.logged_in) {
+            return {
+              drawerLabel: () => null
+            }
+          } else {
+            return {
+              title: 'Login',
+              drawerIcon: ({ tintColor }) => (
+                <Icon name = "md-power" />
+              )
+            }
+          }
+        }
+    },
+    Logout: {
+      screen: Logout,
+      navigationOptions: ({navigation}) => {
+        if(!global.logged_in) {
+          return {
+            drawerLabel: () => null
+          }
+        } else {
+          return {
+            title: 'Logout',
+            drawerIcon: ({ tintColor }) => (
+              <Icon name = "md-power" />
+            )
+          }
+        }
+      }
+  },
     AnnuncioStackNavigator: {
       screen: AnnuncioStackNavigator,
       navigationOptions: ({navigation}) => {
-          return {
+            return {
               drawerLabel: () => null,
           }
       }

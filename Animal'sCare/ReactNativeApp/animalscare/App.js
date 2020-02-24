@@ -8,6 +8,12 @@ const AppContainer = createAppContainer(Drawer);
 
 export default class App extends React.Component {
   
+  constructor() {
+    super();
+    global.logged_in = false;
+    global.is_petsitter = false;
+  }
+
   state = {
     fontLoaded: false,
   };

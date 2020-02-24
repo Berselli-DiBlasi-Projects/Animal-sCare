@@ -919,6 +919,11 @@
     pouchdb-collections "^1.0.1"
     tiny-queue "^0.2.1"
 
+"@freakycoder/react-native-helpers@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@freakycoder/react-native-helpers/-/react-native-helpers-0.1.2.tgz#a96a919b15cbd0ef0e2ed96e87149dd0b0bd9613"
+  integrity sha512-iRmGZKRNvdGmaEyHJnpqqwSfLSFf+y2wCWcV0VpMUl52zvGmivJ5Zpw9wEnmgw4u5oXFkRD0NC/30rdUuDa9wg==
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
@@ -1085,7 +1090,7 @@
     wcwidth "^1.0.1"
     ws "^1.1.0"
 
-"@react-native-community/masked-view@^0.1.6":
+"@react-native-community/masked-view@^0.1.5":
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/@react-native-community/masked-view/-/masked-view-0.1.6.tgz#c7f2ac187c1f25aa8c30d11baa8f4398eca3bb84"
   integrity sha512-PpMoeXwPUoldCRKDuSi+zK5rT+sJTW6ri6RdGPkSKRzU77Q1d9IaR0O5IKvBj0XSdL3p+dcOa05gk35aGDffBQ==
@@ -3108,7 +3113,7 @@ inquirer@^3.0.6:
     strip-ansi "^4.0.0"
     through "^2.3.6"
 
-invariant@^2.2.2, invariant@^2.2.4:
+invariant@^2.1.0, invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -4641,7 +4646,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.5.10, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -4729,12 +4734,26 @@ react-native-auto-height-image@^3.0.0:
   dependencies:
     prop-types "^15.7.2"
 
+react-native-check-box@^2.1.7:
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/react-native-check-box/-/react-native-check-box-2.1.7.tgz#f349d3505a13c15d19949ec4cec40c7adc4f3626"
+  integrity sha512-dPVOoz4jKs2je2HSHp7+XJXNyZFq8Kij7IHutigrQKzB550Dko6ZAQu/1mG1FzdUMFxxkZ2nX59KmbR0Co0T8Q==
+  dependencies:
+    prop-types "^15.5.7"
+
 react-native-circle-button@^1.0.9:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/react-native-circle-button/-/react-native-circle-button-1.0.9.tgz#bf9362b71d4ebd8cdd6e36cda1ee9b133d457964"
   integrity sha512-1DU1L0AJEjVJzHlrQdzDzkwtE0BadIm9TaCJAYg2q+f3Bnqx+62fjqO5gQAMoilgPEgnOTvb9wQd4lVDwv+jeA==
   dependencies:
     prop-types "^15.6.1"
+
+react-native-cookies@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-cookies/-/react-native-cookies-3.3.0.tgz#527f65eb2d8a7a000107706bb11beb57f511e701"
+  integrity sha512-GobKo8Kvyuif6ROj6rDAjQJpCSLazcZl6AgZb1z7ldB9FrMtetQzXvIehS0QcwbpnXWyJzXJaY0yrlDjFz+NaA==
+  dependencies:
+    invariant "^2.1.0"
 
 react-native-drawer@2.5.1:
   version "2.5.1"
@@ -4743,6 +4762,15 @@ react-native-drawer@2.5.1:
   dependencies:
     prop-types "^15.5.8"
     tween-functions "^1.0.1"
+
+react-native-dynamic-search-bar@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-dynamic-search-bar/-/react-native-dynamic-search-bar-0.3.1.tgz#25f8b661816852c710c6b4b8e571dc98532a45fd"
+  integrity sha512-yxuHDQrxSjJbsjAt5tWZn8jKh2evd0FnfPWikuHTuNLJhF0L5yK8vuwKxuYj4keOWydRKiwO69ZNGVaMJhvGCw==
+
+"react-native-dynamic-vector-icons@github:WrathChaos/react-native-dynamic-vector-icons#expo":
+  version "0.0.4"
+  resolved "https://codeload.github.com/WrathChaos/react-native-dynamic-vector-icons/tar.gz/86649b9f5b0805dd041d8483ba9b5da0e58f287b"
 
 react-native-easy-grid@0.2.2:
   version "0.2.2"
@@ -4775,6 +4803,11 @@ react-native-gesture-handler@^1.5.6:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.4"
     prop-types "^15.7.2"
+
+react-native-image-button-text@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/react-native-image-button-text/-/react-native-image-button-text-1.0.7.tgz#08aba24e05ea2109e5fe3f2baec872d068ac35be"
+  integrity sha512-U5tPevX0iMgicdF6Mffm+jeflyZKB0eNNClQynn4riByCqJn+HY8VFYOPC8qZChSJMVc/ml43ci3reaPje3Ltg==
 
 react-native-iphone-x-helper@^1.0.3, react-native-iphone-x-helper@^1.2.1:
   version "1.2.1"
