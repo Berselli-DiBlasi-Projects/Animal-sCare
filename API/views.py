@@ -122,9 +122,9 @@ class filtraAnnunciPetsitter(generics.ListAPIView):
 
 
 class filtraAnnunciUtentiNormali(generics.ListAPIView):
-    serializer_class = AnnuncioConServizi
+    serializer_class = AnnuncioSerializer
     def get_queryset(self):
-        return Servizio.objects.filter(annuncio__user_accetta__isnull=True, annuncio__annuncio_petsitter=False)
+        return Annuncio.objects.filter(user_accetta__isnull=True, annuncio_petsitter=False)
 
 
 class filtraAnnunciPerCane(generics.ListAPIView):
