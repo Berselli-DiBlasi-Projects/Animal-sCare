@@ -11,10 +11,11 @@ def client():
     print(response_data)
 
     #richiamo la API per gli annunci
-    response = requests.get("http://127.0.0.1:8000/API/annunci/", data=credentials)
+    response = requests.get("http://127.0.0.1:8000/api/annunci/", data=credentials)
     print("Status Code: ", response.status_code)
     response_data = response.json()
     print(response_data)
+
 
 if __name__ == "__main__":
     client()
