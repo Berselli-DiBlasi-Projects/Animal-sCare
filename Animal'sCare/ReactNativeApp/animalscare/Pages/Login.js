@@ -13,7 +13,8 @@ class Login extends Component {
         super(props);
         this.state ={ 
             username: "",
-            password: ""
+            password: "",
+            error_message: ""
         }
     }
 
@@ -32,13 +33,29 @@ class Login extends Component {
             })
             .then(res => res.json())
             .then((res) => {
-                console.log('the response is:', res);
+                if(res.key != null) {
+                    global.user_key = res.key;
+                    global.logged_in = true;
+                    global.username = this.state.username;
+                    this.clearFields();
+                    this.props.navigation.goBack(null);
+                } else {
+                    this.setState({error_message: "Errore: username o password errati."});
+                } 
             })
             .then(obj =>  {
               callback(obj)
             })
             .catch((error) => {
             })
+    }
+
+    clearFields = () => {
+        this.setState({username: ""});
+        this.setState({password: ""});
+        this.setState({error_message: ""});
+        this.txtUsername.clear();
+        this.txtPassword.clear();
     }
 
     render() {
@@ -49,7 +66,9 @@ class Login extends Component {
                 
                 <View style={styles.contentbar}>
                     <View style={styles.leftcontainer}>
-                        <IconButton icon="arrow-left" onPress={() => this.props.navigation.goBack(null)} />
+                        <IconButton icon="arrow-left" onPress={() => 
+                            {this.clearFields();
+                            this.props.navigation.goBack(null);}} />
                     </View>
                     <Text style={styles.title}>
                         Log in
@@ -73,11 +92,13 @@ class Login extends Component {
 
                                     <View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} 
+                                            <TextInput editable maxLength={95}
+                                                ref={input => { this.txtUsername = input }}
                                                 onChangeText={(value) => this.setState({username: value})} />
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} 
+                                            <TextInput editable maxLength={95} secureTextEntry={true}
+                                                ref={input => { this.txtPassword = input }}
                                                 onChangeText={(value) => this.setState({password: value})} />
                                         </View>
                                     </View>
@@ -88,7 +109,9 @@ class Login extends Component {
                                     </View>
                                 </View>
 
-                                <View style={{paddingTop: 25}}></View>
+                                <View style={{paddingTop: 10}}></View>
+                                <Text style={{color: 'red'}}>{this.state.error_message}</Text>
+                                <View style={{paddingTop: 10}}></View>
                                 <View style={{borderBottomColor: 'black', borderBottomWidth: 1, width: width - (width * 10 / 100)}}></View>
                                 <View style={{paddingTop: 25}}></View>
 
@@ -104,10 +127,13 @@ class Login extends Component {
 
                                     <View>
                                         <View style={styles.bottomButton}>
-                                            <Button title="Registrati" onPress={() => this.props.navigation.navigate('Registrazione')}/>
+                                            <Button title="Registrati" onPress={() => {
+                                                this.clearFields();
+                                                this.props.navigation.navigate('Registrazione');}}/>
                                         </View>
                                         <View style={styles.bottomButton}>
-                                            <Button title="Login con Google" />
+                                            <Button title="Login con Google" onPress={() => {
+                                                this.clearFields();}}/>
                                         </View>
                                     </View>
                                 </View>

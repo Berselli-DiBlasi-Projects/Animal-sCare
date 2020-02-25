@@ -31,7 +31,7 @@ class ListaAnnunci extends Component {
       };
     
     componentDidMount(){
-    return fetch('http://2.224.160.133.xip.io/API/annunci/?format=json')
+    return fetch('http://2.224.160.133.xip.io/api/annunci/?format=json')
         .then((response) => response.json())
         .then((responseJson) => {
 
@@ -59,7 +59,7 @@ class ListaAnnunci extends Component {
         }
 
         YellowBox.ignoreWarnings([
-            'VirtualizedLists should never be nested', // TODO: Remove when fixed
+            'VirtualizedLists should never be nested',
         ])
         
         return (
@@ -128,26 +128,26 @@ class ListaAnnunci extends Component {
                         style={{flex: 1}}
                         data={this.state.dataSource}
                         renderItem={({item}) => 
-                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('DettagliAnnuncio', {id_annuncio: '1'})}>
+                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('DettagliAnnuncio', {id_annuncio: item.id})}>
                             <Card style={styles.inputContainer}>
                                 <View style={styles.image}>
-                                    <Image source={ item.annuncio.logo_annuncio ? { uri: item.annuncio.logo_annuncio } : annuncio_default}
+                                    <Image source={ item.logo_annuncio ? { uri: item.logo_annuncio } : annuncio_default }
                                     style={styles.annuncioLogo}
                                 />
                                 </View>
                                 
 
                                 <View style={styles.data}>
-                                    <Text style={styles.annuncioTitle} numberOfLines={1}>{item.annuncio.titolo}</Text>
+                                    <Text style={styles.annuncioTitle} numberOfLines={1}>{item.titolo}</Text>
                                     
-                                    <Text style={styles.annuncioSubtitle} numberOfLines={2}>{item.annuncio.sottotitolo}</Text>
+                                    <Text style={styles.annuncioSubtitle} numberOfLines={2}>{item.sottotitolo}</Text>
                                     <View style={styles.textInline}>
                                         <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Data: </Text>
-                                        <Text>{item.annuncio.data_inizio} {item.annuncio.data_fine}</Text>
+                                        <Text>{item.data_inizio} {item.data_fine}</Text>
                                     </View>
                                     <View style={styles.textInline}>
                                         <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Pubblicato da: </Text>
-                                        <Text>{item.annuncio.user}</Text>
+                                        <Text>{item.user}</Text>
                                     </View>
                                 </View>
                             </Card>

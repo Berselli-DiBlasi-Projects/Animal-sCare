@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, SafeAreaView, ScrollView, Image } from 'react-native';
+import { Text, View, SafeAreaView, ScrollView, Image, Button } from 'react-native';
 import { createDrawerNavigator, DrawerItems } from 'react-navigation-drawer';
 import { Icon } from 'native-base';
 import { Dimensions } from 'react-native';
@@ -28,11 +28,7 @@ const CustomDrawerNavigation = (props) => {
     if (!global.logged_in) {
       label_utente = "Utente anonimo";
     } else {
-      if (global.is_petsitter) {
-        label_utente = "Petsitter";
-      } else {
-        label_utente = "Utente normale";
-      }
+      label_utente = global.username;
     }
 
     return (
@@ -58,7 +54,10 @@ const CustomDrawerNavigation = (props) => {
     </SafeAreaView>
     );
   }
-  
+
+  function provina() {
+    console.log('CIAOOOOOOOO');
+  }
 
 const Drawer = createDrawerNavigator({
     ListaAnnunci: {
