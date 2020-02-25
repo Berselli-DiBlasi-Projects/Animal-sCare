@@ -19,6 +19,11 @@ def nega_accesso_senza_profilo(request):
         except Exception:
             return True
 
+    # if request.user.is_authenticated:
+    #     profilo = Profile.objects.get(user=request.user.id)
+    #     print('profilo.indirizzo ==', profilo.indirizzo, len(profilo.indirizzo))
+    #     if len(profilo.indirizzo)==0:
+    #         return True
     return False
 
 

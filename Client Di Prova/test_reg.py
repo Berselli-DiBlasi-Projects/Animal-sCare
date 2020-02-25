@@ -5,8 +5,8 @@ def client():
     # credentials = {"username": "admin", "password": "asdasdasd"}
 
     data = {
-        "username": "resttest",
-        "email": "test@rest.com",
+        "username": "resttest1",
+        "email": "test1@rest.com",
         "password1": "cambiami12",
         "password2": "cambiami12",
         "first_name": "rest_first_name",

@@ -9,7 +9,6 @@ from utenti.models import Profile
 from annunci.models import Annuncio, Servizio
 
 
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -104,8 +103,120 @@ class DatiUtenteCompleti(serializers.ModelSerializer):
         return instance
 
 
+class CompletaDatiDjangoUser(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        # fields = "__all__"
+        exclude=[
+                "last_login",
+                "is_superuser",
+                "is_staff",
+                "is_active",
+                "date_joined",
+                "groups",
+                "user_permissions",
+                ]
+        read_only_fields = ["id", "email", "username", "password"]
 
 
+class CompletaRegPetsitterSerializer(serializers.ModelSerializer):
+    user = CompletaDatiDjangoUser(many=False)
+    class Meta:
+        model = Profile
+        exclude = ("latitudine",
+                   "longitudine",
+                   "pet_coins",
+                   "pet_sitter",
+                   "id",
+                   'nome_pet',
+                   'pet',
+                   'razza',
+                   'eta',
+                   'caratteristiche',
+                   'foto_pet',
+                   )
+
+    def update(self, instance, validated_data):
+        v = instance.user.username
+        print(v)
+        dati_utente= validated_data.pop('user')
+        print("dati_utente",dati_utente)
+        utente_richiedente = Profile.objects.get(user=instance.user)
+        print("utente richiedente ",utente_richiedente)
+        # username, first_name, last_name, email
+        print("validated_data",validated_data)
+        # instance.user.username = dati_utente['username']
+        # instance.user.set_password(dati_utente['password'])
+        instance.user.first_name = dati_utente['first_name']
+        instance.user.last_name = dati_utente['last_name']
+        # instance.user.email = dati_utente['email']
+        instance.indirizzo = validated_data['indirizzo']
+        instance.citta =  validated_data['citta']
+        instance.regione =  validated_data['regione']
+        instance.provincia =  validated_data['provincia']
+        # instance.latitudine =  validated_data['latitudine']
+        # instance.longitudine =validated_data['longitudine']
+        instance.telefono =validated_data['telefono']
+        # instance.pet_coins =validated_data['pet_coins']
+        instance.foto_profilo =validated_data['foto_profilo']
+
+        instance.pet_sitter=True
+
+        instance.descrizione = validated_data['descrizione']
+        instance.hobby = validated_data['hobby']
+        instance.user.save()
+        instance.save()
+        return instance
+
+class CompletaRegUtenteNormale(serializers.ModelSerializer):
+    user = CompletaDatiDjangoUser(many=False)
+    class Meta:
+        model = Profile
+        # fields = "__all__"
+        exclude = ("latitudine",
+                   "longitudine",
+                   "pet_coins",
+                   "pet_sitter",
+                   "id",
+                   )
+    def update(self, instance, validated_data):
+        v = instance.user.username
+        print(v)
+        dati_utente= validated_data.pop('user')
+        print("dati_utente",dati_utente)
+        utente_richiedente = Profile.objects.get(user=instance.user)
+        print("utente richiedente ",utente_richiedente)
+        # username, first_name, last_name, email
+        print("validated_data",validated_data)
+        # instance.user.username = dati_utente['username']
+        # instance.user.set_password(dati_utente['password'])
+        instance.user.first_name = dati_utente['first_name']
+        instance.user.last_name = dati_utente['last_name']
+        # instance.user.email = dati_utente['email']
+
+
+        instance.indirizzo = validated_data['indirizzo']
+        instance.citta =  validated_data['citta']
+        instance.regione =  validated_data['regione']
+        instance.provincia =  validated_data['provincia']
+        # instance.latitudine =  validated_data['latitudine']
+        # instance.longitudine =validated_data['longitudine']
+        instance.telefono =validated_data['telefono']
+        # instance.pet_coins =validated_data['pet_coins']
+        instance.foto_profilo =validated_data['foto_profilo']
+        print("pet sitter FALSE")
+        instance.pet_sitter=False
+        instance.nome_pet = validated_data['nome_pet']
+        instance.pet = validated_data['pet']
+        instance.razza = validated_data['razza']
+        instance.eta = validated_data['eta']
+        instance.caratteristiche = validated_data['caratteristiche']
+        instance.foto_pet = validated_data['foto_pet']
+        instance.descrizione = validated_data['descrizione']
+        instance.hobby = validated_data['hobby']
+        instance.user.save()
+        instance.save()
+        return instance
 
 
 

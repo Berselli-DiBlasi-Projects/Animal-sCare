@@ -10,11 +10,13 @@ from django.contrib.auth.models import User
 from utenti.models import Profile
 from annunci.models import Annuncio, Servizio
 from API.serializers import (AnagraficaSerializer,
-                             AnnuncioSerializer,
-                             UserSerializer,
-                             ServizioOffertoSerializer,
-                             AnnuncioConServizi,
-                             DatiUtenteCompleti,
+                                AnnuncioSerializer,
+                                UserSerializer,
+                                ServizioOffertoSerializer,
+                                AnnuncioConServizi,
+                                DatiUtenteCompleti,
+                                CompletaRegPetsitterSerializer,
+                                CompletaRegUtenteNormale,
                              )
 from annunci.views import ordina_annunci as ordina_geograficamente
 from datetime import datetime
@@ -65,50 +67,18 @@ class selfUserInfoLogin(generics.RetrieveUpdateAPIView):
 
         return Profile.objects.get(user=self.request.user)
 
+class completaRegPetsitter(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsSameUserOrReadOnly, IsUserLogged]
+    serializer_class = CompletaRegPetsitterSerializer
+    def get_object(self):
+        return Profile.objects.get(user=self.request.user)
 
-# class anagraficaUtente(generics.RetrieveUpdateAPIView):
-#     """
-#      Questa view restituisce l'utente avente ID passato tramite URL
-#      e ne permette la modifica
-#     """
-#     serializer_class = AnagraficaSerializer
-#     permission_classes = [IsSameAnagraficaUserOrReadOnly]
-#     # lookup_field = "pk"
-#     def get_object(self):
-#         oid = self.kwargs['pk']
-#         return get_object_or_404(Profile, user=oid)
-#
-#     # def get_queryset(self):
-#     #     """
-#     #     Modifico il query set in modo da ottenere l'utente con l'id
-#     #     prelevato dall'url
-#     #     """
-#     #     oid = self.kwargs['pk']
-#     #     print("Anagrafica utente : ", oid)
-#     #     obj = Profile.objects.filter(user=oid)
-#     #     print(obj)
-#     #     return obj
 
-#
-# class modificaUserInfoLogin(generics.RetrieveUpdateAPIView):
-#     '''
-#     endpoint per modificare i dati login utente
-#     '''
-#     serializer_class = UserSerializer
-#
-#     def get_queryset(self):
-#         oid = self.kwargs['pk']
-#         return User.objects.filter(id=oid)
-#
-# class modificaAnagraficaUtente(generics.RetrieveUpdateAPIView):
-#     '''
-#     endpoint per modificare i dati dell'anagrafica dell'utente
-#     '''
-#     serializer_class = AnagraficaSerializer
-#     # lookup_field = "pk"
-#     def get_object(self):
-#         oid = self.kwargs['pk']
-#         return get_object_or_404(Profile, user=oid)
+class completaRegUtentenormale(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsSameUserOrReadOnly, IsUserLogged]
+    serializer_class = CompletaRegUtenteNormale
+    def get_object(self):
+        return Profile.objects.get(user=self.request.user)
 
 
 class listaAnnunci(generics.ListAPIView):
@@ -124,87 +94,54 @@ class listaAnnunci(generics.ListAPIView):
         return Annuncio.objects.filter(user_accetta__isnull=True)
 
 
-class filtraAnnunciPetsitter(generics.ListAPIView):
+class ordinaAnnunci(generics.ListAPIView):
+    '''
+    API per ordinamento degli annunci
+    url : /api/annunci/ordina/ < animale > / < ordinamento > / < tipo_utente > /
+
+    Parametri :
+
+    animale :       < Cane, Gatto, Coniglio, Volatile, Rettile, Altro >
+
+    ordinamento :   < crescente, decrescente>
+
+    tipo_utente :   < petsitter, normale >
+
+    Attenzione per ignorare il criterio di ordinamento inserire " * "
+
+    in tal caso se inseriti tutti '*' fornirà i dati normalmente come lista annunci
+    '''
     serializer_class = AnnuncioSerializer
     def get_queryset(self):
-        return Annuncio.objects.filter(user_accetta__isnull=True, annuncio_petsitter=True)
-
-
-class filtraAnnunciUtentiNormali(generics.ListAPIView):
-    serializer_class = AnnuncioSerializer
-    def get_queryset(self):
-        return Annuncio.objects.filter(user_accetta__isnull=True, annuncio_petsitter=False)
-
-
-class filtraAnnunciPerCane(generics.ListAPIView):
-    serializer_class = AnnuncioSerializer
-    def get_queryset(self):
-        return Annuncio.objects.filter(user_accetta__isnull=True, pet='Cane')
-
-
-class filtraAnnunciPerGatto(generics.ListAPIView):
-    serializer_class = AnnuncioSerializer
-    def get_queryset(self):
-        return Annuncio.objects.filter(user_accetta__isnull=True, pet='Gatto')
-
-
-class filtraAnnunciPerConiglio(generics.ListAPIView):
-    serializer_class = AnnuncioSerializer
-    def get_queryset(self):
-        return Annuncio.objects.filter(user_accetta__isnull=True, pet='Coniglio')
-
-
-class filtraAnnunciPerVolatile(generics.ListAPIView):
-    serializer_class = AnnuncioSerializer
-    def get_queryset(self):
-        return Annuncio.objects.filter(user_accetta__isnull=True, pet='Volatile')
-
-
-class filtraAnnunciPerRettile(generics.ListAPIView):
-    serializer_class = AnnuncioSerializer
-    def get_queryset(self):
-        return Annuncio.objects.filter(user_accetta__isnull=True, pet='Rettile')
-
-
-class filtraAnnunciPerAltro(generics.ListAPIView):
-    serializer_class = AnnuncioSerializer
-    def get_queryset(self):
-        return Annuncio.objects.filter(accetta__isnull=True, pet='Altro')
-
-
-class ordinaAnnunciDistanzaCrescente(generics.ListAPIView):
-    serializer_class = AnnuncioSerializer
-    def get_queryset(self):
+        ordinamento = self.kwargs['ordinamento']
+        tipo_utente = self.kwargs['tipo_utente']
+        animale = self.kwargs['animale']
         lista = Annuncio.objects.filter(user_accetta__isnull=True)
-        profilo_utente = Profile.objects.get(user=self.request.user)
-        indici = []
-        indici = ordina_geograficamente(profilo_utente, lista, 'crescente')
+        if tipo_utente == 'petsitter' and animale != '*':
+            lista = Annuncio.objects.filter(user_accetta__isnull=True, pet=animale, annuncio_petsitter=True)
 
-        lista = list(lista)
-        new_annunci_validi = list()
-        # Ordina annunci_validi
-        for i, annuncio in enumerate(lista):
-            new_annunci_validi.append(lista[indici[i]])
+        if tipo_utente == 'normale'and animale != '*':
+            lista = Annuncio.objects.filter(user_accetta__isnull=True, pet=animale, annuncio_petsitter=False)
 
-        return new_annunci_validi
+        if tipo_utente == 'petsitter' and animale == '*':
+            lista = Annuncio.objects.filter(user_accetta__isnull=True, annuncio_petsitter=True)
 
+        if tipo_utente == 'normale'and animale == '*':
+            lista = Annuncio.objects.filter(user_accetta__isnull=True, annuncio_petsitter=False)
 
-class ordinaAnnunciDistanzaDecrescente(generics.ListAPIView):
-    serializer_class = AnnuncioSerializer
-    def get_queryset(self):
-        lista = Annuncio.objects.filter(user_accetta__isnull=True)
-        profilo_utente = Profile.objects.get(user=self.request.user)
-        indici = []
-        indici = ordina_geograficamente(profilo_utente, lista, 'decrescente')
+        if ordinamento == 'crescente' or ordinamento == 'decrescente':
+            profilo_utente = Profile.objects.get(user=self.request.user)
+            indici = []
+            indici = ordina_geograficamente(profilo_utente, lista, ordinamento)
 
-        lista = list(lista)
-        new_annunci_validi = list()
-        # Ordina annunci_validi
-        for i, annuncio in enumerate(lista):
-            new_annunci_validi.append(lista[indici[i]])
+            lista = list(lista)
+            new_annunci_validi = list()
+            # Ordina annunci_validi
+            for i, annuncio in enumerate(lista):
+                new_annunci_validi.append(lista[indici[i]])
+            return new_annunci_validi
 
-        return new_annunci_validi
-
+        return lista
 
 class dettaglioAnnuncio(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -221,22 +158,6 @@ class dettaglioAnnuncio(generics.RetrieveUpdateDestroyAPIView):
         return Servizio.objects.get(annuncio=oid)
 
 
-
-# class servizi_richiesti(generics.RetrieveUpdateDestroyAPIView):
-#     """
-#     Questa view restituisce i flag connessi ad un annuncio
-#     e ne permette la modifica solamente se chi la richiama è il proprietario dell'annuncio
-#     """
-#     permission_classes = [IsFlagAnnuncioCorrect]
-#     serializer_class = ServizioOffertoSerializer
-#     def get_object(self):
-#         """
-#         Questa view restituisce i flag dell'annuncio avente ID passato tramite URL
-#         """
-#         oid = self.kwargs['pk']
-#         return get_object_or_404(Servizio, annuncio=oid)
-
-
 class elencoAnnunciUtente(generics.ListAPIView):
     '''restituisce tutti gli annunci fatti da un utente'''
     serializer_class = AnnuncioConServizi
@@ -249,66 +170,11 @@ class elencoAnnunciUtente(generics.ListAPIView):
         return Servizio.objects.filter(annuncio__user=oid, annuncio__user_accetta = None)
 
 
-# class inserisciAnnuncio(APIView):
-#         """
-#         Mostra un elenco degli articoli presenti nel database e ne crea di nuovi!
-#         """
-#         permission_classes = [IsUserLogged]
-#         def post(self, request):
-#             serializer = AnnuncioSerializer(data=request.data)
-#             if serializer.is_valid():
-#                 # serializer.save()
-#                 userprofile = Profile.objects.filter(user=self.request.user).first()
-#                 print("userprofile",userprofile)
-#                 if userprofile.pet_sitter:
-#                     print("sono un petsitter")
-#                     serializer.save(annuncio_petsitter=True, user=self.request.user)
-#                 else:
-#                     print("sono un utente normale")
-#                     serializer.save(annuncio_petsitter=False, user=self.request.user)
-#                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# class inserisciAnnuncio(generics.CreateAPIView):
-#     '''crea un nuovo annuncio'''
-#     serializer_class = AnnuncioSerializer
-#     # queryset = Annuncio.objects.all()
-#     permission_classes = [IsUserLogged]
-#     # devo controllare che tipo di utente sto maneggiando e fare quindi l'apposito metodo create o post
-#
-#     def perform_create(self, serializer):
-#         ''' vado ad impostare automaticamente il flag annuncio_petsitter ed anche l'id del richiedente '''
-#         userprofile = Profile.objects.filter(user=self.request.user).first()
-#         print("userprofile",userprofile)
-#         if userprofile.pet_sitter:
-#             print("sono un petsitter")
-#             serializer.save(annuncio_petsitter=True, user=self.request.user)
-#         else:
-#             print("sono un utente normale")
-#             serializer.save(annuncio_petsitter=False, user=self.request.user)
-#         # serializer.save()
-
-
 class inserisciAnnuncio(generics.CreateAPIView):
     '''crea un nuovo annuncio'''
     serializer_class = AnnuncioConServizi
     # queryset = Annuncio.objects.all()
     permission_classes = [IsUserLogged]
-    # devo controllare che tipo di utente sto maneggiando e fare quindi l'apposito metodo create o post
-
-    # def perform_create(self, serializer):
-    #     ''' vado ad impostare automaticamente il flag annuncio_petsitter ed anche l'id del richiedente '''
-    #     userprofile = Profile.objects.filter(user=self.request.user).first()
-    #     print("userprofile",userprofile)
-    #     if userprofile.pet_sitter:
-    #         print("sono un petsitter")
-    #         serializer.save()
-    #     else:
-    #         print("sono un utente normale")
-    #         serializer.save(user=self.request.user)
-    #     # serializer.save()
-
 
 
 class accettaAnnuncio(generics.RetrieveUpdateAPIView):
@@ -339,7 +205,6 @@ class calendarioUtente(generics.ListAPIView):
         return queryset
 
 class cercaUtente(generics.RetrieveAPIView):
-    permission_classes = [IsUserLogged]
     serializer_class = DatiUtenteCompleti
     def get_object(self):
         name = self.kwargs['name']
@@ -348,6 +213,11 @@ class cercaUtente(generics.RetrieveAPIView):
         profilo = Profile.objects.get(user=username_cercato)
         profilo.user.password=""
         return profilo
+
+
+
+
+
 
 # #################################################
 #                          DA CANCELLARE
@@ -392,76 +262,3 @@ class ListaAnagraficheRegistrate(APIView):
         return Response(serializer.data)
 
 
-
-
-#
-# class profiloUtenteAPI(APIView):
-#     parser_classes = (FileUploadParser,)
-#
-#     '''
-#     in questa classe vado a prendere in dettaglio un determinato utente
-#     la modifica ed eliminazione può essere fatta solamente se colui che richiama la API
-#     è il proprietario dell'account
-#     '''
-#
-#     # def get_object(self, oid):
-#     #     user = get_object_or_404(User, id=oid)
-#     #     profilo = get_object_or_404(Profile, user=oid)
-#     #     return user, profilo
-#
-#     def get(self, request, oid):
-#         utente = User.objects.get(id=oid)
-#         profilo = Profile.objects.get(user=oid)
-#         utente_serializer = UserSerializer(utente)
-#         profilo_serializer = ProfileSerializer(profilo)
-#         return Response({
-#             'utente': utente_serializer.data,
-#             'profilo': profilo_serializer.data
-#         })
-#
-#     def post(self, request, oid, filename, format=None):
-#         print("request.data : ",request.data)
-#         print("oid : ", oid)
-#         print("request.data['utente'] : ", request.data['utente'])
-#         print("request.data['profilo'] : ", request.data['profilo'])
-#         print("request.user", request.user.username)
-#         print("request.data['utente'].get('username')", request.data['utente'].get("username"))
-#
-#         if(request.user.username != request.data['utente'].get("username")):
-#             raise PermissionDenied(_("Non puoi modificare dati che non ti appartengono"))
-#
-#
-#         foto_profilo = request.FILES['foto_profilo']
-#         if request.data['profilo'].get("pet_sitter") == False:
-#             foto_pet = request.FILES['foto_pet']
-#
-#         user_serializer = UserSerializer(data=request.data['utente'])
-#         profile_serializer = ProfileSerializer(data=request.data['profilo'])
-#         # serializer = AnnuncioSerializer(data=request.data)
-#
-#         try:
-#             user_serializer.is_valid(raise_exception=True)
-#             profile_serializer.is_valid(raise_exception=True)
-#         except serializers.ValidationError:
-#             return Response({'utente': user_serializer.errors,
-#                             'profilo': profile_serializer.errors
-#                             }, status=status.HTTP_400_BAD_REQUEST)
-#         else:
-#             return Response({'utente': user_serializer.data,
-#                              'profilo': profile_serializer.data
-#                             }, status=status.HTTP_201_CREATED)
-#
-#     def delete(self, request, oid):
-#         print("request.data : ", request.data)
-#
-#         print("request.user", request.user.id)
-#
-#         if (request.user.id != oid):
-#             raise PermissionDenied(_("Non puoi cancellare dati che non ti appartengono"))
-#
-#         utente = User.objects.get(id=oid)
-#         profilo = Profile.objects.get(user=oid)
-#         utente.delete()
-#         profilo.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
-#

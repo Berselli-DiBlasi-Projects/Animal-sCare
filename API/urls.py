@@ -18,94 +18,56 @@ urlpatterns = [
 
 ########################################################################################################################
 
-    # /API/utenti/profilo/<int:oid> metodi ammessi :GET / PUT
+    # prende le informazioni di un utente
+    # /API/utenti/profilo/<int:oid> metodi ammessi :GET
     url(r'utenti/profilo/(?P<pk>[0-9]+)/$', views.userInfoLogin.as_view(), name='API-user-info'),
 
+    # prende le informazioni dell'utente che ha richiamato l'api e ne permette la modifica
     # /API/utenti/profilo/<int:oid> metodi ammessi :GET / PUT
     url(r'utenti/profilo/$', views.selfUserInfoLogin.as_view(), name='API-self-user-info'),
 
-    # /API/utenti/profilo/<int:oid>/anagrafica   metodi ammessi : GET / PUT
-    # url(r'utenti/profilo/(?P<pk>[0-9]+)/anagrafica/$', views.anagraficaUtente.as_view(), name='API-anagrafica-utente'),
+    # completa la registrazione per un petsitter
+    # /API/utenti/registra/petsitter metodi ammessi :PUT
+    url(r'utenti/registra/petsitter$', views.completaRegPetsitter.as_view(), name='API-registra-petsitter'),
 
+    # completa la registrazione per un utente normale
+    # /API/utenti/registra/utente-normale metodi ammessi :PUT
+    url(r'utenti/registra/utente-normale$', views.completaRegUtentenormale.as_view(),
+        name='API-registra-utente-normale'),
+
+    # visualizza gli annunci
     # /API/annunci/  metodi ammessi  GET : a tutti gli utenti
     url(r'annunci/$', views.listaAnnunci.as_view(), name='API-lista-annunci'),
 
-    # /API/annunci/filtra-per-cane/  metodi ammessi  GET : a tutti gli utenti
-    url(r'annunci/filtra-per-cane/$', views.filtraAnnunciPerCane.as_view(), name='API-filtra-annunci-per-cane'),
-
-    # /API/annunci/filtra-per-gatto/  metodi ammessi  GET : a tutti gli utenti
-    url(r'annunci/filtra-per-gatto/$', views.filtraAnnunciPerGatto.as_view(), name='API-filtra-annunci-per-gatto'),
-
-    # /API/annunci/filtra-per-coniglio/  metodi ammessi  GET : a tutti gli utenti
-    url(r'annunci/filtra-per-coniglio/$', views.filtraAnnunciPerConiglio.as_view(),
-        name='API-filtra-annunci-per-coniglio'),
-
-    # /API/annunci/filtra-per-volatile/  metodi ammessi  GET : a tutti gli utenti
-    url(r'annunci/filtra-per-volatile/$', views.filtraAnnunciPerVolatile.as_view(),
-        name='API-filtra-annunci-per-volatile'),
-
-    # /API/annunci/filtra-per-rettile/  metodi ammessi  GET : a tutti gli utenti
-    url(r'annunci/filtra-per-rettile/$', views.filtraAnnunciPerRettile.as_view(),
-        name='API-filtra-annunci-per-rettile'),
-
-    # /API/annunci/filtra-per-altro/  metodi ammessi  GET : a tutti gli utenti
-    url(r'annunci/filtra-per-altro/$', views.filtraAnnunciPerAltro.as_view(),
-        name='API-filtra-annunci-per-altro'),
-
-    # /API/annunci/filtra-per-petsitter/  metodi ammessi  GET : a tutti gli utenti
-    url(r'annunci/filtra-per-petsitter/$', views.filtraAnnunciPetsitter.as_view(),
-        name='API-filtra-annunci-petsitter'),
-
-    # /API/annunci/filtra-per-petsitter/  metodi ammessi  GET : a tutti gli utenti
-    url(r'annunci/filtra-per-utenti-normali/$', views.filtraAnnunciUtentiNormali.as_view(),
-        name='API-filtra-annunci-utenti-normali'),
-
-    # /API/annunci/ordina-per-dist-crescente/  metodi ammessi  GET : a tutti gli utenti
-    url(r'annunci/ordina-per-dist-crescente/$', views.ordinaAnnunciDistanzaCrescente.as_view(),
-        name='API-ordina-annunci-distanza-crescente'),
-
+    # filtra gli annunci
     # /API/annunci/filtra-per-dist-decrescente/  metodi ammessi  GET : a tutti gli utenti
-    url(r'annunci/ordina-per-dist-decrescente/$', views.ordinaAnnunciDistanzaDecrescente.as_view(),
+    url(r'annunci/ordina/(?P<animale>[A-Za-z0-9*èòàùì]+)/(?P<ordinamento>[A-Za-z0-9*èòàùì]+)/(?P<tipo_utente>[A-Za-z0-9*èòàùì]+)/$',
+        views.ordinaAnnunci.as_view(),
         name='API-ordina-annunci-distanza-decrescente'),
 
+    # osserva l'annuncio nel dettaglio e ne permette anche l'eliminazione o modifica purchè chi la chiama è
+    # colui che lo ha scritto
     # /API/annunci/<int:oid>/dettagli' GET : a tutti gli utenti | POST/PUT/DELETE solo ai proprietari
     url(r'annunci/(?P<pk>[0-9]+)/dettagli/$', views.dettaglioAnnuncio.as_view(), name='API-dettaglio-annuncio'),
 
-    # /API/annunci/<int:oid>/flag' GET : a tutti gli utenti | POST/PUT/DELETE solo ai proprietari
-    # url(r'annunci/(?P<pk>[0-9]+)/servizirichiesti/$', views.servizi_richiesti.as_view(), name='API-flag-annuncio'),
-
+    # restituisce solamente gli annunci di un utente avente un determinato ID
     # /API/annunci/<int:oid>/elenco' GET : a tutti gli utenti
     url(r'annunci/(?P<pk>[0-9]+)/elenco/$', views.elencoAnnunciUtente.as_view(), name='API-elenco-annunci-utente'),
 
+    # inserisce un nuovo annuncio
     # /API/annunci/nuovo/
     url(r'annunci/nuovo/$', views.inserisciAnnuncio.as_view(), name='API-nuovo-annuncio'),
 
-    # # /API/annunci/nuovo/
-    # url(r'annunci/nuovo-con-servizi/$', views.inserisciAnnuncioConServizi.as_view(), name='API-nuovo-con-servizi'),
-
+    # accetta un annuncio avente ID comunicato via link
     # /API/annunci/<int:oid>/dettagli' GET : a tutti gli utenti | POST/PUT/DELETE solo ai proprietari
     url(r'annunci/(?P<pk>[0-9]+)/accetta/$', views.accettaAnnuncio.as_view(), name='API-accetta-annuncio'),
 
-
+    # restituisce gli annunci accettati dall'utente che richiama questo link
     # /API/annunci/<int:oid>/elenco' GET : a tutti gli utenti
     url(r'annunci/calendario/$', views.calendarioUtente.as_view(), name='API-calendario-utente'),
 
+    # cerca l'utente per username
     # /API/utenti/cerca/<char:name>' GET : tutti gli utenti
     url(r'utenti/cerca/(?P<name>[A-Za-z0-9èòàùì]+)/$', views.cercaUtente.as_view(), name='API-cerca-utente'),
-
-    #
-    # # /API/lista-utenti/<int:oid>'
-    # url(r'lista-utenti/(?P<oid>[0-9]+)/$', views.UserDetailAPIView.as_view(), name='API-get-user-detail'),
-    #
-    # # /API/lista-utenti/<int:oid>/profilo'
-    # url(r'lista-utenti/(?P<oid>[0-9]+)/profilo', views.ProfileDetailAPIView.as_view(), name='API-get-profile-detail'),
-    #
-    # # /API/lista-profili/
-    # url(r'lista-profili/$', views.ProfileListCreateAPIView.as_view(), name='API-get-lista-profili'),
-    # #
-    # # # /API/get_users/<int:oid>'
-    # # url(r'lista-profili/(?P<oid>[0-9]+)/$', views.ProfileDetailAPIView.as_view(), name='API-get-profile-detail'),
-    #
-
 
 ]
