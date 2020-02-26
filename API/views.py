@@ -42,14 +42,14 @@ class selfUserInfoLogin(generics.RetrieveUpdateAPIView):
         return Profile.objects.get(user=self.request.user)
 
 class completaRegPetsitter(generics.RetrieveUpdateAPIView):
-    permission_classes = [IsSameUserOrReadOnly, IsUserLogged]
+    permission_classes = [IsSameUserOrReadOnly]
     serializer_class = CompletaRegPetsitterSerializer
     def get_object(self):
         return Profile.objects.get(user=self.request.user)
 
 
 class completaRegUtentenormale(generics.RetrieveUpdateAPIView):
-    permission_classes = [IsSameUserOrReadOnly, IsUserLogged]
+    permission_classes = [IsSameUserOrReadOnly]
     serializer_class = CompletaRegUtenteNormale
     def get_object(self):
         return Profile.objects.get(user=self.request.user)
@@ -139,7 +139,7 @@ class dettaglioAnnuncio(generics.RetrieveUpdateDestroyAPIView):
 class elencoAnnunciUtente(generics.ListAPIView):
     '''restituisce tutti gli annunci fatti da un utente'''
     serializer_class = AnnuncioConServizi
-    permission_classes = [IsUserLogged]
+
     def get_queryset(self):
         """
         Questa view restituisce l'annuncio avente ID passato tramite URL

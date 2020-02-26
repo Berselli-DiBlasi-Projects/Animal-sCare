@@ -28,9 +28,28 @@ class ListaAnnunci extends Component {
         } else {
           this.setState({ show_pickers: true });
         }
-      };
+    };
     
-    componentDidMount(){
+    componentDidMount() {
+        this.fetchAnnunci();
+        this.willFocusSubscription = this.props.navigation.addListener(
+          'willFocus',
+          () => {
+            this.setState({
+                isLoading: true,
+            }, function(){
+    
+            });
+            this.fetchAnnunci();
+          }
+        );
+    }
+
+    componentWillUnmount() {
+    this.willFocusSubscription.remove();
+    }
+
+    fetchAnnunci(){
     return fetch('http://2.224.160.133.xip.io/api/annunci/?format=json')
         .then((response) => response.json())
         .then((responseJson) => {
@@ -52,7 +71,7 @@ class ListaAnnunci extends Component {
 
         if(this.state.isLoading){
             return(
-                <View style={{flex: 1, padding: 20}}>
+                <View style={{flex: 1, paddingTop: height / 2}}>
                     <ActivityIndicator/>
                 </View>
             )

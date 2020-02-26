@@ -23,13 +23,32 @@ class DettagliAnnuncio extends Component {
     }
 
     componentDidMount() {
-        return fetch('http://2.224.160.133.xip.io/api/annunci/' + this.state.id_annuncio + '/dettagli/?format=json')
+        this.fetchDettagliAnnuncio();
+        this.willFocusSubscription = this.props.navigation.addListener(
+          'willFocus',
+          () => {
+            this.setState({
+                isLoading: true,
+            }, function(){
+    
+            });
+            this.fetchDettagliAnnuncio();
+          }
+        );
+    }
+
+    componentWillUnmount() {
+    this.willFocusSubscription.remove();
+    }
+
+    fetchDettagliAnnuncio() {
+        return fetch('http://2.224.160.133.xip.io/api/annunci/' + this.props.navigation.state.params.id_annuncio + '/dettagli/?format=json')
         .then((response) => response.json())
         .then((responseJson) => {
         
-            console.log('ciao');
         this.setState({
             isLoading: false,
+            id_annuncio: this.props.navigation.state.params.id_annuncio,
             dataSource: responseJson,
         }, function(){
 
@@ -44,7 +63,7 @@ class DettagliAnnuncio extends Component {
     render() {
         if(this.state.isLoading){
             return(
-                <View style={{flex: 1, padding: 20}}>
+                <View style={{flex: 1, paddingTop: height / 2}}>
                     <ActivityIndicator/>
                 </View>
             )
@@ -150,13 +169,13 @@ class DettagliAnnuncio extends Component {
 
                                 <View style={styles.controlli}>
                                     <View style={styles.buttonview}>
-                                        <Button title="Accetta annuncio" onPress={() => this.props.navigation.navigate('AccettaAnnuncioConferma', {id_annuncio: id_annuncio})}/>
+                                        <Button title="Accetta annuncio" onPress={() => this.props.navigation.navigate('AccettaAnnuncioConferma', {id_annuncio: this.state.id_annuncio})}/>
                                     </View>
                                     <View style={styles.buttonview}>
                                         <Button title="Modifica annuncio" onPress={() => this.props.navigation.navigate('ModificaAnnuncio')}/>
                                     </View>
                                     <View style={styles.buttonview}>
-                                        <Button title="Elimina annuncio" color='red' onPress={() => this.props.navigation.navigate('EliminaAnnuncioConferma', {id_annuncio: id_annuncio})} />
+                                        <Button title="Elimina annuncio" color='red' onPress={() => this.props.navigation.navigate('EliminaAnnuncioConferma', {id_annuncio: this.state.id_annuncio})} />
                                     </View>
                                 </View>
                             </View>
