@@ -117,6 +117,13 @@ class ordinaAnnunci(generics.ListAPIView):
         tipo_utente = self.kwargs['tipo_utente']
         animale = self.kwargs['animale']
         lista = Annuncio.objects.filter(user_accetta__isnull=True)
+
+        if tipo_utente == '*' and animale != '*':
+            lista = Annuncio.objects.filter(user_accetta__isnull=True, pet=animale)
+
+        if tipo_utente == '*' and animale == '*':
+            lista = Annuncio.objects.filter(user_accetta__isnull=True)
+
         if tipo_utente == 'petsitter' and animale != '*':
             lista = Annuncio.objects.filter(user_accetta__isnull=True, pet=animale, annuncio_petsitter=True)
 
@@ -204,16 +211,26 @@ class calendarioUtente(generics.ListAPIView):
 
         return queryset
 
-class cercaUtente(generics.RetrieveAPIView):
-    serializer_class = DatiUtenteCompleti
-    def get_object(self):
-        name = self.kwargs['name']
-        print(name)
-        username_cercato = User.objects.get(username=name)
-        profilo = Profile.objects.get(user=username_cercato)
-        profilo.user.password=""
-        return profilo
 
+class cercaUtente(APIView):
+    def get(self, request, *args, **kwargs):
+        name = kwargs.get('name')
+        try :
+            username_cercato = User.objects.get(username__exact=name)
+            profilo = Profile.objects.get(user=username_cercato)
+            profilo.user.password=""
+            serializers = DatiUtenteCompleti(profilo,many=False)
+            return Response(serializers.data)
+        except Exception:
+            username_trovati = User.objects.filter(username__startswith=name)
+            print("username trovati : ", username_trovati)
+            profili = []
+            for user in username_trovati:
+                p = Profile.objects.get(user=user)
+                p.user.password = ""
+                profili.append(p)
+            serializers = DatiUtenteCompleti(profili, many=True)
+            return Response(serializers.data)
 
 
 
