@@ -69,4 +69,10 @@ urlpatterns = [
     # /API/utenti/cerca/<char:name>' GET : tutti gli utenti
     url(r'utenti/cerca/(?P<name>[A-Za-z0-9èòàùì]+)/$', views.cercaUtente.as_view(), name='API-cerca-utente'),
 
+    # classifica utenti
+    # /API/utenti/classifica/<tipo utente>/<criterio>/  metodi ammessi  GET : a tutti gli utenti
+    url(r'utenti/classifica/(?P<tipo_utente>[A-Za-z0-9*èòàùì]+)/(?P<criterio>[A-Za-z0-9èòàùì]+)/$',
+        views.classificaUtenti.as_view(),
+        name='API-classifica-utenti'),
+
 ]

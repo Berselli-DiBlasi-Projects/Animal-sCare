@@ -307,8 +307,3 @@ class AnnuncioConServizi(serializers.ModelSerializer):
 
         return servizi
 
-# class CalendarioSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Annuncio
-#         fields = "__all__"
-#         read_only_fields = ("id",)

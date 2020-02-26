@@ -1,14 +1,8 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import serializers
-from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FileUploadParser
-from rest_framework import mixins
 from rest_framework import generics
 from django.contrib.auth.models import User
-from utenti.models import Profile
-from annunci.models import Annuncio, Servizio
+from recensioni.models import Recensione
 from API.serializers import (AnagraficaSerializer,
                                 AnnuncioSerializer,
                                 UserSerializer,
@@ -19,28 +13,8 @@ from API.serializers import (AnagraficaSerializer,
                                 CompletaRegUtenteNormale,
                              )
 from annunci.views import ordina_annunci as ordina_geograficamente
-from datetime import datetime
-
-from django.core.exceptions import PermissionDenied
-from django.utils.translation import ugettext_lazy as _
-
 from .permissions import *
-from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_METHODS
 
-
-# class userInfoLogin(generics.RetrieveUpdateAPIView):
-#     """
-#     Questa view restituisce la lista completa degli utenti registrati
-#     """
-#     permission_classes = [IsSameUserOrReadOnly]
-#     serializer_class = UserSerializer
-#     def get_queryset(self):
-#         """
-#         Modifico il query set in modo da ottenere l'utente con l'id
-#         prelevato dall'url
-#         """
-#         oid = self.kwargs['pk']
-#         return User.objects.filter(id=oid)
 
 class userInfoLogin(generics.RetrieveAPIView):
     """
@@ -85,12 +59,9 @@ class listaAnnunci(generics.ListAPIView):
     """
      Questa view restituisce la lista completa di tutti gli annunci
      """
-    # queryset = Annuncio.objects.all()
     serializer_class = AnnuncioSerializer
 
     def get_queryset(self):
-        # data_odierna = datetime.now();
-        # return Annuncio.objects.filter(user_accetta=None)
         return Annuncio.objects.filter(user_accetta__isnull=True)
 
 
@@ -180,7 +151,6 @@ class elencoAnnunciUtente(generics.ListAPIView):
 class inserisciAnnuncio(generics.CreateAPIView):
     '''crea un nuovo annuncio'''
     serializer_class = AnnuncioConServizi
-    # queryset = Annuncio.objects.all()
     permission_classes = [IsUserLogged]
 
 
@@ -193,10 +163,6 @@ class accettaAnnuncio(generics.RetrieveUpdateAPIView):
         """
         oid = self.kwargs['pk']
         return Servizio.objects.get(annuncio=oid)
-    #
-    # def perform_update(self, serializer):
-    #     user_accetta = self.request.user
-    #     serializer.save(user_accetta=user_accetta)
 
 
 class calendarioUtente(generics.ListAPIView):
@@ -204,10 +170,7 @@ class calendarioUtente(generics.ListAPIView):
     serializer_class = AnnuncioSerializer
     def get_queryset(self):
         user_request = self.request.user
-        print("user", user_request)
-
         queryset = Annuncio.objects.filter(user_accetta=user_request)
-        print("queryset ", queryset)
 
         return queryset
 
@@ -223,7 +186,9 @@ class cercaUtente(APIView):
             return Response(serializers.data)
         except Exception:
             username_trovati = User.objects.filter(username__startswith=name)
-            print("username trovati : ", username_trovati)
+            if len(username_trovati) == 0:
+                username_trovati = User.objects.filter(username__contains=name)
+
             profili = []
             for user in username_trovati:
                 p = Profile.objects.get(user=user)
@@ -231,6 +196,65 @@ class cercaUtente(APIView):
                 profili.append(p)
             serializers = DatiUtenteCompleti(profili, many=True)
             return Response(serializers.data)
+
+class classificaUtenti(generics.ListAPIView):
+    '''
+    API per la classifica utente :
+
+    tipo_utente : < petsitter > ,  < normale >, < * >
+
+    criterio : < voti > , < recensioni >
+
+    PER SELEZIONARE TUTTI GLI UTENTI INSERIRE ' * '
+
+    NON È AMMESSO IGNORARE IL CRITERIO DI ORDINAMENTO
+
+    '''
+    serializer_class = DatiUtenteCompleti
+    def get_queryset(self):
+        criterio = self.kwargs['criterio']
+        tipo_utente = self.kwargs['tipo_utente']
+
+        # viene fatto sempre se si ignora il criterio di ricerca
+        profili = Profile.objects.all()
+
+        if tipo_utente == 'petsitter':
+            profili = Profile.objects.filter(pet_sitter=True)
+
+        if tipo_utente == 'normale':
+            profili = Profile.objects.filter(pet_sitter=False)
+
+        if criterio == 'voti':
+            lista = list()
+            for p in profili:
+                voti = Recensione.objects.filter(user_recensito= p.user)
+                somma = 0
+                for v in voti:
+                    somma += v.voto
+                if len(voti) > 0:
+                    media = somma / len(voti)
+                else:
+                    media = 0
+                tupla = (p, media)
+                lista.append(tupla)
+            lista = sorted(lista, key=lambda tup: tup[1], reverse=True)
+            profili = []
+            for i in lista:
+                profili.append(i[0])
+            return profili
+
+        if criterio == 'recensioni':
+            lista = list()
+            for p in profili:
+                voti = Recensione.objects.filter(user_recensito= p.user)
+                tupla = (p, len(voti))
+                lista.append(tupla)
+            lista = sorted(lista, key=lambda tup: tup[1], reverse=True)
+            profili = []
+            for i in lista:
+                profili.append(i[0])
+            return profili
+
 
 
 
