@@ -13,17 +13,17 @@ def nega_accesso_senza_profilo(request):
     :return: render della pagina scelta_profilo_oauth.
     """
 
-    if request.user.is_authenticated:
-        try:
-            Profile.objects.get(user=request.user.id)
-        except Exception:
-            return True
-
     # if request.user.is_authenticated:
-    #     profilo = Profile.objects.get(user=request.user.id)
-    #     print('profilo.indirizzo ==', profilo.indirizzo, len(profilo.indirizzo))
-    #     if len(profilo.indirizzo)==0:
+    #     try:
+    #         Profile.objects.get(user=request.user.id)
+    #     except Exception:
     #         return True
+
+    if request.user.is_authenticated:
+        profilo = Profile.objects.get(user=request.user.id)
+        print('profilo.indirizzo =', profilo.indirizzo,'len',  len(profilo.indirizzo))
+        if len(profilo.indirizzo) == 0:
+            return True
     return False
 
 

@@ -421,12 +421,15 @@ def oauth_normale(request):
     :return: render della pagina di creazione profilo normale.
     """
 
-    try:
-        # Se questo utente ha già un profilo, viene rediretto alla home, altrimenti può registrarne uno nuovo
+    # try:
+    #     # Se questo utente ha già un profilo, viene rediretto alla home, altrimenti può registrarne uno nuovo
+    #     Profile.objects.get(user=request.user.id)
+    #     return HttpResponseRedirect(reverse('main:index'))
+    # except Exception:
+    #     pass
+    if nega_accesso_senza_profilo(request) == False:
         Profile.objects.get(user=request.user.id)
         return HttpResponseRedirect(reverse('main:index'))
-    except Exception:
-        pass
 
     # Se la richiesta è di tipo POST, allora possiamo processare i dati
     if request.method == "POST":
@@ -488,12 +491,15 @@ def oauth_petsitter(request):
     :return: render della pagina di creazione profilo da petsitter.
     """
 
-    try:
-        # Se questo utente ha già un profilo, viene rediretto alla home, altrimenti può registrarne uno nuovo
+    # try:
+    #     # Se questo utente ha già un profilo, viene rediretto alla home, altrimenti può registrarne uno nuovo
+    #     Profile.objects.get(user=request.user.id)
+    #     return HttpResponseRedirect(reverse('main:index'))
+    # except Exception:
+    #     pass
+    if nega_accesso_senza_profilo(request) == False:
         Profile.objects.get(user=request.user.id)
         return HttpResponseRedirect(reverse('main:index'))
-    except Exception:
-        pass
 
     # Se la richiesta è di tipo POST, allora possiamo processare i dati
     if request.method == "POST":
@@ -703,13 +709,21 @@ def scelta_profilo_oauth(request):
     :return: render della pagina di scelta Oauth normale o petsitter.
     """
 
-    try:
-        Profile.objects.get(user=request.user.id)
-        return HttpResponseRedirect(reverse('main:index'))
-    except Exception:
+    # try:
+    #     Profile.objects.get(user=request.user.id)
+    #     return HttpResponseRedirect(reverse('main:index'))
+    # except Exception:
+    #     context = {'base_template': 'main/base_oauth.html'}
+    #     return render(request, 'utenti/scelta_utente_oauth.html', context=context)
+
+    # profilo = Profile.objects.get(user=request.user.id)
+    # print('profilo.indirizzo a=', profilo.indirizzo, 'len', len(profilo.indirizzo))
+    # if len(profilo.indirizzo) == 0:
+    if nega_accesso_senza_profilo(request):
         context = {'base_template': 'main/base_oauth.html'}
         return render(request, 'utenti/scelta_utente_oauth.html', context=context)
-
+    else:
+        return HttpResponseRedirect(reverse('main:index'))
 
 def view_profile(request, oid):
     """

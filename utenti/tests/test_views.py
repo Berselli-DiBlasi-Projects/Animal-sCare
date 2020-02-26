@@ -11,49 +11,53 @@ class TestViews(TestCase):
         self.user_unauthenticated = Client()
         self.user_normale_login = Client()
         self.user_normale = User.objects.create_user(username='normale', password='12345')
-        Profile.objects.create(
-            user=self.user_normale,
-            indirizzo='Via Vivarelli',
-            citta='Modena',
-            provincia='Modena',
-            regione='Emilia Romagna',
-            latitudine=0,
-            longitudine=0,
-            telefono=3391234567,
-            pet_coins=100,
-            foto_profilo=None,
-            pet_sitter=False,
-            nome_pet='Ugo',
-            pet='Cane',
-            razza='Shihtzu',
-            eta=12,
-            caratteristiche='Allergico a quasi tutto'
-        )
+
+        self.profilo = Profile.objects.get(user=self.user_normale)
+        # profilo.user = self.user_normale,
+        self.profilo.indirizzo = 'Via Vivarelli'
+        self.profilo.citta = 'Modena'
+        self.profilo.provincia = 'Modena'
+        self.profilo.regione = 'Emilia Romagna'
+        self.profilo.latitudine = 0
+        self.profilo.longitudine = 0
+        self.profilo.telefono = 3391234567
+        self.profilo.pet_coins = 100
+        self.profilo.foto_profilo = None
+        self.profilo. pet_sitter = False
+        self.profilo.nome_pet = 'Ugo'
+        self.profilo.pet = 'Cane'
+        self.profilo.razza = 'Shihtzu'
+        self.profilo.eta = 12
+        self.profilo.caratteristiche = 'Allergico a quasi tutto'
+        self.profilo.save()
+
         self.user_normale_login.login(username='normale', password='12345')
 
         self.user_petsitter_login = Client()
         self.user_petsitter = User.objects.create_user(username='petsitter', password='12345')
-        Profile.objects.create(
-            user=self.user_petsitter,
-            indirizzo='Via Vivarelli',
-            citta='Modena',
-            provincia='Modena',
-            regione='Emilia Romagna',
-            latitudine=0,
-            longitudine=0,
-            telefono=3391234567,
-            pet_coins=100,
-            foto_profilo=None,
-            pet_sitter=True,
-            nome_pet='Tobi',
-            pet='Cane',
-            razza='Meticcio',
-            eta=3,
-            caratteristiche='Allergico alle noci',
-            foto_pet=None,
-            descrizione='Socievole',
-            hobby='Cinema, Musica, Sport'
-        )
+        self.profilo = Profile.objects.get(user=self.user_petsitter)
+
+        # profilo.user=self.user_petsitter,
+        self.profilo.indirizzo='Via Vivarelli'
+        self.profilo.citta='Modena'
+        self.profilo.provincia='Modena'
+        self.profilo.regione='Emilia Romagna'
+        self.profilo.latitudine=0
+        self.profilo.longitudine=0
+        self.profilo.telefono=3391234567
+        self.profilo.pet_coins=100
+        self.profilo.foto_profilo=None
+        self.profilo.pet_sitter=True
+        self.profilo.nome_pet='Tobi'
+        self.profilo.pet='Cane'
+        self.profilo.razza='Meticcio'
+        self.profilo.eta=3
+        self.profilo.caratteristiche='Allergico alle noci'
+        self.profilo.foto_pet=None
+        self.profilo.descrizione='Socievole'
+        self.profilo.hobby='Cinema, Musica, Sport'
+        self.profilo.save()
+
         self.user_petsitter_login.login(username='petsitter', password='12345')
 
         self.user_oauth_login = Client()
