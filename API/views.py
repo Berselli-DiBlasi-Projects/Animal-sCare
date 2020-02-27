@@ -11,9 +11,13 @@ from API.serializers import (AnagraficaSerializer,
                                 DatiUtenteCompleti,
                                 CompletaRegPetsitterSerializer,
                                 CompletaRegUtenteNormale,
+                                RecensioniSerializer,
                              )
 from annunci.views import ordina_annunci as ordina_geograficamente
 from .permissions import *
+from rest_framework.parsers import JSONParser, MultiPartParser, FileUploadParser
+
+
 
 
 class userInfoLogin(generics.RetrieveAPIView):
@@ -175,27 +179,50 @@ class calendarioUtente(generics.ListAPIView):
         return queryset
 
 
-class cercaUtente(APIView):
-    def get(self, request, *args, **kwargs):
-        name = kwargs.get('name')
+# class cercaUtente(APIView):
+#     # parser_classes = [MultiPartParser]
+#     def get(self, request, *args, **kwargs):
+#         name = kwargs.get('name')
+#         try :
+#             username_cercato = User.objects.get(username__exact=name)
+#             profilo = Profile.objects.get(user=username_cercato)
+#             profilo.user.password=""
+#             serializers = DatiUtenteCompleti(profilo,many=False)
+#             return Response(serializers.data)
+#         except Exception:
+#             username_trovati = User.objects.filter(username__startswith=name)
+#             if len(username_trovati) == 0:
+#                 username_trovati = User.objects.filter(username__contains=name)
+#
+#             profili = []
+#             for user in username_trovati:
+#                 p = Profile.objects.get(user=user)
+#                 p.user.password = ""
+#                 profili.append(p)
+#             serializers = DatiUtenteCompleti(profili, many=True)
+#             return Response(serializers.data)
+
+class cercaUtente(generics.ListAPIView):
+    serializer_class = DatiUtenteCompleti
+    def get_queryset(self):
+        name = self.kwargs['name']
+        profili = []
         try :
             username_cercato = User.objects.get(username__exact=name)
             profilo = Profile.objects.get(user=username_cercato)
             profilo.user.password=""
-            serializers = DatiUtenteCompleti(profilo,many=False)
-            return Response(serializers.data)
+            profili.append(profilo)
+            return profili
         except Exception:
             username_trovati = User.objects.filter(username__startswith=name)
             if len(username_trovati) == 0:
                 username_trovati = User.objects.filter(username__contains=name)
-
-            profili = []
             for user in username_trovati:
                 p = Profile.objects.get(user=user)
                 p.user.password = ""
                 profili.append(p)
-            serializers = DatiUtenteCompleti(profili, many=True)
-            return Response(serializers.data)
+            return profili
+
 
 class classificaUtenti(generics.ListAPIView):
     '''
@@ -255,6 +282,15 @@ class classificaUtenti(generics.ListAPIView):
                 profili.append(i[0])
             return profili
 
+
+# class recensisciUtente(generics.RetrieveDestroyAPIView):
+#     serializer_class = RecensioniSerializer
+#     permission_classes = [IsUserLogged]
+#
+#     def get_object(self):
+#         user_recensito = self.kwargs['user_recensito']
+#         user_recensore = self.kwargs['user_recensore']
+#
 
 
 

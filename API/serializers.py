@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils import timezone
 from django.utils import formats
-
+from recensioni.models import Recensione
 from utenti.models import Profile
 from annunci.models import Annuncio, Servizio
 
@@ -306,4 +306,25 @@ class AnnuncioConServizi(serializers.ModelSerializer):
         servizi.save()
 
         return servizi
+
+
+
+class RecensioniSerializer(serializers.ModelSerializer):
+    pass
+#
+#     # user_recensore = UserSerializer(many=False)
+#     # user_recensito = UserSerializer(many=False)
+#
+#     class Meta:
+#         model = Recensione
+#         fields ="__all__"
+#     def create(self,validated_data):
+#         user_recensito =validated_data.pop('user_recensito')
+#         print(user_recensito)
+#         user_recensore =validated_data.pop('user_recensore')
+#         print(user_recensore)
+#
+#         # user_recensito = self._kwargs[]
+#
+
 

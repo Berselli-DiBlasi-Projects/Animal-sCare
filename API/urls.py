@@ -75,4 +75,10 @@ urlpatterns = [
         views.classificaUtenti.as_view(),
         name='API-classifica-utenti'),
 
+    # # recensisci utenti
+    # # /API/utenti/classifica/<tipo utente>/<criterio>/  metodi ammessi  GET : a tutti gli utenti
+    # url(r'utenti/recensisci/(?P<utente_recensito>[A-Za-z0-9èòàùì]+)/(?P<utente_recensore>[A-Za-z0-9èòàùì]+)/$',
+    #     views.recensisciUtente.as_view(),
+    #     name='API-recensisci-utenti'),
+
 ]
