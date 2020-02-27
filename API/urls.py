@@ -75,10 +75,27 @@ urlpatterns = [
         views.classificaUtenti.as_view(),
         name='API-classifica-utenti'),
 
-    # # recensisci utenti
-    # # /API/utenti/classifica/<tipo utente>/<criterio>/  metodi ammessi  GET : a tutti gli utenti
-    # url(r'utenti/recensisci/(?P<utente_recensito>[A-Za-z0-9èòàùì]+)/(?P<utente_recensore>[A-Za-z0-9èòàùì]+)/$',
-    #     views.recensisciUtente.as_view(),
-    #     name='API-recensisci-utenti'),
+    # Cassa Pet Coins utenti
+    # /API/utenti/cassa/<quantità>/  metodi ammessi  GET : a tutti gli utenti
+    url(r'utenti/cassa/(?P<num>[-+\S][0-9]+)/$',
+        views.modificaPetCoins.as_view(),
+        name='API-petcoins-utenti'),
 
+    # recensisci utenti
+    # recensioni/nuova/<utente_recensito>/<utente_recensore>/ metodi ammessi  GET : a tutti gli utenti
+    url(r'recensioni/nuova/(?P<utente>[A-Za-z0-9èòàùì]+)/$',
+        views.recensisciUtente.as_view(),
+        name='API-recensisci-utenti'),
+
+    # recensioni di un utente
+    # /API/recensioni/ricevute/<utente>/  metodi ammessi  GET : a tutti gli utenti
+    url(r'recensioni/ricevute/(?P<utente>[A-Za-z0-9èòàùì]+)/$',
+        views.recensioniRicevute.as_view(),
+        name='API-lista-recensioni-utente'),
+
+    # modifica una recensione fatta per un utente
+    # /API/recensioni/ricevute/<utente>/  metodi ammessi  GET : a tutti gli utenti
+    url(r'recensioni/modifica/(?P<utente>[A-Za-z0-9èòàùì]+)/$',
+        views.modificaRecensione.as_view(),
+        name='API-modifica-recensione'),
 ]

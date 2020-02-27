@@ -310,21 +310,24 @@ class AnnuncioConServizi(serializers.ModelSerializer):
 
 
 class RecensioniSerializer(serializers.ModelSerializer):
-    pass
-#
-#     # user_recensore = UserSerializer(many=False)
-#     # user_recensito = UserSerializer(many=False)
-#
-#     class Meta:
-#         model = Recensione
-#         fields ="__all__"
+
+    # user_recensore = UserSerializer(many=False)
+    # user_recensito = UserSerializer(many=False)
+
+    class Meta:
+        model = Recensione
+        fields ="__all__"
 #     def create(self,validated_data):
-#         user_recensito =validated_data.pop('user_recensito')
-#         print(user_recensito)
-#         user_recensore =validated_data.pop('user_recensore')
-#         print(user_recensore)
+#         user_recensito = self.context.get('view').parser_context['kwargs']['user_recensito']
+#         print('user_recensito', user_recensito)
+#         user_recensore = self.context.get('view').parser_context['kwargs']['user_recensore']
+#         print('user_recensore', user_recensore)
+#         # user_recensito =validated_data.pop('user_recensito')
+#         # print('user_recensito', user_recensito)
+#         # user_recensore =validated_data.pop('user_recensore')
+#         # print('user_recensore', user_recensore)
 #
-#         # user_recensito = self._kwargs[]
+# #         # user_recensito = self._kwargs[]
 #
 
 

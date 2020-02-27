@@ -178,30 +178,6 @@ class calendarioUtente(generics.ListAPIView):
 
         return queryset
 
-
-# class cercaUtente(APIView):
-#     # parser_classes = [MultiPartParser]
-#     def get(self, request, *args, **kwargs):
-#         name = kwargs.get('name')
-#         try :
-#             username_cercato = User.objects.get(username__exact=name)
-#             profilo = Profile.objects.get(user=username_cercato)
-#             profilo.user.password=""
-#             serializers = DatiUtenteCompleti(profilo,many=False)
-#             return Response(serializers.data)
-#         except Exception:
-#             username_trovati = User.objects.filter(username__startswith=name)
-#             if len(username_trovati) == 0:
-#                 username_trovati = User.objects.filter(username__contains=name)
-#
-#             profili = []
-#             for user in username_trovati:
-#                 p = Profile.objects.get(user=user)
-#                 p.user.password = ""
-#                 profili.append(p)
-#             serializers = DatiUtenteCompleti(profili, many=True)
-#             return Response(serializers.data)
-
 class cercaUtente(generics.ListAPIView):
     serializer_class = DatiUtenteCompleti
     def get_queryset(self):
@@ -283,17 +259,77 @@ class classificaUtenti(generics.ListAPIView):
             return profili
 
 
-# class recensisciUtente(generics.RetrieveDestroyAPIView):
-#     serializer_class = RecensioniSerializer
-#     permission_classes = [IsUserLogged]
-#
-#     def get_object(self):
-#         user_recensito = self.kwargs['user_recensito']
-#         user_recensore = self.kwargs['user_recensore']
-#
+class recensisciUtente(generics.CreateAPIView):
+    serializer_class = RecensioniSerializer
+    permission_classes = [IsUserLogged]
+
+    def perform_create(self, serializer):
+        nickname_recensore = self.request.user.username
+        nickname_recensito = self.kwargs['utente_recensito']
+        try:
+            recensore = User.objects.get(username=nickname_recensore)
+        except Exception:
+            raise Exception("Utente recensore non trovato")
+        try:
+            recensito = User.objects.get(username=nickname_recensito)
+        except Exception:
+            raise Exception("Utente recensito non trovato")
+        serializer.save(user_recensore=recensore, user_recensito=recensito)
 
 
+class recensioniRicevute(generics.ListAPIView):
+    serializer_class = RecensioniSerializer
+    def get_queryset(self):
+        # lista_recensioni = []
+        nickname_cercato = self.kwargs['utente']
+        try:
+            recensito = User.objects.get(username=nickname_cercato)
+        except Exception:
+            raise Exception("Utente recensito non trovato")
+        recensioni = Recensione.objects.filter(user_recensito=recensito)
+        return list(recensioni)
 
+
+class modificaRecensione(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = RecensioniSerializer
+    permission_classes = [IsUserLogged, IsRecensionePossessorOrReadOnly]
+
+    def get_object(self):
+        nickname_recensore = self.request.user.username
+        nickname_recensito = self.kwargs['utente']
+        try:
+            recensore = User.objects.get(username=nickname_recensore)
+        except Exception:
+            raise Exception("Utente recensore non trovato")
+        try:
+            recensito = User.objects.get(username=nickname_recensito)
+        except Exception:
+            raise Exception("Utente recensito non trovato")
+
+        try:
+            recensione = Recensione.objects.get(user_recensore=recensore, user_recensito=recensito)
+            return recensione
+        except Exception:
+            raise Exception("Recensione non trovata." +
+                            " \nrecensore : " + nickname_recensore +
+                            " \nrecensito : " + nickname_recensito)
+
+
+class modificaPetCoins(generics.RetrieveUpdateAPIView):
+    serializer_class = AnagraficaSerializer
+    permission_classes = [IsUserLogged]
+
+    def get_object(self):
+        return Profile.objects.get(user=self.request.user)
+
+    def perform_update(self, serializer):
+        num = int(self.kwargs['num'])
+        valori_ammessi = [ 50, 100, 200, -50, -100, -200]
+        if num not in valori_ammessi:
+            raise Exception("Valore non ammesso")
+        val = serializer.validated_data['pet_coins']
+        val = val + num
+        serializer.save(pet_coins=val)
 
 
 # #################################################
