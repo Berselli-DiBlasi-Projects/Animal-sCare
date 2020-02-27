@@ -1,26 +1,54 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Button, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Button, Image, Dimensions, ActivityIndicator, FlatList } from 'react-native';
 import SearchBar from "react-native-dynamic-search-bar";
 import CustomHeader from '../components/Header';
 import Card from '../components/Card';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
-import profile_image from '../assets/profile_img.jpg';
+import profilo_default from '../assets/user_default.jpg';
 import { IconButton } from 'react-native-paper';
 
 const {width, height} = Dimensions.get('window');
 
 class CercaUtente extends Component {
 
-    state = {
-        search: ''
-    };
-
-    updateSearch = search => {
-        this.setState({ search });
-    };
+    constructor(props){
+        super(props);
+        this.state ={ 
+            isLoading: false,
+            search: ''
+        }
+    }
     
+    fetchCercaUtente(text) {
+        console.log('Sto per fetchare: ' + 'http://2.224.160.133.xip.io/api/utenti/cerca/' + text + '/?format=json');
+        return fetch('http://2.224.160.133.xip.io/api/utenti/cerca/' + text + '/?format=json')
+        .then((response) => response.json())
+        .then((responseJson) => {
+        
+        console.log('Ho fetchato');
+        this.setState({
+            isLoading: false,
+            dataSource: responseJson,
+        }, function(){
+
+        });
+
+        })
+        .catch((error) =>{
+        console.error(error);
+        });
+    }
+
     render() {
-        const { search } = this.state;
+
+        if(this.state.isLoading){
+            return(
+                <View style={{flex: 1, paddingTop: height / 2}}>
+                    <ActivityIndicator/>
+                </View>
+            )
+        }
+
         return (
             
             <View style={styles.screen}>
@@ -49,7 +77,7 @@ class CercaUtente extends Component {
                     width="88%"
                     activeOpacity={.9}
                     onChangeText={text => {
-                        console.log(text);
+                        this.fetchCercaUtente(text);
                     }}
                     onPressCancel={() => {
                         console.log("cancel");
@@ -58,19 +86,22 @@ class CercaUtente extends Component {
 
                 <View style={{paddingBottom: 5}}></View>
 
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    <View style={styles.screen}>
-
+                <View style={styles.flatlistview}>
+                    <FlatList
+                        style={{flex: 1}}
+                        data={this.state.dataSource}
+                        renderItem={({item}) => 
                         <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.goBack(null)}>
-                            
                             <Card style={styles.inputContainer}>
                                 <View style={styles.image}>
-                                    <Image source={profile_image} style={styles.profileLogo}  />
+                                    <Image source={ data.foto_profilo ? { uri: data.foto_profilo } : profilo_default }
+                                     style={styles.profileLogo}  />
                                 </View>
                                 <View style={styles.data}>
-                                    <Text style={styles.profileName} numberOfLines={1}>Werther Berselli</Text>
+                                    <Text style={styles.profileName} numberOfLines={1}>{data.user.first_name} + ' ' + {data.user.last_name}</Text>
                                     
-                                    <Text style={styles.profileData} numberOfLines={2}>Utente normale, Via Secchia 1/B, Formigine</Text>
+                                    <Text style={styles.profileData} numberOfLines={2}>{data.pet_sitter == true ? 'Petsitter' : 'Utente normale'},
+                                         {data.indirizzo}, {data.citta}</Text>
                                     <View style={styles.textInline}>
                                         <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Voto medio: </Text>
                                         <Text>5/5</Text>
@@ -81,105 +112,11 @@ class CercaUtente extends Component {
                                     </View>
                                 </View>
                             </Card>
-
-                            <Card style={styles.inputContainer}>
-                                <View style={styles.image}>
-                                    <Image source={profile_image} style={styles.profileLogo}  />
-                                </View>
-                                <View style={styles.data}>
-                                    <Text style={styles.profileName} numberOfLines={1}>Werther Berselli</Text>
-                                    
-                                    <Text style={styles.profileData} numberOfLines={2}>Utente normale, Via Secchia 1/B, Formigine</Text>
-                                    <View style={styles.textInline}>
-                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Voto medio: </Text>
-                                        <Text>5/5</Text>
-                                    </View>
-                                    <View style={styles.textInline}>
-                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Recensioni ricevute: </Text>
-                                        <Text>1</Text>
-                                    </View>
-                                </View>
-                            </Card>
-
-                            <Card style={styles.inputContainer}>
-                                <View style={styles.image}>
-                                    <Image source={profile_image} style={styles.profileLogo}  />
-                                </View>
-                                <View style={styles.data}>
-                                    <Text style={styles.profileName} numberOfLines={1}>Werther Berselli</Text>
-                                    
-                                    <Text style={styles.profileData} numberOfLines={2}>Utente normale, Via Secchia 1/B, Formigine</Text>
-                                    <View style={styles.textInline}>
-                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Voto medio: </Text>
-                                        <Text>5/5</Text>
-                                    </View>
-                                    <View style={styles.textInline}>
-                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Recensioni ricevute: </Text>
-                                        <Text>1</Text>
-                                    </View>
-                                </View>
-                            </Card>
-
-                            <Card style={styles.inputContainer}>
-                                <View style={styles.image}>
-                                    <Image source={profile_image} style={styles.profileLogo}  />
-                                </View>
-                                <View style={styles.data}>
-                                    <Text style={styles.profileName} numberOfLines={1}>Werther Berselli</Text>
-                                    
-                                    <Text style={styles.profileData} numberOfLines={2}>Utente normale, Via Secchia 1/B, Formigine</Text>
-                                    <View style={styles.textInline}>
-                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Voto medio: </Text>
-                                        <Text>5/5</Text>
-                                    </View>
-                                    <View style={styles.textInline}>
-                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Recensioni ricevute: </Text>
-                                        <Text>1</Text>
-                                    </View>
-                                </View>
-                            </Card>
-
-                            <Card style={styles.inputContainer}>
-                                <View style={styles.image}>
-                                    <Image source={profile_image} style={styles.profileLogo}  />
-                                </View>
-                                <View style={styles.data}>
-                                    <Text style={styles.profileName} numberOfLines={1}>Werther Berselli</Text>
-                                    
-                                    <Text style={styles.profileData} numberOfLines={2}>Utente normale, Via Secchia 1/B, Formigine</Text>
-                                    <View style={styles.textInline}>
-                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Voto medio: </Text>
-                                        <Text>5/5</Text>
-                                    </View>
-                                    <View style={styles.textInline}>
-                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Recensioni ricevute: </Text>
-                                        <Text>1</Text>
-                                    </View>
-                                </View>
-                            </Card>
-
-                            <Card style={styles.inputContainer}>
-                                <View style={styles.image}>
-                                    <Image source={profile_image} style={styles.profileLogo}  />
-                                </View>
-                                <View style={styles.data}>
-                                    <Text style={styles.profileName} numberOfLines={1}>Werther Berselli</Text>
-                                    
-                                    <Text style={styles.profileData} numberOfLines={2}>Utente normale, Via Secchia 1/B, Formigine</Text>
-                                    <View style={styles.textInline}>
-                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Voto medio: </Text>
-                                        <Text>5/5</Text>
-                                    </View>
-                                    <View style={styles.textInline}>
-                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Recensioni ricevute: </Text>
-                                        <Text>1</Text>
-                                    </View>
-                                </View>
-                            </Card>
-
                         </TouchableOpacity>
-                    </View>
-                </ScrollView>
+                        }
+                        keyExtractor={({id}, index) => id.toString()}
+                    />
+                </View>
             </View>
         );
     }
@@ -237,6 +174,12 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'flex-end',
+        alignItems: 'center'
+    },
+    flatlistview: {
+        flex: 1,
+        width: '100%',
+        justifyContent: 'space-between',
         alignItems: 'center'
     }
 });

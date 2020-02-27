@@ -14,6 +14,7 @@ export default class App extends React.Component {
     global.is_petsitter = false;
     global.user_key = '-1';
     global.username = '';
+    global.user_id = 1; // 1 per esempio, da mettere a posto!
   }
 
   state = {

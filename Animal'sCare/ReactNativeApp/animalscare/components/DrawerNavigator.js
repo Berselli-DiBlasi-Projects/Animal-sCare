@@ -15,8 +15,7 @@ import Logout from '../Pages/Logout';
 import logo from '../assets/favicon.png';
 import RegistrazioneStackNavigator from './RegistrazioneStackNavigator';
 import AnnuncioStackNavigator from './AnnuncioStackNavigator';
-import ProfiloNormaleStackNavigator from './ProfiloNormaleStackNavigator';
-import ProfiloPetsitterStackNavigator from './ProfiloPetsitterStackNavigator';
+import ProfiloStackNavigator from './ProfiloStackNavigator';
 
 const {width, height} = Dimensions.get('window');
 
@@ -105,8 +104,8 @@ const Drawer = createDrawerNavigator({
           )
         }
     },
-    ProfiloNormaleStackNavigator: {
-      screen: ProfiloNormaleStackNavigator,
+    ProfiloStackNavigator: {
+      screen: ProfiloStackNavigator,
       navigationOptions: ({navigation}) => {
         if(!global.logged_in) {
           return {
@@ -114,24 +113,7 @@ const Drawer = createDrawerNavigator({
           }
         } else {
           return {
-            title: 'Profilo normale',
-            drawerIcon: ({ tintColor }) => (
-              <Icon name = "md-person" />
-            )
-          }
-        }
-      }
-    },
-    ProfiloPetsitterStackNavigator: {
-      screen: ProfiloPetsitterStackNavigator,
-      navigationOptions: ({navigation}) => {
-        if(!global.logged_in) {
-          return {
-            drawerLabel: () => null
-          }
-        } else {
-          return {
-            title: 'Profilo petsitter',
+            title: 'Profilo',
             drawerIcon: ({ tintColor }) => (
               <Icon name = "md-person" />
             )

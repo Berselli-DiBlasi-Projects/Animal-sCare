@@ -1,39 +1,39 @@
 import {createStackNavigator} from 'react-navigation-stack';
-import ProfiloNormale from '../Pages/ProfiloNormale';
+import Profilo from '../Pages/Profilo';
 import EliminaProfiloConferma from '../Pages/EliminaProfiloConferma';
-import ModificaProfiloNormale from '../Pages/ModificaProfiloNormale';
+import ModificaProfilo from '../Pages/ModificaProfilo';
 import AnnunciDiUtente from '../Pages/AnnunciDiUtente';
 import RecensioniRicevute from '../Pages/RecensioniRicevute';
 
-const ProfiloNormaleStackNavigator = createStackNavigator({
-    ProfiloNormale: {
-        screen: ProfiloNormale,
+const ProfiloStackNavigator = createStackNavigator({
+    Profilo: {
+        screen: Profilo,
         navigationOptions: {
-        title: 'Profilo normale',
+        title: 'Profilo',
         drawerIcon: ({ tintColor }) => (
             <Icon name = "md-person" />
           )
         }
     },
-    EliminaProfiloConfermaNormale: {
+    EliminaProfiloConferma: {
         screen: EliminaProfiloConferma,
         navigationOptions: {
         title: 'Elimina profilo conferma'
         }
     },
-    ModificaProfiloNormale: {
-        screen: ModificaProfiloNormale,
+    ModificaProfilo: {
+        screen: ModificaProfilo,
         navigationOptions: {
             title: 'Modifica profilo'
         }
     },
-    AnnunciDiUtenteNormale: {
+    AnnunciDiUtente: {
         screen: AnnunciDiUtente,
         navigationOptions: {
             title: 'Annunci di utente'
         }
     },
-    RecensioniRicevuteNormale: {
+    RecensioniRicevute: {
         screen: RecensioniRicevute,
         navigationOptions: {
             title: 'Recensioni ricevute'
@@ -41,4 +41,4 @@ const ProfiloNormaleStackNavigator = createStackNavigator({
     }
 }, {headerMode: 'none'});
 
-export default ProfiloNormaleStackNavigator;
+export default ProfiloStackNavigator;
