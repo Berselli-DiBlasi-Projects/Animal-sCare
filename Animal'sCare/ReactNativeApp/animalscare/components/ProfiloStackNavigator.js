@@ -1,9 +1,11 @@
+import React, { Component, createContext } from 'react';
 import {createStackNavigator} from 'react-navigation-stack';
 import Profilo from '../Pages/Profilo';
 import EliminaProfiloConferma from '../Pages/EliminaProfiloConferma';
 import ModificaProfilo from '../Pages/ModificaProfilo';
 import AnnunciDiUtente from '../Pages/AnnunciDiUtente';
 import RecensioniRicevute from '../Pages/RecensioniRicevute';
+
 
 const ProfiloStackNavigator = createStackNavigator({
     Profilo: {

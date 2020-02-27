@@ -15,28 +15,35 @@ class CercaUtente extends Component {
         super(props);
         this.state ={ 
             isLoading: false,
-            search: ''
+            search: '',
+            dataSource: null
         }
     }
     
     fetchCercaUtente(text) {
-        console.log('Sto per fetchare: ' + 'http://2.224.160.133.xip.io/api/utenti/cerca/' + text + '/?format=json');
-        return fetch('http://2.224.160.133.xip.io/api/utenti/cerca/' + text + '/?format=json')
-        .then((response) => response.json())
-        .then((responseJson) => {
-        
-        console.log('Ho fetchato');
-        this.setState({
-            isLoading: false,
-            dataSource: responseJson,
-        }, function(){
+        if(text == "") {
+            this.setState({
+                isLoading: false,
+            }, function(){
 
-        });
+            });
+        } else {
+            return fetch('http://2.224.160.133.xip.io/api/utenti/cerca/' + text + '/?format=json')
+            .then((response) => response.json())
+            .then((responseJson) => {
 
-        })
-        .catch((error) =>{
-        console.error(error);
-        });
+            this.setState({
+                dataSource: responseJson,
+                isLoading: false,
+            }, function(){
+
+            });
+
+            })
+            .catch((error) =>{
+            console.error(error);
+            });
+        }
     }
 
     render() {
@@ -91,17 +98,17 @@ class CercaUtente extends Component {
                         style={{flex: 1}}
                         data={this.state.dataSource}
                         renderItem={({item}) => 
-                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.goBack(null)}>
+                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('Profilo', {user_id: item.user.id})}>
                             <Card style={styles.inputContainer}>
                                 <View style={styles.image}>
-                                    <Image source={ data.foto_profilo ? { uri: data.foto_profilo } : profilo_default }
+                                    <Image source={ item.foto_profilo ? { uri: item.foto_profilo } : profilo_default }
                                      style={styles.profileLogo}  />
                                 </View>
                                 <View style={styles.data}>
-                                    <Text style={styles.profileName} numberOfLines={1}>{data.user.first_name} + ' ' + {data.user.last_name}</Text>
+                                    <Text style={styles.profileName} numberOfLines={1}>{item.user.first_name} {item.user.last_name}</Text>
                                     
-                                    <Text style={styles.profileData} numberOfLines={2}>{data.pet_sitter == true ? 'Petsitter' : 'Utente normale'},
-                                         {data.indirizzo}, {data.citta}</Text>
+                                    <Text style={styles.profileData} numberOfLines={2}>{item.pet_sitter == true ? 'Petsitter' : 'Utente normale'},
+                                         {item.indirizzo}, {item.citta}</Text>
                                     <View style={styles.textInline}>
                                         <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Voto medio: </Text>
                                         <Text>5/5</Text>

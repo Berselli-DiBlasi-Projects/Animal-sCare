@@ -37,6 +37,18 @@ class Login extends Component {
                     global.user_key = res.key;
                     global.logged_in = true;
                     global.username = this.state.username;
+
+                    /* Start Fetch user id */
+                    fetch('http://2.224.160.133.xip.io/api/utenti/cerca/' + this.state.username + '/?format=json')
+                    .then((user_response) => user_response.json())
+                    .then((user_responseJson) => {
+                        global.user_id = user_responseJson[0].user.id;
+                    })
+                    .catch((error) =>{
+                    console.error(error);
+                    });
+                    /* End Fetch user id */
+
                     this.clearFields();
                     this.props.navigation.goBack(null);
                 } else {

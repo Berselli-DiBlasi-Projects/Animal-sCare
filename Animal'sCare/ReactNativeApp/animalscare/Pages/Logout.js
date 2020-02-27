@@ -26,6 +26,7 @@ class Logout extends Component {
         global.logged_in = false;
         global.user_key = '-1';
         global.username = '';
+        global.user_id = -1;
         this.props.navigation.goBack(null);
     }
 
