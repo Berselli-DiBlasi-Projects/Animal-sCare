@@ -54,10 +54,6 @@ const CustomDrawerNavigation = (props) => {
     );
   }
 
-  function provina() {
-    console.log('CIAOOOOOOOO');
-  }
-
 const Drawer = createDrawerNavigator({
     ListaAnnunci: {
         screen: ListaAnnunci,

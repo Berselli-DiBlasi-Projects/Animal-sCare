@@ -13,24 +13,36 @@ const {width, height} = Dimensions.get('window');
 
 class Profilo extends Component {
 
+    user_id = -1;
+
     constructor(props){
         super(props);
         this.state ={ 
-            isLoading: true,
-            user_id: global.user_id
+            isLoading: true
         }
     }
     
     componentDidMount() {
+        if (this.props.navigation.state.params == null) {
+            user_id = global.user_id;
+        } else {
+            user_id = this.props.navigation.state.params.user_id;
+        }
         this.fetchProfilo();
+        
         this.willFocusSubscription = this.props.navigation.addListener(
           'willFocus',
           () => {
             this.setState({
-                isLoading: true,
-            }, function(){
-    
+                isLoading: true
             });
+            
+            if (this.props.navigation.state.params == null) {
+                user_id = global.user_id;
+            } else {
+                user_id = this.props.navigation.state.params.user_id;
+            }
+
             this.fetchProfilo();
           }
         );
@@ -41,14 +53,13 @@ class Profilo extends Component {
     }
 
     fetchProfilo() {
-        return fetch('http://2.224.160.133.xip.io/api/utenti/profilo/' + this.state.user_id + '/?format=json')
+        return fetch('http://2.224.160.133.xip.io/api/utenti/profilo/' + user_id + '/?format=json')
         .then((response) => response.json())
         .then((responseJson) => {
         
         this.setState({
             isLoading: false,
-            user_id: global.user_id,
-            dataSource: responseJson,
+            dataSource: responseJson
         }, function(){
 
         });
@@ -277,7 +288,7 @@ class Profilo extends Component {
                                             <Button title={label_annunci_di} onPress={() => this.props.navigation.navigate('AnnunciDiUtente')}/>
                                         </View>
                                         <View style={styles.buttonview}>
-                                            <Button title="Recensioni ricevute" onPress={() => this.props.navigation.navigate('RecensioniRicevute', {user_id: this.state.user_id})}/>
+                                            <Button title="Recensioni ricevute" onPress={() => this.props.navigation.navigate('RecensioniRicevute', {user_id: user_id})}/>
                                         </View>
                                     </View>
                                     <View style={styles.controlli}>
@@ -285,7 +296,7 @@ class Profilo extends Component {
                                             <Button title="Modifica profilo" onPress={() => this.props.navigation.navigate('ModificaProfilo')} />
                                         </View>
                                         <View style={styles.buttonview}>
-                                            <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConferma', {user_id: this.state.user_id})} />
+                                            <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConferma', {user_id: user_id})} />
                                         </View>
                                     </View>
                                 </View>
