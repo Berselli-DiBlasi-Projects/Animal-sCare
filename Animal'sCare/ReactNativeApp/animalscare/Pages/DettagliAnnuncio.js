@@ -144,7 +144,7 @@ class DettagliAnnuncio extends Component {
                                 </View>
                                 <View style={styles.entry}>
                                     <Text style={styles.textTitle}>Pubblicato da: </Text>
-                                    <Text style={styles.textData}>{data.annuncio.user}</Text>
+                                    <Text style={styles.textData}>{data.annuncio.user.username}</Text>
                                 </View>
                                 <View style={styles.entry}>
                                     <Text style={styles.textTitle}>Pet: </Text>

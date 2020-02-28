@@ -168,10 +168,10 @@ class ProfiloPersonale extends Component {
     
                                     <View style={styles.controlli}>
                                         <View style={styles.buttonview}>
-                                            <Button title={label_annunci_di} onPress={() => this.props.navigation.navigate('AnnunciDiUtente')} />
+                                            <Button title={label_annunci_di} onPress={() => this.props.navigation.navigate('AnnunciDiUtente', {user_id: data.user.id, username: data.user.username})} />
                                         </View>
                                         <View style={styles.buttonview}>
-                                            <Button title="Recensioni ricevute" onPress={() => this.props.navigation.navigate('RecensioniRicevute', {user_id: this.state.user_id})}/>
+                                            <Button title="Recensioni ricevute" onPress={() => this.props.navigation.navigate('RecensioniRicevute', {username: data.user.username})}/>
                                         </View>
                                     </View>
                                     <View style={styles.controlli}>
@@ -179,7 +179,7 @@ class ProfiloPersonale extends Component {
                                             <Button title="Modifica profilo" onPress={() => this.props.navigation.navigate('ModificaProfilo')} />
                                         </View>
                                         <View style={styles.buttonview}>
-                                            <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConferma', {user_id: this.state.user_id})} />
+                                            <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConferma', {user_id: data.user.id})} />
                                         </View>
                                     </View>
                                 </View>
@@ -271,10 +271,10 @@ class ProfiloPersonale extends Component {
     
                                     <View style={styles.controlli}>
                                         <View style={styles.buttonview}>
-                                            <Button title={label_annunci_di} onPress={() => this.props.navigation.navigate('AnnunciDiUtente')}/>
+                                            <Button title={label_annunci_di} onPress={() => this.props.navigation.navigate('AnnunciDiUtente', {user_id: data.user.id, username: data.user.username})}/>
                                         </View>
                                         <View style={styles.buttonview}>
-                                            <Button title="Recensioni ricevute" onPress={() => this.props.navigation.navigate('RecensioniRicevute', {user_id: user_id})}/>
+                                            <Button title="Recensioni ricevute" onPress={() => this.props.navigation.navigate('RecensioniRicevute', {username: data.user.username})}/>
                                         </View>
                                     </View>
                                     <View style={styles.controlli}>
@@ -282,7 +282,7 @@ class ProfiloPersonale extends Component {
                                             <Button title="Modifica profilo" onPress={() => this.props.navigation.navigate('ModificaProfilo')} />
                                         </View>
                                         <View style={styles.buttonview}>
-                                            <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConferma', {user_id: user_id})} />
+                                            <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConferma', {user_id: data.user.id})} />
                                         </View>
                                     </View>
                                 </View>

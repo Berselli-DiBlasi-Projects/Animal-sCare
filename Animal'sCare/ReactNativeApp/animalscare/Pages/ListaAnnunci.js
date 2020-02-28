@@ -129,21 +129,26 @@ class ListaAnnunci extends Component {
                                 <Picker.Item label="Rettili" value="Rettile" />
                                 <Picker.Item label="Altro" value="Altro" />
                             </Picker>
-
-                            <View style={{paddingBottom: 5}}></View>
-
-                            <Picker
-                                style={styles.picker} itemStyle={styles.pickerItem}
-                                selectedValue={this.ordina}
-                                onValueChange={(itemValue) => {this.ordina = itemValue;
-                                    this.fetchAnnunci();}}
-                                >
-                                <Picker.Item label="Non ordinare gli annunci" value="*" />
-                                <Picker.Item label="Distanza geografica crescente" value="crescente" />
-                                <Picker.Item label="Distanza geografica decrescente" value="decrescente" />
-                            </Picker>
-
-                            <View style={{paddingBottom: 2}}></View>
+                            
+                            {global.logged_in ? (
+                                <View style={{width: '100%', height: 40}}>
+                                    <View style={{paddingBottom: 5}}></View>
+                                    <Picker
+                                        style={styles.picker} itemStyle={styles.pickerItem}
+                                        selectedValue={this.ordina}
+                                        onValueChange={(itemValue) => {this.ordina = itemValue;
+                                            this.fetchAnnunci();}}
+                                        >
+                                        <Picker.Item label="Non ordinare gli annunci" value="*" />
+                                        <Picker.Item label="Distanza geografica crescente" value="crescente" />
+                                        <Picker.Item label="Distanza geografica decrescente" value="decrescente" />
+                                    </Picker>
+                                </View>
+                            ) : null}
+                            {global.logged_in ? (
+                                <View style={{paddingTop: 6}}></View>
+                            ) : <View style={{paddingTop: 2}}></View>}
+                            
                         </View>
                     ) : null}
                 </View>
@@ -171,7 +176,7 @@ class ListaAnnunci extends Component {
                                     </View>
                                     <View style={styles.textInline}>
                                         <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Pubblicato da: </Text>
-                                        <Text>{item.user}</Text>
+                                        <Text>{item.user.username}</Text>
                                     </View>
                                 </View>
                             </Card>
@@ -252,7 +257,6 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     pickers: {
-        height: 132,
         width: '90%',
         justifyContent: 'space-between',
         alignItems: 'center'

@@ -61,7 +61,7 @@ class Login extends Component {
               callback(obj)
             })
             .catch((error) => {
-                loginExecute;
+                this.loginExecute;
             })
     }
 
