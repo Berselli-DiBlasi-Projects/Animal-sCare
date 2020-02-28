@@ -5,19 +5,20 @@ import Card from '../components/Card';
 import annuncio_default from '../assets/annuncio_default.jpg';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import {Picker} from 'native-base';
-import { IconButton } from 'react-native-paper';
+import { IconButton, ThemeProvider } from 'react-native-paper';
 
 const {width, height} = Dimensions.get('window');
 
 class ListaAnnunci extends Component {
 
+    categorie = "*";
+    animali = "*";
+    ordina = "*";
+
     constructor(props){
         super(props);
         this.state ={ 
             isLoading: true,
-            categorie: "tutto",
-            animali: "tutto",
-            ordina: "non_ordinare",
             show_pickers: true
         }
     }
@@ -50,7 +51,9 @@ class ListaAnnunci extends Component {
     }
 
     fetchAnnunci(){
-    return fetch('http://2.224.160.133.xip.io/api/annunci/?format=json')
+    return fetch('http://2.224.160.133.xip.io/api/annunci/ordina/' + this.animali + 
+        '/' + this.ordina + '/' + this.categorie + '/?format=json')
+
         .then((response) => response.json())
         .then((responseJson) => {
 
@@ -60,10 +63,9 @@ class ListaAnnunci extends Component {
         }, function(){
 
         });
-
         })
         .catch((error) =>{
-        console.error(error);
+            this.fetchAnnunci();
         });
     }
 
@@ -102,38 +104,41 @@ class ListaAnnunci extends Component {
                         <View style={styles.pickers}>
                             <Picker
                                 style={styles.picker} itemStyle={styles.pickerItem}
-                                selectedValue={this.state.categorie}
-                                onValueChange={(itemValue) => this.setState({categorie: itemValue})}
+                                selectedValue={this.categorie}
+                                onValueChange={(itemValue) => { this.categorie = itemValue;
+                                    this.fetchAnnunci();}}
                                 >
-                                <Picker.Item label="Tutte le categorie di annunci" value="tutto" />
+                                <Picker.Item label="Tutte le categorie di annunci" value="*" />
                                 <Picker.Item label="Cerco un petsitter" value="petsitter" />
-                                <Picker.Item label="Cerco un pet" value="pet" />
+                                <Picker.Item label="Cerco un pet" value="normale" />
                             </Picker>
 
                             <View style={{paddingBottom: 5}}></View>
                         
                             <Picker
                                 style={styles.picker} itemStyle={styles.pickerItem}
-                                selectedValue={this.state.animali}
-                                onValueChange={(itemValue) => this.setState({animali: itemValue})}
+                                selectedValue={this.animali}
+                                onValueChange={(itemValue) => {this.animali = itemValue;
+                                    this.fetchAnnunci();}}
                                 >
-                                <Picker.Item label="Tutti gli animali" value="tutto" />
-                                <Picker.Item label="Cani" value="cani" />
-                                <Picker.Item label="Gatti" value="gatti" />
-                                <Picker.Item label="Conigli" value="conigli" />
-                                <Picker.Item label="Volatili" value="volatili" />
-                                <Picker.Item label="Rettili" value="rettili" />
-                                <Picker.Item label="Altro" value="altro" />
+                                <Picker.Item label="Tutti gli animali" value="*" />
+                                <Picker.Item label="Cani" value="Cane" />
+                                <Picker.Item label="Gatti" value="Gatto" />
+                                <Picker.Item label="Conigli" value="Coniglio" />
+                                <Picker.Item label="Volatili" value="Volatile" />
+                                <Picker.Item label="Rettili" value="Rettile" />
+                                <Picker.Item label="Altro" value="Altro" />
                             </Picker>
 
                             <View style={{paddingBottom: 5}}></View>
 
                             <Picker
                                 style={styles.picker} itemStyle={styles.pickerItem}
-                                selectedValue={this.state.ordina}
-                                onValueChange={(itemValue) => this.setState({ordina: itemValue})}
+                                selectedValue={this.ordina}
+                                onValueChange={(itemValue) => {this.ordina = itemValue;
+                                    this.fetchAnnunci();}}
                                 >
-                                <Picker.Item label="Non ordinare gli annunci" value="non_ordinare" />
+                                <Picker.Item label="Non ordinare gli annunci" value="*" />
                                 <Picker.Item label="Distanza geografica crescente" value="crescente" />
                                 <Picker.Item label="Distanza geografica decrescente" value="decrescente" />
                             </Picker>

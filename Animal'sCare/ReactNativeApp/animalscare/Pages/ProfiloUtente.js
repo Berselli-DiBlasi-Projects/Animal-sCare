@@ -11,7 +11,7 @@ import { IconButton } from 'react-native-paper';
 
 const {width, height} = Dimensions.get('window');
 
-class Profilo extends Component {
+class ProfiloUtente extends Component {
 
     user_id = -1;
 
@@ -23,11 +23,7 @@ class Profilo extends Component {
     }
     
     componentDidMount() {
-        if (this.props.navigation.state.params == null) {
-            user_id = global.user_id;
-        } else {
-            user_id = this.props.navigation.state.params.user_id;
-        }
+        this.user_id = this.props.navigation.state.params.user_id;
         this.fetchProfilo();
         
         this.willFocusSubscription = this.props.navigation.addListener(
@@ -37,12 +33,7 @@ class Profilo extends Component {
                 isLoading: true
             });
             
-            if (this.props.navigation.state.params == null) {
-                user_id = global.user_id;
-            } else {
-                user_id = this.props.navigation.state.params.user_id;
-            }
-
+            this.user_id = this.props.navigation.state.params.user_id;
             this.fetchProfilo();
           }
         );
@@ -53,7 +44,7 @@ class Profilo extends Component {
     }
 
     fetchProfilo() {
-        return fetch('http://2.224.160.133.xip.io/api/utenti/profilo/' + user_id + '/?format=json')
+        return fetch('http://2.224.160.133.xip.io/api/utenti/profilo/' + this.user_id + '/?format=json')
         .then((response) => response.json())
         .then((responseJson) => {
         
@@ -66,7 +57,7 @@ class Profilo extends Component {
 
         })
         .catch((error) =>{
-        console.error(error);
+        this.fetchProfilo();
         });
     }
 
@@ -185,15 +176,7 @@ class Profilo extends Component {
                                             <Button title={label_annunci_di} onPress={() => this.props.navigation.navigate('AnnunciDiUtente')} />
                                         </View>
                                         <View style={styles.buttonview}>
-                                            <Button title="Recensioni ricevute" onPress={() => this.props.navigation.navigate('RecensioniRicevute', {user_id: this.state.user_id})}/>
-                                        </View>
-                                    </View>
-                                    <View style={styles.controlli}>
-                                        <View style={styles.buttonview}>
-                                            <Button title="Modifica profilo" onPress={() => this.props.navigation.navigate('ModificaProfilo')} />
-                                        </View>
-                                        <View style={styles.buttonview}>
-                                            <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConferma', {user_id: this.state.user_id})} />
+                                            <Button title="Recensioni ricevute" onPress={() => this.props.navigation.navigate('RecensioniRicevute', {user_id: this.user_id})}/>
                                         </View>
                                     </View>
                                 </View>
@@ -288,15 +271,7 @@ class Profilo extends Component {
                                             <Button title={label_annunci_di} onPress={() => this.props.navigation.navigate('AnnunciDiUtente')}/>
                                         </View>
                                         <View style={styles.buttonview}>
-                                            <Button title="Recensioni ricevute" onPress={() => this.props.navigation.navigate('RecensioniRicevute', {user_id: user_id})}/>
-                                        </View>
-                                    </View>
-                                    <View style={styles.controlli}>
-                                        <View style={styles.buttonview}>
-                                            <Button title="Modifica profilo" onPress={() => this.props.navigation.navigate('ModificaProfilo')} />
-                                        </View>
-                                        <View style={styles.buttonview}>
-                                            <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConferma', {user_id: user_id})} />
+                                            <Button title="Recensioni ricevute" onPress={() => this.props.navigation.navigate('RecensioniRicevute', {user_id: this.user_id})}/>
                                         </View>
                                     </View>
                                 </View>
@@ -365,4 +340,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Profilo;
+export default ProfiloUtente;
