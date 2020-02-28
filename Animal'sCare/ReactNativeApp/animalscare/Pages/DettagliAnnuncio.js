@@ -56,7 +56,7 @@ class DettagliAnnuncio extends Component {
 
         })
         .catch((error) =>{
-        console.error(error);
+        this.fetchDettagliAnnuncio();
         });
     }
 

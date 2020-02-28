@@ -1,26 +1,26 @@
 import React, { Component, createContext } from 'react';
 import {createStackNavigator} from 'react-navigation-stack';
-import Profilo from '../Pages/Profilo';
+import ProfiloPersonale from '../Pages/ProfiloPersonale';
 import EliminaProfiloConferma from '../Pages/EliminaProfiloConferma';
 import ModificaProfilo from '../Pages/ModificaProfilo';
 import AnnunciDiUtente from '../Pages/AnnunciDiUtente';
 import RecensioniRicevute from '../Pages/RecensioniRicevute';
 
 
-const ProfiloStackNavigator = createStackNavigator({
-    Profilo: {
-        screen: Profilo,
+const ProfiloPersonaleStackNavigator = createStackNavigator({
+    ProfiloPersonale: {
+        screen: ProfiloPersonale,
         navigationOptions: {
-        title: 'Profilo',
-        drawerIcon: ({ tintColor }) => (
-            <Icon name = "md-person" />
-          )
+            title: 'Profilo',
+            drawerIcon: ({ tintColor }) => (
+                <Icon name = "md-person" />
+            )
         }
     },
     EliminaProfiloConferma: {
         screen: EliminaProfiloConferma,
         navigationOptions: {
-        title: 'Elimina profilo conferma'
+            title: 'Elimina profilo conferma'
         }
     },
     ModificaProfilo: {
@@ -43,4 +43,4 @@ const ProfiloStackNavigator = createStackNavigator({
     }
 }, {headerMode: 'none'});
 
-export default ProfiloStackNavigator;
+export default ProfiloPersonaleStackNavigator;

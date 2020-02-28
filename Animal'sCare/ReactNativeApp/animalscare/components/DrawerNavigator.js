@@ -15,7 +15,9 @@ import Logout from '../Pages/Logout';
 import logo from '../assets/favicon.png';
 import RegistrazioneStackNavigator from './RegistrazioneStackNavigator';
 import AnnuncioStackNavigator from './AnnuncioStackNavigator';
-import ProfiloStackNavigator from './ProfiloStackNavigator';
+import ProfiloPersonaleStackNavigator from './ProfiloPersonaleStackNavigator';
+import ProfiloUtenteStackNavigator from './ProfiloUtenteStackNavigator';
+
 
 const {width, height} = Dimensions.get('window');
 
@@ -100,8 +102,8 @@ const Drawer = createDrawerNavigator({
           )
         }
     },
-    ProfiloStackNavigator: {
-      screen: ProfiloStackNavigator,
+    ProfiloPersonaleStackNavigator: {
+      screen: ProfiloPersonaleStackNavigator,
       navigationOptions: ({navigation}) => {
         if(!global.logged_in) {
           return {
@@ -218,9 +220,17 @@ const Drawer = createDrawerNavigator({
           }
         }
       }
-  },
+    },
     AnnuncioStackNavigator: {
       screen: AnnuncioStackNavigator,
+      navigationOptions: ({navigation}) => {
+            return {
+              drawerLabel: () => null,
+          }
+      }
+    },
+    ProfiloUtenteStackNavigator: {
+      screen: ProfiloUtenteStackNavigator,
       navigationOptions: ({navigation}) => {
             return {
               drawerLabel: () => null,
