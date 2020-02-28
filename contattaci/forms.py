@@ -20,8 +20,8 @@ class ContattaciForm(forms.Form):
         return self.cleaned_data['titolo']
 
     def clean_messaggio(self):
-        if not re.match("^[A-Za-z0-9 .,'èòàùì]+$", self.cleaned_data['messaggio']):
-            raise ValidationError(_('Errore: il titolo può contenere solo lettere, numeri e spazi.'))
+        if not re.match("^[A-Za-z0-9 .,'èòàùì!?]+$", self.cleaned_data['messaggio']):
+            raise ValidationError(_('Errore: il messaggio può contenere solo lettere, numeri e spazi.'))
         if not (1 <= len(self.cleaned_data['messaggio']) <= 300):
-            raise ValidationError(_('Errore: il titolo deve avere lunghezza fra 1 e 300 caratteri.'))
+            raise ValidationError(_('Errore: il messaggio deve avere lunghezza fra 1 e 300 caratteri.'))
         return self.cleaned_data['titolo']

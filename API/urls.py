@@ -98,4 +98,8 @@ urlpatterns = [
     url(r'recensioni/modifica/(?P<utente>[A-Za-z0-9èòàùì]+)/$',
         views.modificaRecensione.as_view(),
         name='API-modifica-recensione'),
+
+    # contattaci
+    # /API/annunci/nuovo/
+    url(r'contattaci/$', views.contattaciInPrivato.as_view(), name='API-contattaci'),
 ]

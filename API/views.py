@@ -12,9 +12,14 @@ from API.serializers import (AnagraficaSerializer,
                                 CompletaRegPetsitterSerializer,
                                 CompletaRegUtenteNormale,
                                 RecensioniSerializer,
-                             )
+                                ContattaciSerializer,
+                            )
 from annunci.views import ordina_annunci as ordina_geograficamente
 from .permissions import *
+from django.core.mail import EmailMessage
+from django.conf import settings
+
+
 from rest_framework.parsers import JSONParser, MultiPartParser, FileUploadParser
 
 
@@ -331,6 +336,18 @@ class modificaPetCoins(generics.RetrieveUpdateAPIView):
         val = val + num
         serializer.save(pet_coins=val)
 
+
+class contattaciInPrivato(generics.CreateAPIView):
+    serializer_class = ContattaciSerializer
+    permission_classes = [IsUserLogged]
+
+    def perform_create(self, serializer):
+        print("titolo", serializer.validated_data['titolo'])
+        print("messaggio", serializer.validated_data['messaggio'])
+        email = EmailMessage(serializer.validated_data['titolo'],
+                             'Messaggio dall\'utente: ' + self.request.user.username + "\n" +
+                             serializer.validated_data['messaggio'], to=[settings.EMAIL_HOST_USER])
+        email.send()
 
 # #################################################
 #                          DA CANCELLARE

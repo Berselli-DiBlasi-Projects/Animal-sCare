@@ -9,6 +9,11 @@ from utenti.models import Profile
 from annunci.models import Annuncio, Servizio
 
 
+class UsernameOnlySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id","username"]
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -219,40 +224,10 @@ class CompletaRegUtenteNormale(serializers.ModelSerializer):
         return instance
 
 
-
-# class DateTimeFieldWihTZ(serializers.DateTimeField):
-#     '''Class to make output of a DateTime Field timezone aware
-#     '''
-#     def to_representation(self, value):
-#         value = timezone.localtime(value)
-#         return super(DateTimeFieldWihTZ, self).to_representation(value)
-#
-#
-# class CustomDateTimeField(serializers.DateTimeField):
-#     def to_representation(self, value):
-#         print("value ", value)
-#         tz = timezone.get_default_timezone()
-#         # timezone.localtime() defaults to the current tz, you only
-#         # need the `tz` arg if the current tz != default tz
-#         value = timezone.localtime(value, timezone=tz)
-#         # py3 notation below, for py2 do:
-#         return super(CustomDateTimeField, self).to_representation(value)
-#         # return super().to_representation(value)
-
-
 class AnnuncioSerializer(serializers.ModelSerializer):
-    # data_inizio = DateTimeFieldWihTZ(format='%Y-%m-%d %H:%M', input_formats=['%Y-%m-%dT%H:%M:%SZ',])
-    # data_fine = DateTimeFieldWihTZ(format='%Y-%m-%d %H:%M', input_formats=['%Y-%m-%dT%H:%M:%SZ',])
-
-    # "modo usaro da django": "2020-02-29T15:12:00",
-    # "modo usato da django rest": "2020-02-08T16:49:50.590558",
-
-    # data_inizio = CustomDateTimeField()
-    # data_fine = CustomDateTimeField()
-
-    data_inizio =serializers.DateTimeField(format=None,input_formats=None)
-    data_fine =serializers.DateTimeField(format=None,input_formats=None)
-
+    data_inizio =serializers.DateTimeField(format=None, input_formats=None)
+    data_fine =serializers.DateTimeField(format=None, input_formats=None)
+    user = UsernameOnlySerializer(many=False, read_only=True)
     class Meta:
         model = Annuncio
         fields = "__all__"
@@ -310,24 +285,16 @@ class AnnuncioConServizi(serializers.ModelSerializer):
 
 
 class RecensioniSerializer(serializers.ModelSerializer):
-
-    # user_recensore = UserSerializer(many=False)
-    # user_recensito = UserSerializer(many=False)
-
     class Meta:
         model = Recensione
         fields ="__all__"
-#     def create(self,validated_data):
-#         user_recensito = self.context.get('view').parser_context['kwargs']['user_recensito']
-#         print('user_recensito', user_recensito)
-#         user_recensore = self.context.get('view').parser_context['kwargs']['user_recensore']
-#         print('user_recensore', user_recensore)
-#         # user_recensito =validated_data.pop('user_recensito')
-#         # print('user_recensito', user_recensito)
-#         # user_recensore =validated_data.pop('user_recensore')
-#         # print('user_recensore', user_recensore)
-#
-# #         # user_recensito = self._kwargs[]
-#
+
+
+class ContattaciSerializer(serializers.Serializer):
+    titolo = serializers.CharField(max_length=95)
+    messaggio = serializers.CharField(max_length=300)
+
+    class Meta:
+        fields=['titolo', 'messaggio']
 
 
