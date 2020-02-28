@@ -1,7 +1,7 @@
 import requests
 
 def client():
-    # token_h = "Token 6f9ce6a2bc0f738362b8c0a02d15d6e6ceb94a26"
+
     credentials = {"username": "pippo", "password": "pippo"}
     
     response = requests.post("http://127.0.0.1:8000/api/rest-auth/login/", data=credentials)
@@ -9,9 +9,12 @@ def client():
     print("Status Code: ", response.status_code)
     response_data = response.json()
     print(response_data)
+    # print("token = ", response_data.get("key"))
+    token_h = "Token " + response_data.get("key")
+    headers = {"Authorization": token_h}
 
     #richiamo la API per gli annunci
-    response = requests.get("http://127.0.0.1:8000/api/annunci/", data=credentials)
+    response = requests.get("http://127.0.0.1:8000/api/recensioni/nuova/1", headers=headers)
     print("Status Code: ", response.status_code)
     response_data = response.json()
     print(response_data)
