@@ -41,7 +41,7 @@ class CercaUtente extends Component {
 
             })
             .catch((error) =>{
-            console.error(error);
+            this.fetchCercaUtente(text);
             });
         }
     }
@@ -64,7 +64,7 @@ class CercaUtente extends Component {
                 
                 <View style={styles.contentbar}>
                     <View style={styles.leftcontainer}>
-                        <IconButton icon="arrow-left" onPress={() => this.props.navigation.navigate('ListaAnnunci')} />
+                        <IconButton icon="arrow-left" onPress={() => this.props.navigation.goBack(null)} />
                     </View>
                     <Text style={styles.title}>
                         Cerca utente
@@ -98,7 +98,7 @@ class CercaUtente extends Component {
                         style={{flex: 1}}
                         data={this.state.dataSource}
                         renderItem={({item}) => 
-                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('Profilo', {user_id: item.user.id})}>
+                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('ProfiloUtente', {user_id: item.user.id})}>
                             <Card style={styles.inputContainer}>
                                 <View style={styles.image}>
                                     <Image source={ item.foto_profilo ? { uri: item.foto_profilo } : profilo_default }
