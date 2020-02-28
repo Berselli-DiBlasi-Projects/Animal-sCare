@@ -55,11 +55,60 @@ class AnagraficaSerializer(serializers.ModelSerializer):
         # read_only_fields = ['user',"latitudine", "longitudine","pet_coins", "pet_sitter", "id"]
 
 
+
+class RecensioniSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recensione
+        fields ="__all__"
+
+
 class DatiUtenteCompleti(serializers.ModelSerializer):
     user = UserSerializer(many=False)
+    numero_recensioni = serializers.SerializerMethodField("get_numero_recensioni_utente")
+    media_voti = serializers.SerializerMethodField("get_media_voti_utente")
+
     class Meta:
         model = Profile
-        fields = "__all__"
+        fields =["user",
+                 "indirizzo",
+                 "citta",
+                 "provincia",
+                 "regione",
+                 "latitudine",
+                 "longitudine",
+                 "telefono",
+                 "pet_coins",
+                 "foto_profilo",
+                 "pet_sitter",
+                 "nome_pet",
+                 "pet",
+                 "razza",
+                 "eta",
+                 "caratteristiche",
+                 "foto_pet",
+                 "descrizione",
+                 "hobby",
+                 "numero_recensioni",
+                 "media_voti",
+                 ]
+
+    def get_media_voti_utente(self, Recensione):
+        # somma = 0
+        #
+        # recensioni = Recensione.objects.filter(user_recensito=self.instance)
+        # print("recensioni : ",recensioni)
+        # for obj in recensioni:
+        #     somma += obj.voto
+        # media = somma / len(recensioni)
+        return 0
+
+
+    def get_numero_recensioni_utente(self,Recensione):
+        # try:
+        #     recensioni = Recensione.objects.get(user_recensito=self.instance)
+        #     return len(recensioni)
+        # except Exception:
+        return 0
 
     def update(self, instance, validated_data):
         v = instance.user.username
@@ -282,14 +331,6 @@ class AnnuncioConServizi(serializers.ModelSerializer):
 
         return servizi
 
-
-
-class RecensioniSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Recensione
-        fields ="__all__"
-
-
 class ContattaciSerializer(serializers.Serializer):
     titolo = serializers.CharField(max_length=95)
     messaggio = serializers.CharField(max_length=300)
@@ -298,3 +339,8 @@ class ContattaciSerializer(serializers.Serializer):
         fields=['titolo', 'messaggio']
 
 
+class UtenteConRecensioni(serializers.ModelSerializer):
+    user_recensito = DatiUtenteCompleti(many=False)
+    class Meta:
+        model = Recensione
+        fields ="__all__"

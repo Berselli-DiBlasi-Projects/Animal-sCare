@@ -23,8 +23,6 @@ from django.conf import settings
 from rest_framework.parsers import JSONParser, MultiPartParser, FileUploadParser
 
 
-
-
 class userInfoLogin(generics.RetrieveAPIView):
     """
     Questa view restituisce la lista completa degli utenti registrati

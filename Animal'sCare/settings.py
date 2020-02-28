@@ -105,6 +105,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
 
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': "%Y-%m-%dT%H:%M:00",
