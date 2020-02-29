@@ -48,6 +48,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+MIDDLEWARE_CLASSES = (
+    'API.disableCSRF.DisableCSRF',
+)
+
 ROOT_URLCONF = 'Animal\'sCare.urls'
 
 TEMPLATES = [
