@@ -99,7 +99,7 @@ class AnnunciDiUtente extends Component {
                     <FlatList
                         style={{flex: 1}}
                         data={this.state.dataSource}
-                        renderItem={({item}) => 
+                        renderItem={({item, index}) => 
                         <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('DettagliAnnuncio', {id_annuncio: item.annuncio.id})}>
                             <Card style={styles.inputContainer}>
                                 <View style={styles.image}>
@@ -125,7 +125,7 @@ class AnnunciDiUtente extends Component {
                             </Card>
                         </TouchableOpacity>
                         }
-                        keyExtractor={({id}, index) => id.toString()}
+                        keyExtractor={(item, index) => index.toString()}
                     />
                 </View>
             </View>

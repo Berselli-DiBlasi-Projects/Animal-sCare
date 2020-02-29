@@ -93,7 +93,7 @@ class RecensioniRicevute extends Component {
                     <FlatList
                         style={{flex: 1}}
                         data={this.state.dataSource}
-                        renderItem={({item}) => 
+                        renderItem={({item, index}) => 
                             <Card style={styles.inputContainer}>
                                 <View style={styles.data}>
                                     <Text style={styles.recensioneTitle} numberOfLines={1}>{item.titolo}</Text>
@@ -106,7 +106,7 @@ class RecensioniRicevute extends Component {
                                 </View>
                             </Card>
                         }
-                        keyExtractor={({id}, index) => id.toString()}
+                        keyExtractor={(item, index) => index.toString()}
                     />
                 </View>
             </View>

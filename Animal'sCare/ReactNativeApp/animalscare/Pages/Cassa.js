@@ -1,13 +1,70 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, Button } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, Button, ActivityIndicator, Dimensions } from 'react-native';
 import CustomHeader from '../components/Header';
 import { IconButton } from 'react-native-paper';
 import logo from '../assets/pet_coin.png';
 import Card from '../components/Card';
 
+
+const {width, height} = Dimensions.get('window');
+
 class Cassa extends Component {
 
+    constructor(props){
+        super(props);
+        this.state ={ 
+            isLoading: true
+        }
+    }
+    
+    componentDidMount() {
+        this.fetchProfilo();
+        
+        this.willFocusSubscription = this.props.navigation.addListener(
+          'willFocus',
+          () => {
+            this.setState({
+                isLoading: true
+            });
+            this.fetchProfilo();
+          }
+        );
+    }
+
+    componentWillUnmount() {
+    this.willFocusSubscription.remove();
+    }
+
+    fetchProfilo() {
+        return fetch('http://2.224.160.133.xip.io/api/utenti/profilo/' + global.user_id + '/?format=json')
+        .then((response) => response.json())
+        .then((responseJson) => {
+        
+        this.setState({
+            isLoading: false,
+            dataSource: responseJson
+        }, function(){
+
+        });
+
+        })
+        .catch((error) =>{
+        this.fetchProfilo();
+        });
+    }
+
     render() {
+
+        if(this.state.isLoading){
+            return(
+                <View style={{flex: 1, paddingTop: height / 2}}>
+                    <ActivityIndicator/>
+                </View>
+            )
+        }
+
+        data = this.state.dataSource;
+
         return (
             <View style={styles.screen}>
                 <CustomHeader parent={this.props} />
@@ -28,7 +85,7 @@ class Cassa extends Component {
                         
                             <View style={{flexDirection: 'row', marginTop: 20}}>
                                 <Text>Saldo attuale: </Text>
-                                <Text>2550</Text>
+                                <Text>{data.pet_coins}</Text>
                                 <Image source={logo} style={{ width: 25, height: 25 }}  />
                             </View>
                             
