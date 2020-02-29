@@ -8,6 +8,23 @@ from recensioni.models import Recensione
 from utenti.models import Profile
 from annunci.models import Annuncio, Servizio
 
+def calcolaMediaVotiUtente(profilo):
+    utente = User.objects.get(username = profilo)
+    somma = 0
+    recensioni = Recensione.objects.filter(user_recensito=utente)
+    # print("recensioni : ",recensioni)
+    for obj in recensioni:
+        somma += obj.voto
+    if len(recensioni)!=0:
+        media = somma / len(recensioni)
+    else:
+        media = 0
+    return media
+
+def calcolaNumeroVotiUtente(profilo):
+    utente = User.objects.get(username = profilo)
+    recensioni = Recensione.objects.filter(user_recensito=utente)
+    return len(recensioni)
 
 class UsernameOnlySerializer(serializers.ModelSerializer):
     class Meta:
@@ -92,23 +109,14 @@ class DatiUtenteCompleti(serializers.ModelSerializer):
                  "media_voti",
                  ]
 
-    def get_media_voti_utente(self, Recensione):
-        # somma = 0
-        #
-        # recensioni = Recensione.objects.filter(user_recensito=self.instance)
-        # print("recensioni : ",recensioni)
-        # for obj in recensioni:
-        #     somma += obj.voto
-        # media = somma / len(recensioni)
-        return 0
+    def get_media_voti_utente(self,profilo):
+        # user = Profile.__class__.objects.get(user=self.instance)
+        return calcolaMediaVotiUtente(profilo)
 
 
-    def get_numero_recensioni_utente(self,Recensione):
-        # try:
-        #     recensioni = Recensione.objects.get(user_recensito=self.instance)
-        #     return len(recensioni)
-        # except Exception:
-        return 0
+    def get_numero_recensioni_utente(self,profilo):
+        # user = Profile.__class__.objects.get(user=self.instance)
+        return calcolaNumeroVotiUtente(profilo)
 
     def update(self, instance, validated_data):
         v = instance.user.username
