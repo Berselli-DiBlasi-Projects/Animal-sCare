@@ -98,7 +98,7 @@ class CercaUtente extends Component {
                         style={{flex: 1}}
                         data={this.state.dataSource}
                         renderItem={({item, index}) => 
-                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('ProfiloUtente', {user_id: item.user.id})}>
+                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('ProfiloUtenteCercaUtenteSN', {user_id: item.user.id})}>
                             <Card style={styles.inputContainer}>
                                 <View style={styles.image}>
                                     <Image source={ item.foto_profilo ? { uri: item.foto_profilo } : profilo_default }

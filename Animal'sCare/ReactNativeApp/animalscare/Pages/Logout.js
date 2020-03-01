@@ -27,6 +27,7 @@ class Logout extends Component {
         global.user_key = '-1';
         global.username = '';
         global.user_id = -1;
+        global.is_petsitter = false;
         this.props.navigation.goBack(null);
     }
 

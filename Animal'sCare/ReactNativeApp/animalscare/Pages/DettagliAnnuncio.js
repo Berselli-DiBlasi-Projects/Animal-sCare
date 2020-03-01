@@ -45,7 +45,6 @@ class DettagliAnnuncio extends Component {
         return fetch('http://2.224.160.133.xip.io/api/annunci/' + this.props.navigation.state.params.id_annuncio + '/dettagli/?format=json')
         .then((response) => response.json())
         .then((responseJson) => {
-        
         this.setState({
             isLoading: false,
             id_annuncio: this.props.navigation.state.params.id_annuncio,
@@ -142,9 +141,24 @@ class DettagliAnnuncio extends Component {
                                     <Text style={styles.textTitle}>Pet coins: </Text>
                                     <Text style={styles.textData}>{data.annuncio.pet_coins}</Text>
                                 </View>
+
                                 <View style={styles.entry}>
                                     <Text style={styles.textTitle}>Pubblicato da: </Text>
-                                    <Text style={styles.textData}>{data.annuncio.user.username}</Text>
+                                    <View style={{flexDirection: 'row'}}>
+                                        <Text style={styles.textData, {color: 'blue'}}
+                                            onPress={() => this.props.navigation.navigate('ProfiloUtenteAnnuncioSN', {user_id: data.annuncio.user.id})}>
+                                            {data.annuncio.user.username}</Text>
+                                        { data.annuncio.annuncio_petsitter == true ? (
+                                            <View>
+                                                <Text> (Petsitter)</Text>
+                                            </View>
+                                        ) : (
+                                            <View>
+                                                <Text> (Utente normale)</Text>
+                                            </View>
+                                        )}
+                                        
+                                    </View>
                                 </View>
                                 <View style={styles.entry}>
                                     <Text style={styles.textTitle}>Pet: </Text>
@@ -167,15 +181,23 @@ class DettagliAnnuncio extends Component {
                                     <Text style={styles.textData}>{servizi}</Text>
                                 </View>
 
-                                <View style={styles.controlli}>
-                                    <View style={styles.buttonview}>
-                                        <Button title="Accetta annuncio" onPress={() => this.props.navigation.navigate('AccettaAnnuncioConferma', {id_annuncio: this.state.id_annuncio})}/>
-                                    </View>
-                                    <View style={styles.buttonview}>
-                                        <Button title="Modifica annuncio" onPress={() => this.props.navigation.navigate('ModificaAnnuncio')}/>
-                                    </View>
-                                    <View style={styles.buttonview}>
-                                        <Button title="Elimina annuncio" color='red' onPress={() => this.props.navigation.navigate('EliminaAnnuncioConferma', {id_annuncio: this.state.id_annuncio})} />
+                                <View style={{alignItems: 'center'}}>
+                                    <View style={styles.controlli}>
+                                        { data.annuncio.annuncio_petsitter != global.is_petsitter && global.logged_in == true && data.annuncio.user_accetta == null ? (
+                                        <View style={styles.buttonview}>
+                                            <Button title="Accetta annuncio" onPress={() => this.props.navigation.navigate('AccettaAnnuncioConferma', {id_annuncio: this.state.id_annuncio})}/>
+                                        </View>
+                                        ) : null }
+                                        { data.annuncio.user.id == global.user_id ? (
+                                        <View style={{flexDirection: 'row'}}>
+                                            <View style={styles.buttonview}>
+                                                <Button title="Modifica annuncio" onPress={() => this.props.navigation.navigate('ModificaAnnuncio')}/>
+                                            </View>
+                                            <View style={styles.buttonview}>
+                                                <Button title="Elimina annuncio" color='red' onPress={() => this.props.navigation.navigate('EliminaAnnuncioConferma', {id_annuncio: this.state.id_annuncio})} />
+                                            </View>
+                                        </View>
+                                        ) : null }
                                     </View>
                                 </View>
                             </View>
@@ -212,7 +234,8 @@ const styles = StyleSheet.create({
     },
     controlli: {
         flexDirection: 'row',
-        paddingTop: 20
+        paddingTop: 20,
+        paddingRight: 28
     },
     buttonview: {
         width: 110,

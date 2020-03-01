@@ -180,7 +180,7 @@ class ProfiloPersonale extends Component {
                                     </View>
                                     <View style={styles.controlli}>
                                         <View style={styles.buttonview}>
-                                            <Button title="Modifica profilo" onPress={() => this.props.navigation.navigate('ModificaProfilo')} />
+                                            <Button title="Modifica profilo" onPress={() => this.props.navigation.navigate('ModificaProfilo', {user_id: data.user.id})} />
                                         </View>
                                         <View style={styles.buttonview}>
                                             <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConferma', {user_id: data.user.id})} />
@@ -287,7 +287,7 @@ class ProfiloPersonale extends Component {
                                     </View>
                                     <View style={styles.controlli}>
                                         <View style={styles.buttonview}>
-                                            <Button title="Modifica profilo" onPress={() => this.props.navigation.navigate('ModificaProfilo')} />
+                                            <Button title="Modifica profilo" onPress={() => this.props.navigation.navigate('ModificaProfilo', {user_id: data.user.id})} />
                                         </View>
                                         <View style={styles.buttonview}>
                                             <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConferma', {user_id: data.user.id})} />
