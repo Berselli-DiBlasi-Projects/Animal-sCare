@@ -97,8 +97,8 @@ class CercaUtente extends Component {
                     <FlatList
                         style={{flex: 1}}
                         data={this.state.dataSource}
-                        renderItem={({item}) => 
-                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('ProfiloUtente', {user_id: item.user.id})}>
+                        renderItem={({item, index}) => 
+                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('ProfiloUtenteCercaUtenteSN', {user_id: item.user.id})}>
                             <Card style={styles.inputContainer}>
                                 <View style={styles.image}>
                                     <Image source={ item.foto_profilo ? { uri: item.foto_profilo } : profilo_default }
@@ -111,17 +111,17 @@ class CercaUtente extends Component {
                                          {item.indirizzo}, {item.citta}</Text>
                                     <View style={styles.textInline}>
                                         <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Voto medio: </Text>
-                                        <Text>5/5</Text>
+                                        <Text>{item.media_voti}/5</Text>
                                     </View>
                                     <View style={styles.textInline}>
                                         <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Recensioni ricevute: </Text>
-                                        <Text>1</Text>
+                                        <Text>{item.numero_recensioni}</Text>
                                     </View>
                                 </View>
                             </Card>
                         </TouchableOpacity>
                         }
-                        keyExtractor={({id}, index) => id.toString()}
+                        keyExtractor={(item, index) => index.toString()}
                     />
                 </View>
             </View>

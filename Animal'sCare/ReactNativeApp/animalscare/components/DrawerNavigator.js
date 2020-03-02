@@ -5,8 +5,6 @@ import { Icon } from 'native-base';
 import { Dimensions } from 'react-native';
 import ListaAnnunci from '../Pages/ListaAnnunci';
 import InserisciAnnuncio from '../Pages/InserisciAnnuncio';
-import Classifica from '../Pages/Classifica';
-import CercaUtente from '../Pages/CercaUtente';
 import Calendario from '../Pages/Calendario';
 import Cassa from '../Pages/Cassa';
 import Contattaci from '../Pages/Contattaci';
@@ -17,6 +15,8 @@ import RegistrazioneStackNavigator from './RegistrazioneStackNavigator';
 import AnnuncioStackNavigator from './AnnuncioStackNavigator';
 import ProfiloPersonaleStackNavigator from './ProfiloPersonaleStackNavigator';
 import ProfiloUtenteStackNavigator from './ProfiloUtenteStackNavigator';
+import CercaUtenteStackNavigator from './CercaUtenteStackNavigator';
+import ClassificaStackNavigator from './ClassificaStackNavigator';
 
 
 const {width, height} = Dimensions.get('window');
@@ -84,17 +84,17 @@ const Drawer = createDrawerNavigator({
           }
         }
     },
-    Classifica: {
-        screen: Classifica,
-        navigationOptions: {
-        title: 'Classifica',
-        drawerIcon: ({ tintColor }) => (
-            <Icon name = "ios-star-outline" />
-          )
-        }
-    },
-    CercaUtente: {
-        screen: CercaUtente,
+    ClassificaStackNavigator: {
+      screen: ClassificaStackNavigator,
+      navigationOptions: {
+      title: 'Classifica',
+      drawerIcon: ({ tintColor }) => (
+          <Icon name = "md-search" />
+        )
+      }
+  },
+    CercaUtenteStackNavigator: {
+        screen: CercaUtenteStackNavigator,
         navigationOptions: {
         title: 'Cerca utente',
         drawerIcon: ({ tintColor }) => (

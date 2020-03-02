@@ -140,11 +140,11 @@ class ProfiloUtente extends Component {
                                     </View>
                                     <View style={styles.entry}>
                                         <Text style={styles.textTitle}>Voti: </Text>
-                                        <Text style={styles.textData}>5/5</Text>
+                                        <Text style={styles.textData}>{data.media_voti}/5</Text>
                                     </View>
                                     <View style={styles.entry}>
                                         <Text style={styles.textTitle}>Recensioni: </Text>
-                                        <Text style={styles.textData}>1 recensione</Text>
+                                        <Text style={styles.textData}>{data.numero_recensioni} recensione</Text>
                                     </View>
                                 </View>
                             </Card>
@@ -179,6 +179,16 @@ class ProfiloUtente extends Component {
                                             <Button title="Recensioni ricevute" onPress={() => this.props.navigation.navigate('RecensioniRicevute', {username: data.user.username})}/>
                                         </View>
                                     </View>
+                                    {data.user.id == global.user_id ? (
+                                        <View style={styles.controlli}>
+                                            <View style={styles.buttonview}>
+                                                <Button title="Modifica profilo" onPress={() => this.props.navigation.navigate('ModificaProfilo', {user_id: data.user.id})} />
+                                            </View>
+                                            <View style={styles.buttonview}>
+                                                <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConferma', {user_id: data.user.id})} />
+                                            </View>
+                                        </View>
+                                    ) : null}
                                 </View>
                             </Card>    
                         </View>
@@ -259,11 +269,11 @@ class ProfiloUtente extends Component {
                                     </View>
                                     <View style={styles.entry}>
                                         <Text style={styles.textTitle}>Voti: </Text>
-                                        <Text style={styles.textData}>4/5</Text>
+                                        <Text style={styles.textData}>{data.media_voti}/5</Text>
                                     </View>
                                     <View style={styles.entry}>
                                         <Text style={styles.textTitle}>Recensioni: </Text>
-                                        <Text style={styles.textData}>2 recensioni</Text>
+                                        <Text style={styles.textData}>{data.numero_recensioni} recensioni</Text>
                                     </View>
     
                                     <View style={styles.controlli}>
@@ -274,6 +284,16 @@ class ProfiloUtente extends Component {
                                             <Button title="Recensioni ricevute" onPress={() => this.props.navigation.navigate('RecensioniRicevute', {username: data.user.username})}/>
                                         </View>
                                     </View>
+                                    {data.user.id == global.user_id ? (
+                                    <View style={styles.controlli}>
+                                        <View style={styles.buttonview}>
+                                            <Button title="Modifica profilo" onPress={() => this.props.navigation.navigate('ModificaProfilo', {user_id: data.user.id})} />
+                                        </View>
+                                        <View style={styles.buttonview}>
+                                            <Button title="Elimina profilo" color='red' onPress={() => this.props.navigation.navigate('EliminaProfiloConferma', {user_id: data.user.id})} />
+                                        </View>
+                                    </View>
+                                    ) : null}
                                 </View>
                             </Card>
                         </View>

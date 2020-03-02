@@ -23,6 +23,7 @@ class Login extends Component {
         .then((user_response) => user_response.json())
         .then((user_responseJson) => {
             global.user_id = user_responseJson[0].user.id;
+            global.is_petsitter = user_responseJson[0].pet_sitter;
         })
         .catch((error) =>{
         this.fetchUserId();
@@ -48,7 +49,6 @@ class Login extends Component {
                     global.user_key = res.key;
                     global.logged_in = true;
                     global.username = this.state.username;
-
                     this.fetchUserId();
 
                     this.clearFields();

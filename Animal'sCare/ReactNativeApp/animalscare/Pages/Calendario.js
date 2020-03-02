@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Button, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Button, Image, Dimensions, FlatList } from 'react-native';
 import CustomHeader from '../components/Header';
 import Card from '../components/Card';
-import logo from '../assets/favicon.png';
+import annuncio_default from '../assets/annuncio_default.jpg';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import {Picker} from 'native-base';
 import { IconButton } from 'react-native-paper';
 
 const {width, height} = Dimensions.get('window');
+
 
 class Calendario extends Component {
 
@@ -15,90 +16,139 @@ class Calendario extends Component {
         categorie: "tutto"
     };
 
+    constructor(props){
+        super(props);
+        this.state ={ 
+            isLoading: true,
+            show_pickers: true
+        }
+    }
+
+    ShowHidePickers = () => {
+        if (this.state.show_pickers == true) {
+          this.setState({ show_pickers: false });
+        } else {
+          this.setState({ show_pickers: true });
+        }
+    };
+    
+    componentDidMount() {
+        this.fetchCalendario();
+        this.willFocusSubscription = this.props.navigation.addListener(
+          'willFocus',
+          () => {
+            this.setState({
+                isLoading: true,
+            }, function(){
+    
+            });
+            this.fetchCalendario();
+          }
+        );
+    }
+
+    componentWillUnmount() {
+    this.willFocusSubscription.remove();
+    }
+
+    fetchCalendario(){
+    return fetch('http://2.224.160.133.xip.io/api/annunci/calendario/?format=json', {
+
+        method: 'GET',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + global.user_key,
+            },
+        })
+        .then((response) => response.json())
+        .then((responseJson) => {
+        this.setState({
+            isLoading: false,
+            dataSource: responseJson,
+        }, function(){
+
+        });
+        })
+        .catch((error) =>{
+            console.log(error);
+            this.fetchCalendario();
+        });
+    }
+
     render() {
         return (
             
             <View style={styles.screen}>
+                <View style={{alignSelf: 'flex-start', width: '100%', alignItems: 'center'}}>
                 
-                <CustomHeader parent={this.props} />
-                
-                <View style={styles.contentbar}>
-                    <View style={styles.leftcontainer}>
-                        <IconButton icon="arrow-left" onPress={() => this.props.navigation.goBack(null)} />
+                    <CustomHeader parent={this.props} />
+                    
+                    <View style={styles.contentbar}>
+                        <View style={styles.leftcontainer}>
+                            <IconButton icon="arrow-left" onPress={() => this.props.navigation.goBack(null)} />
+                        </View>
+                        <Text style={styles.title}>
+                            Calendario
+                        </Text>
+                        <View style={styles.rightcontainer}>
+                            <IconButton icon="filter" style={{paddingRight: 10}} onPress={this.ShowHidePickers} />
+                        </View>
                     </View>
-                    <Text style={styles.title}>
-                        Calendario
-                    </Text>
-                    <View style={styles.rightcontainer}></View>
-                </View>
             
+                    {this.state.show_pickers ? (
+                        <View style={styles.pickers}>
+                            <Picker
+                                style={styles.picker} itemStyle={styles.pickerItem}
+                                selectedValue={this.state.categorie}
+                                onValueChange={(itemValue) => this.setState({categorie: itemValue})}
+                                >
+                                <Picker.Item label="Tutti gli animali" value="tutto" />
+                                <Picker.Item label="Cani" value="cani" />
+                                <Picker.Item label="Gatti" value="gatti" />
+                                <Picker.Item label="Conigli" value="conigli" />
+                                <Picker.Item label="Volatili" value="volatili" />
+                                <Picker.Item label="Rettili" value="rettili" />
+                                <Picker.Item label="Altro" value="altro" />
+                            </Picker>
 
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    <View style={styles.screen}>
-
-                        <Picker
-                            style={styles.picker} itemStyle={styles.pickerItem}
-                            selectedValue={this.state.categorie}
-                            onValueChange={(itemValue) => this.setState({categorie: itemValue})}
-                            >
-                            <Picker.Item label="Tutti gli animali" value="tutto" />
-                            <Picker.Item label="Cani" value="cani" />
-                            <Picker.Item label="Gatti" value="gatti" />
-                            <Picker.Item label="Conigli" value="conigli" />
-                            <Picker.Item label="Volatili" value="volatili" />
-                            <Picker.Item label="Rettili" value="rettili" />
-                            <Picker.Item label="Altro" value="altro" />
-                        </Picker>
-
-                        <View style={{paddingBottom: 5}}></View>
-
-                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('DettagliAnnuncio', {id_annuncio: '1'})}>
+                            <View style={{paddingBottom: 5}}></View>    
+                        </View>
+                    ) : null}
+                </View>
+                <View style={styles.flatlistview}>
+                    <FlatList
+                        style={{flex: 1}}
+                        data={this.state.dataSource}
+                        renderItem={({item, index}) => 
+                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('DettagliAnnuncio', {id_annuncio: item.id})}>
                             <Card style={styles.inputContainerGreen}>
                                 <View style={styles.image}>
-                                    <Image source={logo} style={styles.annuncioLogo}  />
+                                    <Image source={ item.logo_annuncio ? { uri: item.logo_annuncio } : annuncio_default }
+                                    style={styles.annuncioLogo}
+                                />
                                 </View>
                                 
 
                                 <View style={styles.data}>
-                                    <Text style={styles.annuncioTitle} numberOfLines={1}>Cerco petsitter a colombaro di formigine c'erano tre alberi</Text>
+                                    <Text style={styles.annuncioTitle} numberOfLines={1}>{item.titolo}</Text>
                                     
-                                    <Text style={styles.annuncioSubtitle} numberOfLines={2}>Bobi cerca un petsitter e sempre sarà dodò dell'albero azzurro e poi sai che non si sa</Text>
+                                    <Text style={styles.annuncioSubtitle} numberOfLines={2}>{item.sottotitolo}</Text>
                                     <View style={styles.textInline}>
                                         <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Data: </Text>
-                                        <Text>12/11/2020 - 13/11/2020</Text>
+                                        <Text>{item.data_inizio} {item.data_fine}</Text>
                                     </View>
                                     <View style={styles.textInline}>
                                         <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Pubblicato da: </Text>
-                                        <Text>werther</Text>
+                                        <Text>{item.user.username}</Text>
                                     </View>
                                 </View>
                             </Card>
                         </TouchableOpacity>
-
-                        <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('DettagliAnnuncio', {id_annuncio: '1'})}>
-                            <Card style={styles.inputContainerRed}>
-                                <View style={styles.image}>
-                                    <Image source={logo} style={styles.annuncioLogo}  />
-                                </View>
-                                
-
-                                <View style={styles.data}>
-                                    <Text style={styles.annuncioTitle} numberOfLines={1}>Cerco petsitter a colombaro di formigine c'erano tre alberi</Text>
-                                    
-                                    <Text style={styles.annuncioSubtitle} numberOfLines={2}>Bobi cerca un petsitter e sempre sarà dodò dell'albero azzurro e poi sai che non si sa</Text>
-                                    <View style={styles.textInline}>
-                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Data: </Text>
-                                        <Text>12/11/2020 - 13/11/2020</Text>
-                                    </View>
-                                    <View style={styles.textInline}>
-                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Pubblicato da: </Text>
-                                        <Text>werther</Text>
-                                    </View>
-                                </View>
-                            </Card>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
+                        }
+                        keyExtractor={(item, index) => index.toString()}
+                    />
+                </View>
             </View>
         );
     }
@@ -152,7 +202,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     picker: {
-        width: '90%',
+        width: '100%',
         height: 40,
         backgroundColor: '#e7e7e7',
         borderColor: 'black',
@@ -176,6 +226,17 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'flex-end',
+        alignItems: 'center'
+    },
+    pickers: {
+        width: '90%',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    flatlistview: {
+        flex: 1,
+        width: '100%',
+        justifyContent: 'space-between',
         alignItems: 'center'
     }
 });
