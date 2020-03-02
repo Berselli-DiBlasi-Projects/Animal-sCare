@@ -77,7 +77,7 @@ urlpatterns = [
 
     # Cassa Pet Coins utenti
     # /API/utenti/cassa/<quantità>/  metodi ammessi  GET : a tutti gli utenti
-    url(r'utenti/cassa/(?P<num>[-+\S][0-9]+)/$',
+    url(r'utenti/cassa/$',
         views.modificaPetCoins.as_view(),
         name='API-petcoins-utenti'),
 

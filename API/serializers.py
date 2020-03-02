@@ -304,16 +304,14 @@ class AnnuncioConServizi(serializers.ModelSerializer):
         fields = "__all__"
     def create(self, validated_data):
         dati_annuncio = validated_data.pop('annuncio')
-        print(validated_data)
-        print(dati_annuncio)
-        print(dati_annuncio['user'])
-        annuncio_nuovo=Annuncio.objects.create(user=dati_annuncio['user'])
-
-        annuncio_nuovo.user = dati_annuncio['user']
-
-        userprofile = Profile.objects.filter(user=dati_annuncio['user']).first()
-
-        print("userprofile",userprofile)
+        # print(validated_data)
+        # print(dati_annuncio)
+        # request = getattr(self.context, 'request', None)
+        # print(self.context)
+        # print("request USER : ",self.context['request'].user)
+        annuncio_nuovo=Annuncio.objects.create(user=self.context['request'].user)
+        userprofile = Profile.objects.filter(user=self.context['request'].user).first()
+        # print("userprofile",userprofile)
         if userprofile.pet_sitter:
             annuncio_nuovo.annuncio_petsitter=True
         else:
@@ -345,6 +343,12 @@ class ContattaciSerializer(serializers.Serializer):
 
     class Meta:
         fields=['titolo', 'messaggio']
+
+
+class PetCoinsSerializer(serializers.Serializer):
+    pet_coins = serializers.IntegerField()
+    class Meta:
+        fields=['pet_coins']
 
 
 class UtenteConRecensioni(serializers.ModelSerializer):

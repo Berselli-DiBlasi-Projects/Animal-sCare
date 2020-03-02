@@ -13,16 +13,16 @@ from API.serializers import (AnagraficaSerializer,
                                 CompletaRegUtenteNormale,
                                 RecensioniSerializer,
                                 ContattaciSerializer,
+                                PetCoinsSerializer,
                             )
 from annunci.views import ordina_annunci as ordina_geograficamente
 from .permissions import *
 from django.core.mail import EmailMessage
 from django.conf import settings
 
-
 from rest_framework.parsers import JSONParser, MultiPartParser, FileUploadParser
 
-
+# @csrf_exempt
 class userInfoLogin(generics.RetrieveAPIView):
     """
     Questa view restituisce la lista completa degli utenti registrati
@@ -37,6 +37,7 @@ class userInfoLogin(generics.RetrieveAPIView):
         oid = self.kwargs['pk']
         return Profile.objects.get(user=oid)
 
+# @csrf_exempt
 class selfUserInfoLogin(generics.RetrieveUpdateAPIView):
     '''
     restituisco di default il profilo dell'utente loggato
@@ -48,13 +49,14 @@ class selfUserInfoLogin(generics.RetrieveUpdateAPIView):
 
         return Profile.objects.get(user=self.request.user)
 
+# @csrf_exempt
 class completaRegPetsitter(generics.RetrieveUpdateAPIView):
     permission_classes = [IsSameUserOrReadOnly]
     serializer_class = CompletaRegPetsitterSerializer
     def get_object(self):
         return Profile.objects.get(user=self.request.user)
 
-
+# @csrf_exempt
 class completaRegUtentenormale(generics.RetrieveUpdateAPIView):
     permission_classes = [IsSameUserOrReadOnly]
     serializer_class = CompletaRegUtenteNormale
@@ -128,6 +130,7 @@ class ordinaAnnunci(generics.ListAPIView):
 
         return lista
 
+# @csrf_exempt
 class dettaglioAnnuncio(generics.RetrieveUpdateDestroyAPIView):
     """
     Questa view restituisce l'annuncio avente ID passato tramite URL
@@ -154,11 +157,31 @@ class elencoAnnunciUtente(generics.ListAPIView):
         oid = self.kwargs['pk']
         return Servizio.objects.filter(annuncio__user=oid, annuncio__user_accetta = None)
 
-
+# @csrf_exempt
 class inserisciAnnuncio(generics.CreateAPIView):
     '''crea un nuovo annuncio'''
     serializer_class = AnnuncioConServizi
     permission_classes = [IsUserLogged]
+
+    # def perform_create(self, serializer):
+    #     utente = self.request.user
+    #     profilo_utente = Profile.objects.get(user=utente)
+    #     pet_sitter_flag = profilo_utente.pet_sitter
+    #     print(utente, pet_sitter_flag)
+    #     # print(self.request)
+    #     print(serializer)
+    #
+    #     dati_annuncio = serializer.validated_data['annuncio']
+    #     print(dati_annuncio['data_inizio'])
+    #     serializer.save(annuncio__user=utente,
+    #                     annuncio__annuncio_petsitter = pet_sitter_flag,)
+    #     # annuncio_creato = serializer.save(user=utente,
+    #     #                 annuncio_petsitter = pet_sitter_flag,
+    #     #                 )
+
+
+
+
 
 
 class accettaAnnuncio(generics.RetrieveUpdateAPIView):
@@ -261,7 +284,7 @@ class classificaUtenti(generics.ListAPIView):
                 profili.append(i[0])
             return profili
 
-
+# @csrf_exempt
 class recensisciUtente(generics.CreateAPIView):
     serializer_class = RecensioniSerializer
     permission_classes = [IsUserLogged]
@@ -292,7 +315,7 @@ class recensioniRicevute(generics.ListAPIView):
         recensioni = Recensione.objects.filter(user_recensito=recensito)
         return list(recensioni)
 
-
+# @csrf_exempt
 class modificaRecensione(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RecensioniSerializer
     permission_classes = [IsUserLogged, IsRecensionePossessorOrReadOnly]
@@ -317,24 +340,28 @@ class modificaRecensione(generics.RetrieveUpdateDestroyAPIView):
                             " \nrecensore : " + nickname_recensore +
                             " \nrecensito : " + nickname_recensito)
 
-
-class modificaPetCoins(generics.RetrieveUpdateAPIView):
-    serializer_class = AnagraficaSerializer
+# @csrf_exempt
+class modificaPetCoins(generics.UpdateAPIView):
+    serializer_class = PetCoinsSerializer
     permission_classes = [IsUserLogged]
 
     def get_object(self):
-        return Profile.objects.get(user=self.request.user)
+        profilo_selezionato = Profile.objects.get(user=self.request.user)
+        return profilo_selezionato
 
     def perform_update(self, serializer):
-        num = int(self.kwargs['num'])
+
+        profilo_selezionato = Profile.objects.get(user=self.request.user)
+        num = int(serializer.validated_data['pet_coins'])
         valori_ammessi = [ 50, 100, 200, -50, -100, -200]
+
         if num not in valori_ammessi:
             raise Exception("Valore non ammesso")
-        val = serializer.validated_data['pet_coins']
-        val = val + num
-        serializer.save(pet_coins=val)
 
+        profilo_selezionato.pet_coins += num
+        profilo_selezionato.save()
 
+# @csrf_exempt
 class contattaciInPrivato(generics.CreateAPIView):
     serializer_class = ContattaciSerializer
     permission_classes = [IsUserLogged]
