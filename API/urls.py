@@ -65,6 +65,12 @@ urlpatterns = [
     # /API/annunci/<int:oid>/elenco' GET : a tutti gli utenti
     url(r'annunci/calendario/$', views.calendarioUtente.as_view(), name='API-calendario-utente'),
 
+    # restituisce gli annunci accettati dall'utente che richiama questo link filtrati per animale e validità
+    # /API/annunci/<int:oid>/elenco' GET : a tutti gli utenti
+    url(r'annunci/calendario/filtra/(?P<animale>[A-Za-z0-9*]+)/$',
+        views.calendarioUtenteConFiltro.as_view(),
+        name='API-calendario-utente-con-filtro-annunci'),
+
     # cerca l'utente per username
     # /API/utenti/cerca/<char:name>' GET : tutti gli utenti
     url(r'utenti/cerca/(?P<name>[A-Za-z0-9èòàùì]+)/$', views.cercaUtente.as_view(), name='API-cerca-utente'),

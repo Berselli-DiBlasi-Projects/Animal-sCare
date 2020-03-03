@@ -2,6 +2,7 @@ from dateutil.parser import parser
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth.validators import UnicodeUsernameValidator
+import datetime
 from django.utils import timezone
 from django.utils import formats
 from recensioni.models import Recensione
@@ -327,11 +328,19 @@ class CompletaRegUtenteNormale(serializers.ModelSerializer):
 class AnnuncioSerializer(serializers.ModelSerializer):
     data_inizio =serializers.DateTimeField(format=None, input_formats=None)
     data_fine =serializers.DateTimeField(format=None, input_formats=None)
+    annuncio_valido = serializers.SerializerMethodField("get_annuncio_valido")
     user = UsernameOnlySerializer(many=False, read_only=True)
     class Meta:
         model = Annuncio
         fields = "__all__"
         read_only_fields = ("id",)
+
+    def get_annuncio_valido(self, annuncio):
+        now = datetime.datetime.now()
+        if now < annuncio.data_fine:
+            return True
+        else:
+            return False
 
 
 class ServizioOffertoSerializer(serializers.ModelSerializer):
@@ -342,9 +351,17 @@ class ServizioOffertoSerializer(serializers.ModelSerializer):
 
 class AnnuncioConServizi(serializers.ModelSerializer):
     annuncio = AnnuncioSerializer(many=False)
+    # annuncio_valido = serializers.SerializerMethodField("get_annuncio_valido")
     class Meta:
         model = Servizio
         fields = "__all__"
+
+    # def get_annuncio_valido(self, servizio):
+    #     now = datetime.datetime.now()
+    #     if now < servizio.annuncio.data_inizio:
+    #         return True
+    #     else:
+    #         return False
 
     def update(self, instance, validated_data):
         dati_annuncio = validated_data.pop('annuncio')

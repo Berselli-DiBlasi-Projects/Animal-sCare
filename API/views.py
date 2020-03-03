@@ -20,6 +20,10 @@ from annunci.views import ordina_annunci as ordina_geograficamente
 from .permissions import *
 from django.core.mail import EmailMessage
 from django.conf import settings
+from django.contrib.auth import logout
+import datetime
+
+
 
 from rest_framework.parsers import JSONParser, MultiPartParser, FileUploadParser
 
@@ -54,6 +58,8 @@ class selfUserInfoLogin(generics.RetrieveUpdateDestroyAPIView):
         profilo_da_eliminare = User.objects.get(id = instance.user.id)
         profilo_da_eliminare.is_active = False
         profilo_da_eliminare.save()
+        logout(self.request)
+
         # altrimenti per eliminarlo alla radice:
         # profilo_da_eliminare.delete()
 
@@ -236,8 +242,43 @@ class calendarioUtente(generics.ListAPIView):
     def get_queryset(self):
         user_request = self.request.user
         queryset = Annuncio.objects.filter(user_accetta=user_request)
-
         return queryset
+
+
+class calendarioUtenteConFiltro(generics.ListAPIView):
+    '''
+        API per ordinamento degli annunci
+        url : annunci/calendario/filtra/(?P<animale>[A-Za-z0-9*]+)/(?P<valido>^True+$|^False+$)
+
+        Parametri :
+
+        animale :       < Cane, Gatto, Coniglio, Volatile, Rettile, Altro >
+
+        valido :   < True, False >
+
+        Attenzione per ignorare il criterio di filtro per animale inserire " * "
+
+        '''
+    permission_classes = [IsUserLogged]
+    serializer_class = AnnuncioSerializer
+    def get_queryset(self):
+        user_request = self.request.user
+        queryset = Annuncio.objects.filter(user_accetta=user_request)
+        animale = self.kwargs['animale']
+
+        animali_ammessi = ["Cane", "Gatto", "Coniglio", "Volatile", "Rettile", "Altro"]
+
+        if animale == '*' :
+            queryset = Annuncio.objects.filter(user_accetta=user_request)
+
+        if animale in animali_ammessi :
+            queryset = Annuncio.objects.filter(user_accetta=user_request,
+                                               pet=animale)
+        return queryset
+
+
+
+
 
 class cercaUtente(generics.ListAPIView):
     serializer_class = DatiUtenteCompleti
