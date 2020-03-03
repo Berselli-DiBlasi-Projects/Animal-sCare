@@ -38,7 +38,7 @@ class userInfoLogin(generics.RetrieveAPIView):
         return Profile.objects.get(user=oid)
 
 # @csrf_exempt
-class selfUserInfoLogin(generics.RetrieveUpdateAPIView):
+class selfUserInfoLogin(generics.RetrieveUpdateDestroyAPIView):
     '''
     restituisco di default il profilo dell'utente loggato
     '''
@@ -46,8 +46,17 @@ class selfUserInfoLogin(generics.RetrieveUpdateAPIView):
     serializer_class = DatiUtenteCompleti
 
     def get_object(self):
-
         return Profile.objects.get(user=self.request.user)
+
+    def perform_destroy(self, instance):
+        print(instance.user)
+        profilo_da_eliminare = User.objects.get(id = instance.user.id)
+        profilo_da_eliminare.is_active = False
+        profilo_da_eliminare.save()
+        # altrimenti per eliminarlo alla radice:
+        # profilo_da_eliminare.delete()
+
+
 
 # @csrf_exempt
 class completaRegPetsitter(generics.RetrieveUpdateAPIView):
@@ -144,6 +153,13 @@ class dettaglioAnnuncio(generics.RetrieveUpdateDestroyAPIView):
         """
         oid = self.kwargs['pk']
         return Servizio.objects.get(annuncio=oid)
+
+    def perform_destroy(self, instance):
+        print(instance.annuncio)
+        annuncio_da_eliminare = Annuncio.objects.get(id = instance.annuncio.id)
+        annuncio_da_eliminare.delete()
+        # Servizio.objects.get(annuncio=annuncio_da_eliminare).delete()
+
 
 
 class elencoAnnunciUtente(generics.ListAPIView):
