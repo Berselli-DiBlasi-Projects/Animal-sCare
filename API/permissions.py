@@ -65,11 +65,11 @@ class IsCompatibleUser(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
-        id_utente = obj.annuncio.user
+        # id_utente = obj.user
         print(request.user)
         utente = Profile.objects.get(user=request.user)
         # print("utente permission ", utente)
-        annuncio_petsitter = obj.annuncio.annuncio_petsitter
+        annuncio_petsitter = obj.annuncio_petsitter
 
         if annuncio_petsitter == True and utente.pet_sitter == False:
             #se l'annuncio osservato è di un petsitter e chi lo sta accettando è un utente normale

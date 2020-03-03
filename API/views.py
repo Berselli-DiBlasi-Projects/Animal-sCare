@@ -208,13 +208,15 @@ class accettaAnnuncio(generics.RetrieveUpdateAPIView):
         Questa view restituisce l'annuncio avente ID passato tramite URL
         """
         oid = self.kwargs['pk']
-        return Servizio.objects.get(annuncio=oid)
+        return Annuncio.objects.get(id=oid)
 
     def perform_update(self, serializer):
         oid = self.kwargs['pk']
         annuncio_selezionato = Annuncio.objects.get(id=oid)
-        annuncio_selezionato.user_accetta = serializer.validated_data['user_accetta']
-        annuncio_selezionato.save()
+        # annuncio_selezionato.user_accetta = serializer.validated_data['user_accetta']
+        if serializer.validated_data['user_accetta'] == True :
+            annuncio_selezionato.user_accetta = self.request.user
+            annuncio_selezionato.save()
 
 
 # class accettaAnnuncio(generics.RetrieveUpdateAPIView):

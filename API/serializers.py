@@ -415,8 +415,9 @@ class PetCoinsSerializer(serializers.Serializer):
     class Meta:
         fields=['pet_coins']
 
+
 class AccettaAnnuncioSerializer(serializers.Serializer):
-    pet_coins = serializers.BooleanField()
+    user_accetta = serializers.BooleanField()
     class Meta:
         fields=['user_accetta']
 
