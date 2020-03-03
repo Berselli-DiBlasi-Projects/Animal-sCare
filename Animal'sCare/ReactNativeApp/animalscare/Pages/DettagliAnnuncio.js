@@ -191,7 +191,7 @@ class DettagliAnnuncio extends Component {
                                         { data.annuncio.user.id == global.user_id ? (
                                         <View style={{flexDirection: 'row'}}>
                                             <View style={styles.buttonview}>
-                                                <Button title="Modifica annuncio" onPress={() => this.props.navigation.navigate('ModificaAnnuncio')}/>
+                                                <Button title="Modifica annuncio" onPress={() => this.props.navigation.navigate('ModificaAnnuncio', {id_annuncio: this.state.id_annuncio})}/>
                                             </View>
                                             <View style={styles.buttonview}>
                                                 <Button title="Elimina annuncio" color='red' onPress={() => this.props.navigation.navigate('EliminaAnnuncioConferma', {id_annuncio: this.state.id_annuncio})} />

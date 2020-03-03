@@ -1,23 +1,101 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Button, Image } from 'react-native';
+import { View, Text, StyleSheet, Button, Image, ActivityIndicator } from 'react-native';
 import CustomHeader from '../components/Header';
 import Card from '../components/Card';
 import { Dimensions } from 'react-native';
 
 const {width, height} = Dimensions.get('window');
 
-let id_annuncio;
 let title;
 
 class AccettaAnnuncioConferma extends Component {
 
+    constructor(props){
+        super(props);
+        this.state ={
+            annuncio_user: ""
+        }
+    }
+
+    componentDidMount() {
+        this.fetchDettagliAnnuncio();
+        this.willFocusSubscription = this.props.navigation.addListener(
+          'willFocus',
+          () => {
+            this.setState({
+                isLoading: true,
+            }, function(){
+    
+            });
+            this.fetchDettagliAnnuncio();
+          }
+        );
+    }
+
+    componentWillUnmount() {
+        this.willFocusSubscription.remove();
+    }
+
+    fetchDettagliAnnuncio() {
+        return fetch('http://2.224.160.133.xip.io/api/annunci/' + this.props.navigation.state.params.id_annuncio + '/dettagli/?format=json')
+        .then((response) => response.json())
+        .then((responseJson) => {
+        this.setState({
+            isLoading: false,
+            annuncio_user: responseJson.annuncio.user.username
+        }, function(){
+
+        });
+
+        })
+        .catch((error) =>{
+        this.fetchDettagliAnnuncio();
+        });
+    }
+    
+    accettaAnnuncio() {
+        console.log("ciao");
+        fetch('http://2.224.160.133.xip.io/api/annunci/' + this.props.navigation.state.params.id_annuncio + '/accetta/',
+            {
+              method: 'PUT',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + global.user_key,
+              },
+              body: JSON.stringify({
+                annuncio: {
+                    user_accetta: true
+                }
+              }),
+            })
+            .then(res => res.json())
+            .then((res) => {
+                console.log(JSON.stringify(res));
+                this.props.navigation.navigate('ListaAnnunci');
+            })
+            .then(obj =>  {
+              callback(obj)
+            })
+            .catch((error) => {
+                console.log("err");
+                this.accettaAnnuncio;
+            })
+    }
+
     render() {
-        id_annuncio = this.props.navigation.state.params.id_annuncio;
+        if(this.state.isLoading){
+            return(
+                <View style={{flex: 1, paddingTop: height / 2}}>
+                    <ActivityIndicator/>
+                </View>
+            )
+        }
+
         title = "Accetti l'annuncio di ";
-        title += "werther";
-        title += " con id: ";
-        title += id_annuncio;
+        title += this.state.annuncio_user;
         title += "?";
+
         return (
                 
             <View style={styles.screen}>
@@ -35,7 +113,8 @@ class AccettaAnnuncioConferma extends Component {
                                 <Button title="Indietro" onPress={() => this.props.navigation.goBack(null)}/>
                             </View>
                             <View style={styles.buttonview}>
-                                <Button title="Conferma" />
+                                <Button title="Conferma" onPress={() => {
+                                            this.accettaAnnuncio();}} />
                             </View>
                         </View>
                     </Card>

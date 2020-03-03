@@ -10,6 +10,53 @@ const {width, height} = Dimensions.get('window');
 
 class Contattaci extends Component {
 
+    constructor(props){
+        super(props);
+        this.state ={ 
+            titolo: "",
+            messaggio: "",
+            error_message: ""
+        }
+    }
+
+    sendMessage = () => {
+        if (this.state.titolo != "" && this.state.messaggio != "") {
+            fetch('http://2.224.160.133.xip.io/api/contattaci/',
+            {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + global.user_key,
+              },
+              body: JSON.stringify({
+                titolo: this.state.titolo,
+                messaggio: this.state.messaggio,
+              }),
+            })
+            .then(res => res.json())
+            .then((res) => {
+                this.clearFields();
+            })
+            .then(obj =>  {
+              callback(obj)
+            })
+            .catch((error) => {
+                this.sendMessage;
+            })
+        } else {
+            this.setState({error_message: "Errore: assicurati di riempire tutti i campi."});
+        }
+    }
+
+    clearFields = () => {
+        this.setState({titolo: ""});
+        this.setState({messaggio: ""});
+        this.setState({error_message: ""});
+        this.txtTitolo.clear();
+        this.txtMessaggio.clear();
+    }
+
     render() {
         return (
                 
@@ -44,18 +91,25 @@ class Contattaci extends Component {
 
                                     <View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95}
+                                            ref={input => { this.txtTitolo = input }}
+                                            onChangeText={(value) => this.setState({titolo: value})} />
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={300} />
+                                            <TextInput editable maxLength={300} 
+                                            ref={input => { this.txtMessaggio = input }}
+                                            onChangeText={(value) => this.setState({messaggio: value})}/>
                                         </View>
                                     </View>
                                 </View>
                                 <View style={styles.controlli}>
                                     <View style={styles.buttonview}>
-                                        <Button title="Invia messaggio" />
+                                        <Button title="Invia messaggio" onPress={ this.sendMessage } />
                                     </View>
                                 </View>
+
+                                <View style={{paddingTop: 15}}></View>
+                                <Text style={{color: 'red'}}>{this.state.error_message}</Text>
 
                                 <View style={{flexDirection: 'row', marginTop: 20, marginBottom: 5}}>
                                     <Text>I campi contrassegnati con</Text>

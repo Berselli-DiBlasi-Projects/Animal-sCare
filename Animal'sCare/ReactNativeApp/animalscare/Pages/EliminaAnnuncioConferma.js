@@ -11,6 +11,22 @@ let title;
 
 class EliminaAnnuncioConferma extends Component {
 
+    eliminaAnnuncio = () => {
+        fetch('http://2.224.160.133.xip.io/api/annunci/' + this.props.navigation.state.params.id_annuncio + '/dettagli/', {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Token ' + global.user_key
+            }
+        })
+        .then(res => {
+            this.props.navigation.navigate('ListaAnnunci');
+        })
+        .catch((error) => {
+            this.eliminaAnnuncio;
+        });
+
+    }
+
     render() {
         id_annuncio = this.props.navigation.state.params.id_annuncio;
         title = "Confermi di voler eliminare l'annuncio?";
@@ -31,7 +47,7 @@ class EliminaAnnuncioConferma extends Component {
                                 <Button title="Indietro" onPress={() => this.props.navigation.goBack(null)}/>
                             </View>
                             <View style={styles.buttonview}>
-                                <Button title="Conferma" />
+                                <Button title="Conferma" onPress={() => {this.eliminaAnnuncio();}} />
                             </View>
                         </View>
                     </Card>
