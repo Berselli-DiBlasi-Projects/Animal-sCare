@@ -14,6 +14,7 @@ from API.serializers import (AnagraficaSerializer,
                                 RecensioniSerializer,
                                 ContattaciSerializer,
                                 PetCoinsSerializer,
+                                AccettaAnnuncioSerializer,
                             )
 from annunci.views import ordina_annunci as ordina_geograficamente
 from .permissions import *
@@ -199,16 +200,32 @@ class inserisciAnnuncio(generics.CreateAPIView):
 
 
 
-
 class accettaAnnuncio(generics.RetrieveUpdateAPIView):
-    permission_classes = [IsCompatibleUser,IsUserLogged]
-    serializer_class = AnnuncioConServizi
+    permission_classes = [IsCompatibleUser, IsUserLogged]
+    serializer_class = AccettaAnnuncioSerializer
     def get_object(self):
         """
         Questa view restituisce l'annuncio avente ID passato tramite URL
         """
         oid = self.kwargs['pk']
         return Servizio.objects.get(annuncio=oid)
+
+    def perform_update(self, serializer):
+        oid = self.kwargs['pk']
+        annuncio_selezionato = Annuncio.objects.get(id=oid)
+        annuncio_selezionato.user_accetta = serializer.validated_data['user_accetta']
+        annuncio_selezionato.save()
+
+
+# class accettaAnnuncio(generics.RetrieveUpdateAPIView):
+#     permission_classes = [IsCompatibleUser,IsUserLogged]
+#     serializer_class = AnnuncioConServizi
+#     def get_object(self):
+#         """
+#         Questa view restituisce l'annuncio avente ID passato tramite URL
+#         """
+#         oid = self.kwargs['pk']
+#         return Servizio.objects.get(annuncio=oid)
 
 
 class calendarioUtente(generics.ListAPIView):

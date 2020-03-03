@@ -415,6 +415,11 @@ class PetCoinsSerializer(serializers.Serializer):
     class Meta:
         fields=['pet_coins']
 
+class AccettaAnnuncioSerializer(serializers.Serializer):
+    pet_coins = serializers.BooleanField()
+    class Meta:
+        fields=['user_accetta']
+
 
 class UtenteConRecensioni(serializers.ModelSerializer):
     user_recensito = DatiUtenteCompleti(many=False)
