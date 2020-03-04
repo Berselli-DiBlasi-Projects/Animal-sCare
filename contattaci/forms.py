@@ -24,4 +24,4 @@ class ContattaciForm(forms.Form):
             raise ValidationError(_('Errore: il messaggio può contenere solo lettere, numeri e spazi.'))
         if not (1 <= len(self.cleaned_data['messaggio']) <= 300):
             raise ValidationError(_('Errore: il messaggio deve avere lunghezza fra 1 e 300 caratteri.'))
-        return self.cleaned_data['titolo']
+        return self.cleaned_data['messaggio']

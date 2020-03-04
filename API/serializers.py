@@ -5,10 +5,20 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 import datetime
 from django.utils import timezone
 from django.utils import formats
+import magic
+from static import NamingList
+import re
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 from recensioni.models import Recensione
 from utenti.models import Profile
 from annunci.models import Annuncio, Servizio
 from utenti.views import calcola_lat_lon
+
+IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
+MIME_TYPES = ['image/jpeg', 'image/png']
+CONTENT_TYPES = ['image', 'video']
+MAX_UPLOAD_SIZE = "5242880"
 
 def aggiornaLatLng(user, request):
     utente_richiedente = Profile.objects.get(user=user)
@@ -42,6 +52,16 @@ class UsernameOnlySerializer(serializers.ModelSerializer):
         model = User
         fields = ["id","username"]
 
+    def validate_username(self, data):
+        if not re.match("^[A-Za-z0-9]+$", data):
+            return serializers.ValidationError(
+                _('Errore: lo username può contenere solo lettere e numeri.'))
+        if not (3 <= len(data) <= 30):
+            return serializers.ValidationError(
+                _('Errore: lo username deve avere lunghezza fra 3 e 30 caratteri.'))
+        return data['username']
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -67,6 +87,57 @@ class UserSerializer(serializers.ModelSerializer):
                         }
         }
 
+        def validate_username(self, data):
+            if not re.match("^[A-Za-z0-9]+$", data):
+                return serializers.ValidationError(
+                    _('Errore: lo username può contenere solo lettere e numeri.'))
+            if not (3 <= len(data) <= 30):
+                return serializers.ValidationError(
+                    _('Errore: lo username deve avere lunghezza fra 3 e 30 caratteri.'))
+            return data['username']
+
+        def validate_password(self, data):
+            # controllo password
+            if not re.match("^[A-Za-z0-9èòàùì]+$", data):
+                raise serializers.ValidationError(
+                    _('Errore: la password può contenere solo lettere minuscole, maiuscole e numeri.'))
+            if not (3 <= len(data) <= 20):
+                raise serializers.ValidationError(
+                    _('Errore: la password deve avere lunghezza fra 3 e 20 caratteri.'))
+            return data
+
+        def validate_conferma_password(self, data):
+            if not re.match("^[A-Za-z0-9èòàùì]+$", data):
+                raise serializers.ValidationError(
+                    _('Errore: la conferma password può contenere solo lettere minuscole, maiuscole e numeri.'))
+            if not (3 <= len(data) <= 20):
+                raise serializers.ValidationError(
+                    _('Errore: la conferma password deve avere lunghezza fra 3 e 20 caratteri.'))
+            return data
+
+        def validate_first_name(self,data):
+            if not re.match("^[A-Za-z 'èòàùì]+$", data):
+                raise serializers.ValidationError(_('Errore: il nome può contenere solo lettere.'))
+            if not (1 <= len(data) <= 30):
+                raise ValidationError(_('Errore: il nome deve avere lunghezza fra 1 e 30 caratteri.'))
+            return data
+
+        def validate_last_name(self,data):
+            # controllo cognome
+            if not re.match("^[A-Za-z 'èòàùì]+$", data):
+                raise serializers.ValidationError(_('Errore: il cognome può contenere solo lettere.'))
+            if not (1 <= len(data) <= 30):
+                raise serializers.ValidationError(_('Errore: il cognome deve avere lunghezza fra 1 e 30 caratteri.'))
+            return data
+
+        def validate_email(self,data):
+            # controllo email
+            if not (5 <= len(data) <= 50):
+                raise serializers.ValidationError(_('Errore: la mail deve essere compresa gra 5 e 50 caratteri.'))
+            return data
+
+
+
 
 class AnagraficaSerializer(serializers.ModelSerializer):
     '''
@@ -83,12 +154,142 @@ class AnagraficaSerializer(serializers.ModelSerializer):
         # exclude = ("latitudine", "longitudine","pet_coins", "pet_sitter", "id", "user")
         # read_only_fields = ['user',"latitudine", "longitudine","pet_coins", "pet_sitter", "id"]
 
+    def validate_indirizzo(self,data):
+        # controllo indirizzo
+        if not re.match("^[A-Za-z0-9/ 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: l\'indirizzo può contenere solo lettere, numeri e /.'))
+        if not (3 <= len(data) <= 50):
+            raise serializers.ValidationError(
+                _('Errore: l\'indirizzo deve avere lunghezza fra 3 e 50 caratteri.'))
+        return data
+
+    def validate_citta(self, data):
+        # controllo citta
+        if not re.match("^[A-Za-z 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il campo città può contenere solo lettere.'))
+        if not (3 <= len(data) <= 50):
+            raise serializers.ValidationError(
+                _('Errore: la città deve avere lunghezza fra 3 e 50 caratteri.'))
+        return data
+
+    def validate_telefono(self, data):
+        # controllo telefono
+        if not re.match("^[0-9]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il telefono può contenere solo numeri.'))
+        if not (3 <= len(data) <= 30):
+            raise serializers.ValidationError(
+                _('Errore: il telefono deve avere lunghezza fra 3 e 30 caratteri.'))
+        return data
+
+    def validate_foto_profilo(self,data):
+        files = data
+
+        if files is not None:
+            file_size = files.size
+            limit_MB = 5
+            if file_size > limit_MB * 1024 * 1024:
+                raise serializers.ValidationError("La dimensione massima per le immagini è %s MB" % limit_MB)
+
+            file_type = magic.from_buffer(files.read(), mime=True)
+            if file_type not in MIME_TYPES:
+                raise serializers.ValidationError(_("file non supportato."))
+            return files
+        return None
+
+    def validate_nome_pet(self, data):
+        if not re.match("^[A-Za-z 'èòàùì]+$", data):
+            raise serializers.ValidationError(_('Errore: il nome del pet può contenere solo lettere.'))
+        if not (3 <= len(data) <= 30):
+            raise serializers.ValidationError(
+                _('Errore: il nome del pet deve avere lunghezza fra 3 e 30 caratteri.'))
+        return data
+
+    def validate_razza(self, data):
+        # controllo razza
+        if not re.match("^[A-Za-z -'èòàùì]+$", data):
+            raise serializers.ValidationError(_('Errore: la razza del pet può contenere solo lettere e spazi.'))
+        if not (3 <= len(data) <= 30):
+            raise serializers.ValidationError(
+                _('Errore: la razza del pet deve avere lunghezza fra 3 e 30 caratteri.'))
+        return data
+
+    def validate_caratteristiche(self, data):
+        # controllo caratteristiche
+        if not re.match("^[A-Za-z0-9., 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il campo caratteristiche può contenere solo lettere, numeri, punti, virgole e spazi.'))
+        if not (1 <= len(data) <= 245):
+            raise serializers.ValidationError(
+                _('Errore: il campo caratteristiche deve avere lunghezza fra 1 e 245 caratteri.'))
+        return data
+
+    def validate_foto_pet(self, data):
+        files = data
+        if files is not None:
+            file_size = files.size
+            limit_MB = 5
+            if file_size > limit_MB * 1024 * 1024:
+                raise serializers.ValidationError("La dimensione massima per le immagini è %s MB" % limit_MB)
+
+            file_type = magic.from_buffer(files.read(), mime=True)
+            if file_type not in MIME_TYPES:
+                raise serializers.ValidationError(_("file non supportato."))
+            return files
+        return None
+
+    def validate_descrizione(self, data):
+        # controllo descrizione
+        if not re.match("^[A-Za-z0-9., 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il campo descrizione può contenere solo lettere, numeri, punti, virgole e spazi.'))
+        if not (1 <= len(data) <= 245):
+            raise serializers.ValidationError(
+                _('Errore: il campo descrizione deve avere lunghezza fra 1 e 245 caratteri.'))
+        return data
+
+    def validate_hobby(self, data):
+        # controllo hobby
+        if not re.match("^[A-Za-z0-9., 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il campo hobby può contenere solo lettere, numeri, punti, virgole e spazi.'))
+        if not (1 <= len(data) <= 95):
+            raise serializers.ValidationError(
+                _('Errore: il campo hobby deve avere lunghezza fra 1 e 95 caratteri.'))
+        return data
+
+    def validate_eta(self, data):
+        # controllo eta
+        if not re.match("^[0-9]+$", str(data)):
+            raise serializers.ValidationError(_('Errore: l\'età può contenere solo numeri.'))
+        if not (0 <= int(data) <= 100):
+            raise serializers.ValidationError(_('Errore: l\'età deve essere compresa fra 0 e 100.'))
+        return data
+
+
+
 
 
 class RecensioniSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recensione
         fields ="__all__"
+
+    def validate_descrizione(self, data):
+        # controllo descrizione
+        if not re.match("^[A-Za-z0-9 ,.'èòàùì]+$", data):
+            raise serializers.ValidationError(_('Errore: la descrizione può contenere solo lettere, '
+                                               'numeri, punti, virgole e spazi.'))
+        return data
+
+    def validate_titolo(self, data):
+        if not re.match("^[A-Za-z0-9 .,'èòàùì]+$", data):
+            raise serializers.ValidationError(_('Errore: il titolo può contenere solo lettere, numeri e spazi.'))
+        if not (1 <= len(data) <= 95):
+            raise serializers.ValidationError(_('Errore: il titolo deve avere lunghezza fra 1 e 95 caratteri.'))
+        return data
 
 
 class DatiUtenteCompleti(serializers.ModelSerializer):
@@ -119,7 +320,119 @@ class DatiUtenteCompleti(serializers.ModelSerializer):
                  "media_voti",
                  ]
 
+    def validate_indirizzo(self,data):
+        # controllo indirizzo
+        if not re.match("^[A-Za-z0-9/ 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: l\'indirizzo può contenere solo lettere, numeri e /.'))
+        if not (3 <= len(data) <= 50):
+            raise serializers.ValidationError(
+                _('Errore: l\'indirizzo deve avere lunghezza fra 3 e 50 caratteri.'))
+        return data
 
+    def validate_citta(self, data):
+        # controllo citta
+        if not re.match("^[A-Za-z 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il campo città può contenere solo lettere.'))
+        if not (3 <= len(data) <= 50):
+            raise serializers.ValidationError(
+                _('Errore: la città deve avere lunghezza fra 3 e 50 caratteri.'))
+        return data
+
+    def validate_telefono(self, data):
+        # controllo telefono
+        if not re.match("^[0-9]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il telefono può contenere solo numeri.'))
+        if not (3 <= len(data) <= 30):
+            raise serializers.ValidationError(
+                _('Errore: il telefono deve avere lunghezza fra 3 e 30 caratteri.'))
+        return data
+
+    def validate_foto_profilo(self,data):
+        files = data
+
+        if files is not None:
+            file_size = files.size
+            limit_MB = 5
+            if file_size > limit_MB * 1024 * 1024:
+                raise serializers.ValidationError("La dimensione massima per le immagini è %s MB" % limit_MB)
+
+            file_type = magic.from_buffer(files.read(), mime=True)
+            if file_type not in MIME_TYPES:
+                raise serializers.ValidationError(_("file non supportato."))
+            return files
+        return None
+
+    def validate_nome_pet(self, data):
+        if not re.match("^[A-Za-z 'èòàùì]+$", data):
+            raise serializers.ValidationError(_('Errore: il nome del pet può contenere solo lettere.'))
+        if not (3 <= len(data) <= 30):
+            raise serializers.ValidationError(
+                _('Errore: il nome del pet deve avere lunghezza fra 3 e 30 caratteri.'))
+        return data
+
+    def validate_razza(self, data):
+        # controllo razza
+        if not re.match("^[A-Za-z -'èòàùì]+$", data):
+            raise serializers.ValidationError(_('Errore: la razza del pet può contenere solo lettere e spazi.'))
+        if not (3 <= len(data) <= 30):
+            raise serializers.ValidationError(
+                _('Errore: la razza del pet deve avere lunghezza fra 3 e 30 caratteri.'))
+        return data
+
+    def validate_caratteristiche(self, data):
+        # controllo caratteristiche
+        if not re.match("^[A-Za-z0-9., 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il campo caratteristiche può contenere solo lettere, numeri, punti, virgole e spazi.'))
+        if not (1 <= len(data) <= 245):
+            raise serializers.ValidationError(
+                _('Errore: il campo caratteristiche deve avere lunghezza fra 1 e 245 caratteri.'))
+        return data
+
+    def validate_foto_pet(self, data):
+        files = data
+        if files is not None:
+            file_size = files.size
+            limit_MB = 5
+            if file_size > limit_MB * 1024 * 1024:
+                raise serializers.ValidationError("La dimensione massima per le immagini è %s MB" % limit_MB)
+
+            file_type = magic.from_buffer(files.read(), mime=True)
+            if file_type not in MIME_TYPES:
+                raise serializers.ValidationError(_("file non supportato."))
+            return files
+        return None
+
+    def validate_descrizione(self, data):
+        # controllo descrizione
+        if not re.match("^[A-Za-z0-9., 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il campo descrizione può contenere solo lettere, numeri, punti, virgole e spazi.'))
+        if not (1 <= len(data) <= 245):
+            raise serializers.ValidationError(
+                _('Errore: il campo descrizione deve avere lunghezza fra 1 e 245 caratteri.'))
+        return data
+
+    def validate_hobby(self, data):
+        # controllo hobby
+        if not re.match("^[A-Za-z0-9., 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il campo hobby può contenere solo lettere, numeri, punti, virgole e spazi.'))
+        if not (1 <= len(data) <= 95):
+            raise serializers.ValidationError(
+                _('Errore: il campo hobby deve avere lunghezza fra 1 e 95 caratteri.'))
+        return data
+
+    def validate_eta(self, data):
+        # controllo eta
+        if not re.match("^[0-9]+$", str(data)):
+            raise serializers.ValidationError(_('Errore: l\'età può contenere solo numeri.'))
+        if not (0 <= int(data) <= 100):
+            raise serializers.ValidationError(_('Errore: l\'età deve essere compresa fra 0 e 100.'))
+        return data
 
     def get_media_voti_utente(self,profilo):
         # user = Profile.__class__.objects.get(user=self.instance)
@@ -204,6 +517,24 @@ class CompletaDatiDjangoUser(serializers.ModelSerializer):
         read_only_fields = ["id", "email", "username", "password"]
 
 
+        def validate_first_name(self,data):
+            if not re.match("^[A-Za-z 'èòàùì]+$", data):
+                raise serializers.ValidationError(_('Errore: il nome può contenere solo lettere.'))
+            if not (1 <= len(data) <= 30):
+                raise ValidationError(_('Errore: il nome deve avere lunghezza fra 1 e 30 caratteri.'))
+            return data
+
+        def validate_last_name(self,data):
+            # controllo cognome
+            if not re.match("^[A-Za-z 'èòàùì]+$", data):
+                raise serializers.ValidationError(_('Errore: il cognome può contenere solo lettere.'))
+            if not (1 <= len(data) <= 30):
+                raise serializers.ValidationError(_('Errore: il cognome deve avere lunghezza fra 1 e 30 caratteri.'))
+            return data
+
+
+
+
 class CompletaRegPetsitterSerializer(serializers.ModelSerializer):
     user = CompletaDatiDjangoUser(many=False)
     class Meta:
@@ -220,6 +551,71 @@ class CompletaRegPetsitterSerializer(serializers.ModelSerializer):
                    "latitudine",
                    "longitudine",
                    )
+
+    def validate_indirizzo(self,data):
+        # controllo indirizzo
+        if not re.match("^[A-Za-z0-9/ 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: l\'indirizzo può contenere solo lettere, numeri e /.'))
+        if not (3 <= len(data) <= 50):
+            raise serializers.ValidationError(
+                _('Errore: l\'indirizzo deve avere lunghezza fra 3 e 50 caratteri.'))
+        return data
+
+    def validate_citta(self, data):
+        # controllo citta
+        if not re.match("^[A-Za-z 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il campo città può contenere solo lettere.'))
+        if not (3 <= len(data) <= 50):
+            raise serializers.ValidationError(
+                _('Errore: la città deve avere lunghezza fra 3 e 50 caratteri.'))
+        return data
+
+    def validate_telefono(self, data):
+        # controllo telefono
+        if not re.match("^[0-9]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il telefono può contenere solo numeri.'))
+        if not (3 <= len(data) <= 30):
+            raise serializers.ValidationError(
+                _('Errore: il telefono deve avere lunghezza fra 3 e 30 caratteri.'))
+        return data
+
+    def validate_foto_profilo(self,data):
+        files = data
+
+        if files is not None:
+            file_size = files.size
+            limit_MB = 5
+            if file_size > limit_MB * 1024 * 1024:
+                raise serializers.ValidationError("La dimensione massima per le immagini è %s MB" % limit_MB)
+
+            file_type = magic.from_buffer(files.read(), mime=True)
+            if file_type not in MIME_TYPES:
+                raise serializers.ValidationError(_("file non supportato."))
+            return files
+        return None
+
+    def validate_descrizione(self, data):
+        # controllo descrizione
+        if not re.match("^[A-Za-z0-9., 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il campo descrizione può contenere solo lettere, numeri, punti, virgole e spazi.'))
+        if not (1 <= len(data) <= 245):
+            raise serializers.ValidationError(
+                _('Errore: il campo descrizione deve avere lunghezza fra 1 e 245 caratteri.'))
+        return data
+
+    def validate_hobby(self, data):
+        # controllo hobby
+        if not re.match("^[A-Za-z0-9., 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il campo hobby può contenere solo lettere, numeri, punti, virgole e spazi.'))
+        if not (1 <= len(data) <= 95):
+            raise serializers.ValidationError(
+                _('Errore: il campo hobby deve avere lunghezza fra 1 e 95 caratteri.'))
+        return data
 
 
     def update(self, instance, validated_data):
@@ -277,6 +673,122 @@ class CompletaRegUtenteNormale(serializers.ModelSerializer):
                    "descrizione",
                    "hobby",
                    )
+
+    def validate_indirizzo(self,data):
+        # controllo indirizzo
+        if not re.match("^[A-Za-z0-9/ 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: l\'indirizzo può contenere solo lettere, numeri e /.'))
+        if not (3 <= len(data) <= 50):
+            raise serializers.ValidationError(
+                _('Errore: l\'indirizzo deve avere lunghezza fra 3 e 50 caratteri.'))
+        return data
+
+    def validate_citta(self, data):
+        # controllo citta
+        if not re.match("^[A-Za-z 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il campo città può contenere solo lettere.'))
+        if not (3 <= len(data) <= 50):
+            raise serializers.ValidationError(
+                _('Errore: la città deve avere lunghezza fra 3 e 50 caratteri.'))
+        return data
+
+    def validate_telefono(self, data):
+        # controllo telefono
+        if not re.match("^[0-9]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il telefono può contenere solo numeri.'))
+        if not (3 <= len(data) <= 30):
+            raise serializers.ValidationError(
+                _('Errore: il telefono deve avere lunghezza fra 3 e 30 caratteri.'))
+        return data
+
+    def validate_foto_profilo(self,data):
+        files = data
+
+        if files is not None:
+            file_size = files.size
+            limit_MB = 5
+            if file_size > limit_MB * 1024 * 1024:
+                raise serializers.ValidationError("La dimensione massima per le immagini è %s MB" % limit_MB)
+
+            file_type = magic.from_buffer(files.read(), mime=True)
+            if file_type not in MIME_TYPES:
+                raise serializers.ValidationError(_("file non supportato."))
+            return files
+        return None
+
+    def validate_nome_pet(self, data):
+        if not re.match("^[A-Za-z 'èòàùì]+$", data):
+            raise serializers.ValidationError(_('Errore: il nome del pet può contenere solo lettere.'))
+        if not (3 <= len(data) <= 30):
+            raise serializers.ValidationError(
+                _('Errore: il nome del pet deve avere lunghezza fra 3 e 30 caratteri.'))
+        return data
+
+    def validate_razza(self, data):
+        # controllo razza
+        if not re.match("^[A-Za-z -'èòàùì]+$", data):
+            raise serializers.ValidationError(_('Errore: la razza del pet può contenere solo lettere e spazi.'))
+        if not (3 <= len(data) <= 30):
+            raise serializers.ValidationError(
+                _('Errore: la razza del pet deve avere lunghezza fra 3 e 30 caratteri.'))
+        return data
+
+    def validate_caratteristiche(self, data):
+        # controllo caratteristiche
+        if not re.match("^[A-Za-z0-9., 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il campo caratteristiche può contenere solo lettere, numeri, punti, virgole e spazi.'))
+        if not (1 <= len(data) <= 245):
+            raise serializers.ValidationError(
+                _('Errore: il campo caratteristiche deve avere lunghezza fra 1 e 245 caratteri.'))
+        return data
+
+    def validate_foto_pet(self, data):
+        files = data
+        if files is not None:
+            file_size = files.size
+            limit_MB = 5
+            if file_size > limit_MB * 1024 * 1024:
+                raise serializers.ValidationError("La dimensione massima per le immagini è %s MB" % limit_MB)
+
+            file_type = magic.from_buffer(files.read(), mime=True)
+            if file_type not in MIME_TYPES:
+                raise serializers.ValidationError(_("file non supportato."))
+            return files
+        return None
+
+    def validate_descrizione(self, data):
+        # controllo descrizione
+        if not re.match("^[A-Za-z0-9., 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il campo descrizione può contenere solo lettere, numeri, punti, virgole e spazi.'))
+        if not (1 <= len(data) <= 245):
+            raise serializers.ValidationError(
+                _('Errore: il campo descrizione deve avere lunghezza fra 1 e 245 caratteri.'))
+        return data
+
+    def validate_hobby(self, data):
+        # controllo hobby
+        if not re.match("^[A-Za-z0-9., 'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il campo hobby può contenere solo lettere, numeri, punti, virgole e spazi.'))
+        if not (1 <= len(data) <= 95):
+            raise serializers.ValidationError(
+                _('Errore: il campo hobby deve avere lunghezza fra 1 e 95 caratteri.'))
+        return data
+
+    def validate_eta(self, data):
+        # controllo eta
+        if not re.match("^[0-9]+$", str(data)):
+            raise serializers.ValidationError(_('Errore: l\'età può contenere solo numeri.'))
+        if not (0 <= int(data) <= 100):
+            raise serializers.ValidationError(_('Errore: l\'età deve essere compresa fra 0 e 100.'))
+        return data
+
+
     def update(self, instance, validated_data):
         v = instance.user.username
         print(v)
@@ -341,6 +853,68 @@ class AnnuncioSerializer(serializers.ModelSerializer):
             return True
         else:
             return False
+    def validate_titolo(self, data):
+        # controllo titolo
+        if not re.match("^[A-Za-z0-9 .,'èòàùì]+$",data):
+            raise serializers.ValidationError(_('Errore: il titolo può contenere solo lettere, numeri e spazi.'))
+        if not (1 <= len(data) <= 95):
+            raise serializers.ValidationError(_('Errore: il titolo deve avere lunghezza fra 1 e 95 caratteri.'))
+        return data
+
+    def validate_sottotitolo(self, data):
+        # controllo sottotitolo
+        if not re.match("^[A-Za-z0-9 ,.')èòàùì]+$", data):
+            raise serializers.ValidationError(_('Errore: il sottotitolo può contenere solo lettere, '
+                                    'numeri, punti, virgole e spazi.'))
+        if not (1 <= len(data) <= 95):
+            raise serializers.ValidationError(_('Errore: il sottotitolo deve avere lunghezza fra 1 e 95 caratteri.'))
+        return data
+
+    def validate_descrizione(self, data):
+        # controllo descrizione
+        if not re.match("^[A-Za-z0-9 .,'èòàùì]+$", data):
+            raise serializers.ValidationError(_('Errore: la descrizione può contenere solo lettere, '
+                                    'numeri, punti, virgole e spazi.'))
+        if not (1 <= len(data) <= 245):
+            raise serializers.ValidationError(_('Errore: il titolo deve avere lunghezza fra 1 e 245 caratteri.'))
+        return data
+
+    def validate_data_inizio(self, data):
+        # controllo se data inizio < data_fine e se data_inizio e data_fine > adesso
+        data_inizio = data
+        if data_inizio < datetime.datetime.now():
+            raise serializers.ValidationError(_('Errore: la data di inizio non può essere nel passato.'))
+        return data
+
+    def validate_data_fine(self, data):
+        # controllo se data inizio < data_fine e se data_inizio e data_fine > adesso
+        data_fine =data
+
+        if data_fine < datetime.datetime.now():
+            raise serializers.ValidationError(_('Errore: la data di fine non può essere nel passato.'))
+        return data
+
+    def validate_pet_coins(self, data):
+        # controllo pet_coins
+        if not re.match("^[0-9]+$", str(data)):
+            raise serializers.ValidationError(_('Errore: il campo pet coins può contenere solo numeri.'))
+        if not (1 <= int(data) <= 100000):
+            raise serializers.ValidationError(_('Errore: il valore in pet coins deve essere compreso tra 1 e 100000.'))
+        return data
+
+    def validate_logo_annuncio(self, data):
+        files = data
+        if files is not None:
+            file_size = files.size
+            limit_MB = 5
+            if file_size > limit_MB * 1024 * 1024:
+                raise serializers.ValidationError("La dimensione massima per le immagini è %s MB" % limit_MB)
+
+            file_type = magic.from_buffer(files.read(), mime=True)
+            if file_type not in MIME_TYPES:
+                raise serializers.ValidationError(_("file non supportato."))
+            return files
+        return None
 
 
 class ServizioOffertoSerializer(serializers.ModelSerializer):
@@ -426,17 +1000,42 @@ class ContattaciSerializer(serializers.Serializer):
     class Meta:
         fields=['titolo', 'messaggio']
 
+    def validate_titolo(self, data):
+        if not re.match("^[A-Za-z0-9 .,'èòàùì]+$", data):
+            raise serializers.ValidationError(_('Errore: il titolo può contenere solo lettere, numeri e spazi.'))
+        if not (1 <= len(data) <= 95):
+            raise serializers.ValidationError(_('Errore: il titolo deve avere lunghezza fra 1 e 95 caratteri.'))
+        return data
+
+    def validate_messaggio(self, data):
+        if not re.match("^[A-Za-z0-9 .,'èòàùì!?]+$", data):
+            raise serializers.ValidationError(_('Errore: il messaggio può contenere solo lettere, numeri e spazi.'))
+        if not (1 <= len(data) <= 300):
+            raise serializers.ValidationError(_('Errore: il messaggio deve avere lunghezza fra 1 e 300 caratteri.'))
+        return data
+
 
 class PetCoinsSerializer(serializers.Serializer):
     pet_coins = serializers.IntegerField()
     class Meta:
         fields=['pet_coins']
 
+    def validate_pet_coins(self, data):
+        # controllo descrizione
+        if not re.match("^[0-9]+$", data):
+            raise serializers.ValidationError(_('Errore: il valore dei pet coins deve contenere solo numeri'))
+        return data
+
 
 class AccettaAnnuncioSerializer(serializers.Serializer):
     user_accetta = serializers.BooleanField()
     class Meta:
         fields=['user_accetta']
+    def validate_user_accetta(self, data):
+        # controllo descrizione
+        if not re.match("^[A-Za-z]+$", str(data)):
+            raise serializers.ValidationError(_('Errore: il campo può contenere solo <True> o <False>'))
+        return data
 
 
 class UtenteConRecensioni(serializers.ModelSerializer):
@@ -444,3 +1043,19 @@ class UtenteConRecensioni(serializers.ModelSerializer):
     class Meta:
         model = Recensione
         fields ="__all__"
+
+    def validate_descrizione(self, data):
+        # controllo descrizione
+        if not re.match("^[A-Za-z0-9 ,.'èòàùì]+$", data):
+            raise serializers.ValidationError(_('Errore: la descrizione può contenere solo lettere, '
+                                    'numeri, punti, virgole e spazi.'))
+        return data
+
+    def validate_titolo(self, data):
+        if not re.match("^[A-Za-z0-9 .,'èòàùì]+$", data):
+            raise serializers.ValidationError(
+                _('Errore: il titolo può contenere solo lettere, numeri e spazi.'))
+        if not (1 <= len(data) <= 95):
+            raise serializers.ValidationError(
+                _('Errore: il titolo deve avere lunghezza fra 1 e 95 caratteri.'))
+        return data
