@@ -5,20 +5,101 @@ import Card from '../components/Card';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import { Dimensions } from 'react-native';
 import { IconButton } from 'react-native-paper';
-import CheckBox from 'react-native-check-box'
-import PickerAnimali from '../components/PickerAnimali';
+import CheckBox from 'react-native-check-box';
+import {Picker} from 'native-base';
 
 const {width, height} = Dimensions.get('window');
 
 class InserisciAnnuncio extends Component {
 
-    state = {
-        chk1: false,
-        chk2: false,
-        chk3: false,
-        chk4: false,
-        chk5: false
-    };
+    constructor(props){
+        super(props);
+        this.state ={
+            error_message: "",
+            chkPasseggiate: false,
+            chkPuliziaGabbia: false,
+            chkCibo: false,
+            chkOreCompagnia: false,
+            chkAccompagnaDalVet: false,
+            titolo: "",
+            sottotitolo: "",
+            descrizione: "",
+            data_inizio: "",
+            data_fine: "",
+            pet: "Cane",
+            pet_coins: 0,
+            logo_annuncio: null
+        }
+    }
+
+    inserisciAnnuncio = () => {
+        if (this.state.titolo != "" && this.state.sottotitolo != "" && this.state.descrizione != "" &&
+            this.state.data_inizio != "" && this.state.data_fine != "" && this.state.pet != "" &&
+            this.state.pet_coins != 0) {
+            fetch('http://2.224.160.133.xip.io/api/annunci/nuovo/',
+            {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + global.user_key,
+              },
+              body: JSON.stringify({
+                annuncio: {
+                    titolo: this.state.titolo,
+                    sottotitolo: this.state.sottotitolo,
+                    descrizione: this.state.descrizione,
+                    data_inizio: this.state.data_inizio,
+                    data_fine: this.state.data_fine,
+                    logo_annuncio: this.state.logo_annuncio,
+                    pet: this.state.pet,
+                    pet_coins: this.state.pet_coins
+                },
+                passeggiate: this.state.chkPasseggiate,
+                pulizia_gabbia: this.state.chkPuliziaGabbia,
+                cibo: this.state.chkCibo,
+                ore_compagnia: this.state.chkOreCompagnia,
+                accompagna_dal_vet: this.state.chkAccompagnaDalVet
+              }),
+            })
+            .then(res => res.json())
+            .then((res) => {
+                if (res.id != null) {
+                    this.clearFields();
+                } else {
+                    this.setState({error_message: "Errore: controlla i campi inseriti e riprova."});
+                }
+            })
+            .catch((error) => {
+                this.inserisciAnnuncio;
+            })
+        } else {
+            this.setState({error_message: "Errore: assicurati di riempire tutti i campi."});
+        }
+    }
+
+    clearFields = () => {
+        this.setState({error_message: "",
+        chkPasseggiate: false,
+        chkPuliziaGabbia: false,
+        chkCibo: false,
+        chkOreCompagnia: false,
+        chkAccompagnaDalVet: false,
+        titolo: "",
+        sottotitolo: "",
+        descrizione: "",
+        data_inizio: "",
+        data_fine: "",
+        pet_coins: 0,
+        logo_annuncio: ""});
+
+        this.txtTitolo.clear();
+        this.txtSottotitolo.clear();
+        this.txtDescrizione.clear();
+        this.txtDataInizio.clear();
+        this.txtDataFine.clear();
+        this.txtPetCoins.clear();
+    }
 
     render() {
         return (
@@ -80,10 +161,10 @@ class InserisciAnnuncio extends Component {
                                             <Text style={styles.textTitle}>Pulizia gabbia: </Text>
                                         </View>
                                         <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Ore compagnia: </Text>
+                                            <Text style={styles.textTitle}>Cibo: </Text>
                                         </View>
                                         <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Cibo: </Text>
+                                            <Text style={styles.textTitle}>Ore compagnia: </Text>
                                         </View>
                                         <View style={styles.entryTitle}>
                                             <Text style={styles.textTitle}>Accompagna dal vet: </Text>
@@ -92,25 +173,48 @@ class InserisciAnnuncio extends Component {
 
                                     <View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95} 
+                                            ref={input => { this.txtTitolo = input }}
+                                            onChangeText={(value) => this.setState({titolo: value})}/>
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95} 
+                                            ref={input => { this.txtSottotitolo = input }}
+                                            onChangeText={(value) => this.setState({sottotitolo: value})}/>
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={245} multiline={true} />
+                                            <TextInput editable maxLength={245} multiline={true}
+                                            ref={input => { this.txtDescrizione = input }}
+                                            onChangeText={(value) => this.setState({descrizione: value})} />
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={20} multiline={true} />
+                                            <TextInput editable maxLength={20} multiline={true}
+                                            ref={input => { this.txtDataInizio = input }}
+                                            onChangeText={(value) => this.setState({data_inizio: value})} />
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={20} multiline={true} />
+                                            <TextInput editable maxLength={20} multiline={true}
+                                            ref={input => { this.txtDataFine = input }}
+                                            onChangeText={(value) => this.setState({data_fine: value})} />
                                         </View>
                                         <View>
-                                            <PickerAnimali />
+                                        <Picker
+                                            style={styles.picker} itemStyle={styles.pickerItem}
+                                            selectedValue={this.state.pet}
+                                            onValueChange={(itemValue) => this.setState({pet: itemValue})}
+                                            >
+                                            <Picker.Item label="Cane" value="cane" />
+                                            <Picker.Item label="Gatto" value="gatto" />
+                                            <Picker.Item label="Coniglio" value="coniglio" />
+                                            <Picker.Item label="Volatile" value="volatile" />
+                                            <Picker.Item label="Rettile" value="rettile" />
+                                            <Picker.Item label="Altro" value="altro" />
+                                        </Picker>
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={10} multiline={true} />
+                                            <TextInput editable maxLength={10} multiline={true}
+                                            ref={input => { this.txtPetCoins = input }}
+                                            onChangeText={(value) => this.setState({pet_coins: value})} />
                                         </View>
                                         <View>
                                             <TouchableOpacity style={styles.caricaStyle}>
@@ -119,66 +223,71 @@ class InserisciAnnuncio extends Component {
                                         </View>
                                         <View style={styles.checkBoxStyle}>
                                             <CheckBox
-                                                title='chk1'
+                                                title='chkPasseggiate'
                                                 onClick={()=>{
                                                     this.setState({
-                                                        chk1:!this.state.chk1
+                                                        chkPasseggiate:!this.state.chkPasseggiate
                                                     })
                                                 }}
-                                                isChecked={this.state.chk1}
+                                                isChecked={this.state.chkPasseggiate}
                                             />
                                         </View>
                                         <View style={styles.checkBoxStyle}>
                                             <CheckBox
-                                                title='chk2'
+                                                title='chkPuliziaGabbia'
                                                 onClick={()=>{
                                                     this.setState({
-                                                        chk2:!this.state.chk2
+                                                        chkPuliziaGabbia:!this.state.chkPuliziaGabbia
                                                     })
                                                 }}
-                                                isChecked={this.state.chk2}
+                                                isChecked={this.state.chkPuliziaGabbia}
                                             />
                                         </View>
                                         <View style={styles.checkBoxStyle}>
                                             <CheckBox
-                                                title='chk3'
+                                                title='chkCibo'
                                                 onClick={()=>{
                                                     this.setState({
-                                                        chk3:!this.state.chk3
+                                                        chkCibo:!this.state.chkCibo
                                                     })
                                                 }}
-                                                isChecked={this.state.chk3}
+                                                isChecked={this.state.chkCibo}
                                             />
                                         </View>
                                         <View style={styles.checkBoxStyle}>
                                             <CheckBox
-                                                title='chk4'
+                                                title='chkOreCompagnia'
                                                 onClick={()=>{
                                                     this.setState({
-                                                        chk4:!this.state.chk4
+                                                        chkOreCompagnia:!this.state.chkOreCompagnia
                                                     })
                                                 }}
-                                                isChecked={this.state.chk4}
+                                                isChecked={this.state.chkOreCompagnia}
                                             />
                                         </View>
                                         <View style={styles.checkBoxStyle}>
                                             <CheckBox
-                                                title='chk5'
+                                                title='chkAccompagnaDalVet'
                                                 onClick={()=>{
                                                     this.setState({
-                                                        chk5:!this.state.chk5
+                                                        chkAccompagnaDalVet:!this.state.chkAccompagnaDalVet
                                                     })
                                                 }}
-                                                isChecked={this.state.chk5}
+                                                isChecked={this.state.chkAccompagnaDalVet}
                                             />
                                         </View>
                                     </View>
                                 </View>
                                 <View style={styles.controlli}>
                                     <View style={styles.buttonview}>
-                                        <Button title="Inserisci annuncio" />
+                                        <Button title="Inserisci annuncio" onPress={() => {
+                                            this.inserisciAnnuncio();}} />
                                     </View>
                                 </View>
+
+                                <View style={{paddingTop: 10}}></View>
+                                <Text style={{color: 'red'}}>{this.state.error_message}</Text>
+                                <View style={{paddingTop: 10}}></View>
 
                                 <View style={{flexDirection: 'row', marginTop: 20, marginBottom: 5}}>
                                     <Text>I campi contrassegnati con</Text>
@@ -271,6 +380,17 @@ const styles = StyleSheet.create({
         marginLeft: 3,
         marginRight: 3,
         color: 'red'
+    },
+    picker: {
+        marginLeft: 10,
+        width: width - width / 2,
+        height: 28,
+        backgroundColor: '#e7e7e7',
+        marginBottom: 3,
+        marginTop: 3
+    },
+    pickerItem: {
+        color: 'white'
     }
 });
 

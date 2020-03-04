@@ -46,6 +46,7 @@ class Login extends Component {
             .then(res => res.json())
             .then((res) => {
                 if(res.key != null) {
+                    console.log("Token: " + res.key);
                     global.user_key = res.key;
                     global.logged_in = true;
                     global.username = this.state.username;

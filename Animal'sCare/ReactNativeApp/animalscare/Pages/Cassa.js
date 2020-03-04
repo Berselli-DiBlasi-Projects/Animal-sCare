@@ -53,6 +53,31 @@ class Cassa extends Component {
         });
     }
 
+    modificaSaldo(value) {
+        fetch('http://2.224.160.133.xip.io/api/utenti/cassa/',
+            {
+              method: 'PUT',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + global.user_key,
+              },
+              body: JSON.stringify({
+                pet_coins: value,
+              }),
+            })
+            .then(res => res.json())
+            .then((res) => {
+                this.fetchProfilo();
+            })
+            .then(obj =>  {
+              callback(obj)
+            })
+            .catch((error) => {
+                this.modificaSaldo;
+            })
+    }
+
     render() {
 
         if(this.state.isLoading){
@@ -94,13 +119,16 @@ class Cassa extends Component {
                             </View>
                             <View style={{flexDirection: 'row'}}>
                                 <View style={styles.buttonStyle}>
-                                    <Button title="+50" />
+                                    <Button title="+50" onPress={() => {
+                                                this.modificaSaldo("50");}} />
                                 </View>
                                 <View style={styles.buttonStyle}>
-                                    <Button title="+100" />
+                                    <Button title="+100" onPress={() => {
+                                                this.modificaSaldo("100");}} />
                                 </View>
                                 <View style={styles.buttonStyle}>
-                                    <Button title="+200" />
+                                    <Button title="+200" onPress={() => {
+                                                this.modificaSaldo("200");}} />
                                 </View>
                             </View>
 
@@ -109,13 +137,16 @@ class Cassa extends Component {
                             </View>
                             <View style={{flexDirection: 'row'}}>
                                 <View style={styles.buttonStyle}>
-                                    <Button title="-50" />
+                                    <Button title="-50" onPress={() => {
+                                                this.modificaSaldo("-50");}} />
                                 </View>
                                 <View style={styles.buttonStyle}>
-                                    <Button title="-100" />
+                                    <Button title="-100" onPress={() => {
+                                                this.modificaSaldo("-100");}} />
                                 </View>
                                 <View style={styles.buttonStyle}>
-                                    <Button title="-200" />
+                                    <Button title="-200" onPress={() => {
+                                                this.modificaSaldo("-200");}} />
                                 </View>
                             </View>
                             

@@ -6,14 +6,25 @@ import { Dimensions } from 'react-native';
 
 const {width, height} = Dimensions.get('window');
 
-let id_utente;
-let title;
-
 class EliminaProfiloConferma extends Component {
 
+    eliminaProfilo = () => {
+        fetch('http://2.224.160.133.xip.io/api/utenti/profilo/', {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Token ' + global.user_key
+            }
+        })
+        .then(res => {
+            this.props.navigation.navigate('Logout');
+        })
+        .catch((error) => {
+            this.eliminaProfilo;
+        });
+
+    }
+
     render() {
-        id_utente = this.props.navigation.state.params.id_utente;
-        title = "Confermi di voler eliminare il tuo profilo?";
         return (
                 
             <View style={styles.screen}>
@@ -23,7 +34,7 @@ class EliminaProfiloConferma extends Component {
                 <View style={{alignItems: 'center'}}>
                     <Card style={styles.inputContainer}>
                         <View style={{flexDirection: 'row'}}>
-                            <Text style={styles.title}>{title}</Text>
+                            <Text style={styles.title}>Confermi di voler eliminare il tuo profilo?</Text>
                         </View>
 
                         <View style={styles.controlli}>
@@ -31,7 +42,7 @@ class EliminaProfiloConferma extends Component {
                                 <Button title="Indietro" onPress={() => this.props.navigation.goBack(null)}/>
                             </View>
                             <View style={styles.buttonview}>
-                                <Button title="Conferma" />
+                                <Button title="Conferma" onPress={() => {this.eliminaProfilo();}} />
                             </View>
                         </View>
                     </Card>
