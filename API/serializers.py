@@ -468,7 +468,7 @@ class DatiUtenteCompleti(serializers.ModelSerializer):
         # instance.longitudine =validated_data['longitudine']
         instance.telefono =validated_data['telefono']
         instance.pet_coins =validated_data['pet_coins']
-        instance.foto_profilo =validated_data['foto_profilo']
+        # instance.foto_profilo =validated_data['foto_profilo']
 #         controllo il tipo di utente
 
         if utente_richiedente.pet_sitter == False:
@@ -479,7 +479,7 @@ class DatiUtenteCompleti(serializers.ModelSerializer):
             instance.razza = validated_data['razza']
             instance.eta = validated_data['eta']
             instance.caratteristiche = validated_data['caratteristiche']
-            instance.foto_pet = validated_data['foto_pet']
+            # instance.foto_pet = validated_data['foto_pet']
         else:
             print("pet sitter TRUE")
             instance.pet_sitter=True
@@ -643,7 +643,7 @@ class CompletaRegPetsitterSerializer(serializers.ModelSerializer):
 
         instance.telefono =validated_data['telefono']
         # instance.pet_coins =validated_data['pet_coins']
-        instance.foto_profilo =validated_data['foto_profilo']
+        # instance.foto_profilo =validated_data['foto_profilo']
 
         instance.pet_sitter=True
 
@@ -816,7 +816,7 @@ class CompletaRegUtenteNormale(serializers.ModelSerializer):
         # instance.longitudine =validated_data['longitudine']
         instance.telefono =validated_data['telefono']
         # instance.pet_coins =validated_data['pet_coins']
-        instance.foto_profilo =validated_data['foto_profilo']
+        # instance.foto_profilo =validated_data['foto_profilo']
         print("pet sitter FALSE")
         instance.pet_sitter=False
         instance.nome_pet = validated_data['nome_pet']
@@ -824,7 +824,7 @@ class CompletaRegUtenteNormale(serializers.ModelSerializer):
         instance.razza = validated_data['razza']
         instance.eta = validated_data['eta']
         instance.caratteristiche = validated_data['caratteristiche']
-        instance.foto_pet = validated_data['foto_pet']
+        # instance.foto_pet = validated_data['foto_pet']
         # instance.descrizione = validated_data['descrizione']
         # instance.hobby = validated_data['hobby']
         instance.user.save()
@@ -954,7 +954,7 @@ class AnnuncioConServizi(serializers.ModelSerializer):
         instance.annuncio.pet_coins = dati_annuncio['pet_coins']
         instance.annuncio.data_inizio = dati_annuncio['data_inizio']
         instance.annuncio.data_fine = dati_annuncio['data_fine']
-        instance.annuncio.logo_annuncio = dati_annuncio['logo_annuncio']
+        # instance.annuncio.logo_annuncio = dati_annuncio['logo_annuncio']
         instance.annuncio.save()
 
         instance.passeggiate = validated_data['passeggiate']
