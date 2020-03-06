@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Button, Image, Dimensions, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Button, Image, Dimensions, FlatList, ActivityIndicator } from 'react-native';
 import CustomHeader from '../components/Header';
 import Card from '../components/Card';
 import annuncio_default from '../assets/annuncio_default.jpg';
@@ -12,9 +12,7 @@ const {width, height} = Dimensions.get('window');
 
 class Calendario extends Component {
 
-    state = {
-        categorie: "tutto"
-    };
+    categorie = "*";
 
     constructor(props){
         super(props);
@@ -52,7 +50,7 @@ class Calendario extends Component {
     }
 
     fetchCalendario(){
-    return fetch('http://2.224.160.133.xip.io/api/annunci/calendario/?format=json', {
+        return fetch('http://2.224.160.133.xip.io/api/annunci/calendario/filtra/' + this.categorie + '/?format=json', {
 
         method: 'GET',
             headers: {
@@ -71,12 +69,19 @@ class Calendario extends Component {
         });
         })
         .catch((error) =>{
-            console.log(error);
             this.fetchCalendario();
         });
     }
 
     render() {
+        if(this.state.isLoading){
+            return(
+                <View style={{flex: 1, paddingTop: height / 2}}>
+                    <ActivityIndicator/>
+                </View>
+            )
+        }
+
         return (
             
             <View style={styles.screen}>
@@ -101,15 +106,16 @@ class Calendario extends Component {
                             <Picker
                                 style={styles.picker} itemStyle={styles.pickerItem}
                                 selectedValue={this.state.categorie}
-                                onValueChange={(itemValue) => this.setState({categorie: itemValue})}
+                                onValueChange={(itemValue) => {this.categorie = itemValue;
+                                    this.fetchCalendario();}}
                                 >
-                                <Picker.Item label="Tutti gli animali" value="tutto" />
-                                <Picker.Item label="Cani" value="cani" />
-                                <Picker.Item label="Gatti" value="gatti" />
-                                <Picker.Item label="Conigli" value="conigli" />
-                                <Picker.Item label="Volatili" value="volatili" />
-                                <Picker.Item label="Rettili" value="rettili" />
-                                <Picker.Item label="Altro" value="altro" />
+                                <Picker.Item label="Tutti gli animali" value="*" />
+                                <Picker.Item label="Cani" value="Cane" />
+                                <Picker.Item label="Gatti" value="Gatto" />
+                                <Picker.Item label="Conigli" value="Coniglio" />
+                                <Picker.Item label="Volatili" value="Volatile" />
+                                <Picker.Item label="Rettili" value="Rettile" />
+                                <Picker.Item label="Altro" value="Altro" />
                             </Picker>
 
                             <View style={{paddingBottom: 5}}></View>    
@@ -118,32 +124,54 @@ class Calendario extends Component {
                 </View>
                 <View style={styles.flatlistview}>
                     <FlatList
-                        style={{flex: 1}}
+                        style={{flex: 1, flexGrow: 1}}
+                        contentContainerStyle={{ paddingBottom: 30}}
                         data={this.state.dataSource}
                         renderItem={({item, index}) => 
                         <TouchableOpacity style={styles.touchableopacity} activeOpacity={.8} onPress={() => this.props.navigation.navigate('DettagliAnnuncio', {id_annuncio: item.id})}>
-                            <Card style={styles.inputContainerGreen}>
-                                <View style={styles.image}>
-                                    <Image source={ item.logo_annuncio ? { uri: item.logo_annuncio } : annuncio_default }
-                                    style={styles.annuncioLogo}
-                                />
-                                </View>
-                                
-
-                                <View style={styles.data}>
-                                    <Text style={styles.annuncioTitle} numberOfLines={1}>{item.titolo}</Text>
-                                    
-                                    <Text style={styles.annuncioSubtitle} numberOfLines={2}>{item.sottotitolo}</Text>
-                                    <View style={styles.textInline}>
-                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Data: </Text>
-                                        <Text>{item.data_inizio} {item.data_fine}</Text>
+                            {item.annuncio_valido ? (
+                                <Card style={styles.inputContainerGreen}>
+                                    <View style={styles.image}>
+                                        <Image source={ item.logo_annuncio ? { uri: item.logo_annuncio } : annuncio_default }
+                                        style={styles.annuncioLogo}
+                                    />
                                     </View>
-                                    <View style={styles.textInline}>
-                                        <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Pubblicato da: </Text>
-                                        <Text>{item.user.username}</Text>
+                                    <View style={styles.data}>
+                                        <Text style={styles.annuncioTitle} numberOfLines={1}>{item.titolo}</Text>
+                                        
+                                        <Text style={styles.annuncioSubtitle} numberOfLines={2}>{item.sottotitolo}</Text>
+                                        <View style={styles.textInline}>
+                                            <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Data: </Text>
+                                            <Text>{item.data_inizio} {item.data_fine}</Text>
+                                        </View>
+                                        <View style={styles.textInline}>
+                                            <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Pubblicato da: </Text>
+                                            <Text>{item.user.username}</Text>
+                                        </View>
                                     </View>
-                                </View>
-                            </Card>
+                                </Card>
+                                ) : (
+                                <Card style={styles.inputContainerRed}>
+                                    <View style={styles.image}>
+                                        <Image source={ item.logo_annuncio ? { uri: item.logo_annuncio } : annuncio_default }
+                                        style={styles.annuncioLogo}
+                                    />
+                                    </View>
+                                    <View style={styles.data}>
+                                        <Text style={styles.annuncioTitle} numberOfLines={1}>{item.titolo}</Text>
+                                        
+                                        <Text style={styles.annuncioSubtitle} numberOfLines={2}>{item.sottotitolo}</Text>
+                                        <View style={styles.textInline}>
+                                            <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Data: </Text>
+                                            <Text>{item.data_inizio} {item.data_fine}</Text>
+                                        </View>
+                                        <View style={styles.textInline}>
+                                            <Text style={{fontWeight: 'bold', fontStyle: 'italic'}}>Pubblicato da: </Text>
+                                            <Text>{item.user.username}</Text>
+                                        </View>
+                                    </View>
+                                </Card>
+                                        )}
                         </TouchableOpacity>
                         }
                         keyExtractor={(item, index) => index.toString()}
@@ -236,6 +264,7 @@ const styles = StyleSheet.create({
     flatlistview: {
         flex: 1,
         width: '100%',
+        flexGrow: 1,
         justifyContent: 'space-between',
         alignItems: 'center'
     }

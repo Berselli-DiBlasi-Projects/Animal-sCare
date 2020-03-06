@@ -54,7 +54,6 @@ class AccettaAnnuncioConferma extends Component {
     }
     
     accettaAnnuncio() {
-        console.log("ciao");
         fetch('http://2.224.160.133.xip.io/api/annunci/' + this.props.navigation.state.params.id_annuncio + '/accetta/',
             {
               method: 'PUT',
@@ -64,21 +63,17 @@ class AccettaAnnuncioConferma extends Component {
                 'Authorization': 'Token ' + global.user_key,
               },
               body: JSON.stringify({
-                annuncio: {
-                    user_accetta: true
-                }
+                user_accetta: true
               }),
             })
             .then(res => res.json())
             .then((res) => {
-                console.log(JSON.stringify(res));
                 this.props.navigation.navigate('ListaAnnunci');
             })
             .then(obj =>  {
               callback(obj)
             })
             .catch((error) => {
-                console.log("err");
                 this.accettaAnnuncio;
             })
     }

@@ -183,7 +183,7 @@ class DettagliAnnuncio extends Component {
 
                                 <View style={{alignItems: 'center'}}>
                                     <View style={styles.controlli}>
-                                        { data.annuncio.annuncio_petsitter != global.is_petsitter && global.logged_in == true && data.annuncio.user_accetta == null ? (
+                                        { data.annuncio.annuncio_petsitter != global.is_petsitter && global.logged_in == true && data.annuncio.user_accetta == null && data.annuncio.annuncio_valido == true ? (
                                         <View style={styles.buttonview}>
                                             <Button title="Accetta annuncio" onPress={() => this.props.navigation.navigate('AccettaAnnuncioConferma', {id_annuncio: this.state.id_annuncio})}/>
                                         </View>
