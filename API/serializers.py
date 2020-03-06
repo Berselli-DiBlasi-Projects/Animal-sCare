@@ -188,6 +188,7 @@ class AnagraficaSerializer(serializers.ModelSerializer):
         files = data
 
         if files is not None:
+
             file_size = files.size
             limit_MB = 5
             if file_size > limit_MB * 1024 * 1024:
@@ -721,7 +722,8 @@ class CompletaRegUtenteNormale(serializers.ModelSerializer):
 
     def validate_nome_pet(self, data):
         if not re.match("^[A-Za-z 'èòàùì]+$", data):
-            raise serializers.ValidationError(_('Errore: il nome del pet può contenere solo lettere.'))
+            raise serializers.ValidationError(
+                _('Errore: il nome del pet può contenere solo lettere.'))
         if not (3 <= len(data) <= 30):
             raise serializers.ValidationError(
                 _('Errore: il nome del pet deve avere lunghezza fra 3 e 30 caratteri.'))
@@ -730,7 +732,8 @@ class CompletaRegUtenteNormale(serializers.ModelSerializer):
     def validate_razza(self, data):
         # controllo razza
         if not re.match("^[A-Za-z -'èòàùì]+$", data):
-            raise serializers.ValidationError(_('Errore: la razza del pet può contenere solo lettere e spazi.'))
+            raise serializers.ValidationError(
+                _('Errore: la razza del pet può contenere solo lettere e spazi.'))
         if not (3 <= len(data) <= 30):
             raise serializers.ValidationError(
                 _('Errore: la razza del pet deve avere lunghezza fra 3 e 30 caratteri.'))
@@ -856,27 +859,31 @@ class AnnuncioSerializer(serializers.ModelSerializer):
     def validate_titolo(self, data):
         # controllo titolo
         if not re.match("^[A-Za-z0-9 .,'èòàùì]+$",data):
-            raise serializers.ValidationError(_('Errore: il titolo può contenere solo lettere, numeri e spazi.'))
+            raise serializers.ValidationError(
+                _('Errore: il titolo può contenere solo lettere, numeri e spazi.'))
         if not (1 <= len(data) <= 95):
-            raise serializers.ValidationError(_('Errore: il titolo deve avere lunghezza fra 1 e 95 caratteri.'))
+            raise serializers.ValidationError(
+                _('Errore: il titolo deve avere lunghezza fra 1 e 95 caratteri.'))
         return data
 
     def validate_sottotitolo(self, data):
         # controllo sottotitolo
         if not re.match("^[A-Za-z0-9 ,.')èòàùì]+$", data):
-            raise serializers.ValidationError(_('Errore: il sottotitolo può contenere solo lettere, '
-                                    'numeri, punti, virgole e spazi.'))
+            raise serializers.ValidationError(
+                _('Errore: il sottotitolo può contenere solo lettere, numeri, punti, virgole e spazi.'))
         if not (1 <= len(data) <= 95):
-            raise serializers.ValidationError(_('Errore: il sottotitolo deve avere lunghezza fra 1 e 95 caratteri.'))
+            raise serializers.ValidationError(
+                _('Errore: il sottotitolo deve avere lunghezza fra 1 e 95 caratteri.'))
         return data
 
     def validate_descrizione(self, data):
         # controllo descrizione
         if not re.match("^[A-Za-z0-9 .,'èòàùì]+$", data):
-            raise serializers.ValidationError(_('Errore: la descrizione può contenere solo lettere, '
-                                    'numeri, punti, virgole e spazi.'))
+            raise serializers.ValidationError(
+                _('Errore: la descrizione può contenere solo lettere, numeri, punti, virgole e spazi.'))
         if not (1 <= len(data) <= 245):
-            raise serializers.ValidationError(_('Errore: il titolo deve avere lunghezza fra 1 e 245 caratteri.'))
+            raise serializers.ValidationError(
+                _('Errore: il titolo deve avere lunghezza fra 1 e 245 caratteri.'))
         return data
 
     def validate_data_inizio(self, data):
@@ -899,7 +906,8 @@ class AnnuncioSerializer(serializers.ModelSerializer):
         if not re.match("^[0-9]+$", str(data)):
             raise serializers.ValidationError(_('Errore: il campo pet coins può contenere solo numeri.'))
         if not (1 <= int(data) <= 100000):
-            raise serializers.ValidationError(_('Errore: il valore in pet coins deve essere compreso tra 1 e 100000.'))
+            raise serializers.ValidationError(
+                _('Errore: il valore in pet coins deve essere compreso tra 1 e 100000.'))
         return data
 
     def validate_logo_annuncio(self, data):
@@ -1002,16 +1010,20 @@ class ContattaciSerializer(serializers.Serializer):
 
     def validate_titolo(self, data):
         if not re.match("^[A-Za-z0-9 .,'èòàùì]+$", data):
-            raise serializers.ValidationError(_('Errore: il titolo può contenere solo lettere, numeri e spazi.'))
+            raise serializers.ValidationError(
+                _('Errore: il titolo può contenere solo lettere, numeri e spazi.'))
         if not (1 <= len(data) <= 95):
-            raise serializers.ValidationError(_('Errore: il titolo deve avere lunghezza fra 1 e 95 caratteri.'))
+            raise serializers.ValidationError(
+                _('Errore: il titolo deve avere lunghezza fra 1 e 95 caratteri.'))
         return data
 
     def validate_messaggio(self, data):
         if not re.match("^[A-Za-z0-9 .,'èòàùì!?]+$", data):
-            raise serializers.ValidationError(_('Errore: il messaggio può contenere solo lettere, numeri e spazi.'))
+            raise serializers.ValidationError(
+                _('Errore: il messaggio può contenere solo lettere, numeri e spazi.'))
         if not (1 <= len(data) <= 300):
-            raise serializers.ValidationError(_('Errore: il messaggio deve avere lunghezza fra 1 e 300 caratteri.'))
+            raise serializers.ValidationError(
+                _('Errore: il messaggio deve avere lunghezza fra 1 e 300 caratteri.'))
         return data
 
 
@@ -1022,7 +1034,7 @@ class PetCoinsSerializer(serializers.Serializer):
 
     def validate_pet_coins(self, data):
         # controllo descrizione
-        if not re.match("^[0-9]+$", data):
+        if not re.match("^[0-9]+$", str(data)):
             raise serializers.ValidationError(_('Errore: il valore dei pet coins deve contenere solo numeri'))
         return data
 

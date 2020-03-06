@@ -1,4 +1,5 @@
 from rest_framework.views import APIView
+from rest_framework.exceptions import *
 from rest_framework.response import Response
 from rest_framework import generics
 from django.contrib.auth.models import User
@@ -21,6 +22,9 @@ from .permissions import *
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.contrib.auth import logout
+from django.core.exceptions import PermissionDenied
+
+
 import datetime
 
 
@@ -67,14 +71,14 @@ class selfUserInfoLogin(generics.RetrieveUpdateDestroyAPIView):
 
 # @csrf_exempt
 class completaRegPetsitter(generics.RetrieveUpdateAPIView):
-    permission_classes = [IsSameUserOrReadOnly]
+    permission_classes = [IsSameUserOrReadOnly, IsUserLogged]
     serializer_class = CompletaRegPetsitterSerializer
     def get_object(self):
         return Profile.objects.get(user=self.request.user)
 
 # @csrf_exempt
 class completaRegUtentenormale(generics.RetrieveUpdateAPIView):
-    permission_classes = [IsSameUserOrReadOnly]
+    permission_classes = [IsSameUserOrReadOnly ,IsUserLogged]
     serializer_class = CompletaRegUtenteNormale
     def get_object(self):
         return Profile.objects.get(user=self.request.user)
@@ -132,7 +136,7 @@ class ordinaAnnunci(generics.ListAPIView):
         if tipo_utente == 'normale'and animale == '*':
             lista = Annuncio.objects.filter(user_accetta__isnull=True, annuncio_petsitter=False)
 
-        if ordinamento == 'crescente' or ordinamento == 'decrescente':
+        if (ordinamento == 'crescente' or ordinamento == 'decrescente') and self.request.user.is_authenticated():
             profilo_utente = Profile.objects.get(user=self.request.user)
             indici = []
             indici = ordina_geograficamente(profilo_utente, lista, ordinamento)
@@ -164,7 +168,10 @@ class dettaglioAnnuncio(generics.RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         print(instance.annuncio)
         annuncio_da_eliminare = Annuncio.objects.get(id = instance.annuncio.id)
-        annuncio_da_eliminare.delete()
+        if annuncio_da_eliminare.user == self.request.user:
+            annuncio_da_eliminare.delete()
+        else:
+            raise PermissionDenied()
         # Servizio.objects.get(annuncio=annuncio_da_eliminare).delete()
 
 
@@ -219,10 +226,16 @@ class accettaAnnuncio(generics.RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         oid = self.kwargs['pk']
         annuncio_selezionato = Annuncio.objects.get(id=oid)
+        utente_attivo= Profile.objects.get(user=self.request.user)
         # annuncio_selezionato.user_accetta = serializer.validated_data['user_accetta']
-        if serializer.validated_data['user_accetta'] == True :
-            annuncio_selezionato.user_accetta = self.request.user
-            annuncio_selezionato.save()
+        if(utente_attivo.pet_sitter == True and annuncio_selezionato.annuncio_petsitter==False) or \
+                (utente_attivo.pet_sitter == False and annuncio_selezionato.annuncio_petsitter==True):
+            if serializer.validated_data['user_accetta'] == True :
+                annuncio_selezionato.user_accetta = self.request.user
+                annuncio_selezionato.save()
+        else:
+            content = 'non sei autorizzato ad accettare annunci della tua stessa categoria'
+            raise PermissionDenied()
 
 
 # class accettaAnnuncio(generics.RetrieveUpdateAPIView):
@@ -367,7 +380,7 @@ class recensisciUtente(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         nickname_recensore = self.request.user.username
-        nickname_recensito = self.kwargs['utente_recensito']
+        nickname_recensito = self.kwargs['utente']
         try:
             recensore = User.objects.get(username=nickname_recensore)
         except Exception:
@@ -432,7 +445,7 @@ class modificaPetCoins(generics.UpdateAPIView):
         valori_ammessi = [ 50, 100, 200, -50, -100, -200]
 
         if num not in valori_ammessi:
-            raise Exception("Valore non ammesso")
+            raise PermissionDenied("Valore non ammesso")
 
         profilo_selezionato.pet_coins += num
         profilo_selezionato.save()

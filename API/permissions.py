@@ -7,6 +7,10 @@ class IsSameAnagraficaUserOrReadOnly(permissions.BasePermission):
     """
     update e delete concessi solo ai proprietari dei dati loggati.
     """
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
@@ -26,11 +30,21 @@ class IsAnnuncioPossessorOrReadOnly(permissions.BasePermission):
     """
     update e delete concessi solo ai proprietari degli annunci.
     """
+    # def has_permission(self, request, view):
+    #
+    #     if request.method in permissions.SAFE_METHODS:
+    #         return True
+
     def has_object_permission(self, request, view, obj):
         # print(obj.annuncio.user)
-        if request.method in permissions.SAFE_METHODS:
+        if request.method == 'GET':
             return True
-        return obj.annuncio.user == request.user
+
+        if request.method == 'PUT' or request.method == 'DELETE':
+            if request.user.is_authenticated() and obj.annuncio.user == request.user:
+                return True
+
+        return False
 
 
 class IsRecensionePossessorOrReadOnly(permissions.BasePermission):

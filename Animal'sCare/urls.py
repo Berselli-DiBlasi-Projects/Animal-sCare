@@ -18,6 +18,8 @@ urlpatterns = [
     url("api-auth/", include("rest_framework.urls")),
     url("api/rest-auth/", include("rest_auth.urls")),
     url("api/rest-auth/registration/", include("rest_auth.registration.urls")),
+
+    # url('accounts/', include('allauth.urls')), # <--
 ]
 
 handler404 = main_views.handler404

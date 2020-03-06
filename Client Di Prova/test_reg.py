@@ -5,8 +5,8 @@ def client():
     # credentials = {"username": "admin", "password": "asdasdasd"}
 
     data = {
-        "username": "resttest1",
-        "email": "test1@rest.com",
+        "username": "johnsnow1",
+        "email": "john@snow1.com",
         "password1": "cambiami12",
         "password2": "cambiami12",
         "first_name": "rest_first_name",
@@ -20,6 +20,40 @@ def client():
     #
     # response = requests.get("http://127.0.0.1:8000/api/profiles/",
     #                         headers=headers)
+
+    # print("Status Code: ", response.status_code)
+    # response_data = response.json()
+    # print(response_data)
+
+    print("Status Code: ", response.status_code)
+    response_data = response.json()
+    print(response_data)
+    print("token = ", response_data.get("key"))
+    token_h = "Token " + response_data.get("key")
+    headers = {"Authorization": token_h}
+
+    # richiamo la API per gli annunci
+    data = {
+        "user": {
+            "username": "completa",
+            "first_name": "profilo",
+        },
+        "indirizzo": "via rossi",
+        "citta": "fermo",
+        "provincia": "FM",
+        "regione": "Marche",
+        "telefono": "1234567890",
+        "foto_profilo": "null",
+        "nome_pet": "aaa",
+        "pet": "Cane",
+        "razza": "meticcio",
+        "eta": 1,
+        "caratteristiche": "morbidissimo",
+        "foto_pet": "null"
+    }
+    response = requests.put("http://127.0.0.1:8000/api/utenti/registra/utente-normale",
+                            headers=headers,
+                            data=data)
 
     print("Status Code: ", response.status_code)
     response_data = response.json()

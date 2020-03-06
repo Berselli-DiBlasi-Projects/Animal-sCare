@@ -42,7 +42,7 @@ urlpatterns = [
     # /API/annunci/filtra-per-dist-decrescente/  metodi ammessi  GET : a tutti gli utenti
     url(r'annunci/ordina/(?P<animale>[A-Za-z0-9*èòàùì]+)/(?P<ordinamento>[A-Za-z0-9*èòàùì]+)/(?P<tipo_utente>[A-Za-z0-9*èòàùì]+)/$',
         views.ordinaAnnunci.as_view(),
-        name='API-ordina-annunci-distanza-decrescente'),
+        name='API-ordina-annunci-animale-distanza-utente'),
 
     # osserva l'annuncio nel dettaglio e ne permette anche l'eliminazione o modifica purchè chi la chiama è
     # colui che lo ha scritto
