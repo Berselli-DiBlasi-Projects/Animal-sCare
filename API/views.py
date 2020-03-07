@@ -350,6 +350,11 @@ class recensisciUtente(generics.CreateAPIView):
             recensito = User.objects.get(username=nickname_recensito)
         except Exception:
             raise Exception("Utente recensito non trovato")
+
+        rec = Recensione.objects.filter(user_recensore=recensore, user_recensito=recensito)
+        if len(rec) != 0:
+            raise PermissionDenied("hai già recensito l'utente")
+
         if recensito != recensore:
             serializer.save(user_recensore=recensore, user_recensito=recensito)
         else:

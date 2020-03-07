@@ -4,6 +4,7 @@ from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from utenti.models import Profile
 from annunci.models import Annuncio, Servizio
+from recensioni.models import Recensione
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
@@ -541,7 +542,12 @@ class listAPIViewTestCase(APITestCase):
         response = self.client.post(url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_modifica_recensione(self):
+    def test_scrivi_recensione_utente_gia_recensito(self):
+        Recensione.objects.create(user_recensito=self.user_petsitter,
+                                  user_recensore=self.user_normale,
+                                  titolo="testo",
+                                  descrizione="testo",
+                                  voto=2)
         data = {
             "titolo": "Recensione",
             "descrizione": "prova",
@@ -556,4 +562,4 @@ class listAPIViewTestCase(APITestCase):
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_user_normale.key)
         response = self.client.post(url, data=data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

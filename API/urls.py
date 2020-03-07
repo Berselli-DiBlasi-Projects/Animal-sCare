@@ -70,13 +70,14 @@ urlpatterns = [
         name='API-classifica-utenti'),
 
     # Cassa Pet Coins utenti
-    # /API/utenti/cassa/<quantità>/  metodi ammessi  GET : a tutti gli utenti
+    # /API/utenti/cassa/  metodi ammessi  PUT : ai soli utenti loggati
     url(r'utenti/cassa/$',
         views.modificaPetCoins.as_view(),
         name='API-petcoins-utenti'),
 
     # recensisci utenti
-    # recensioni/nuova/<utente_recensito>/<utente_recensore>/ metodi ammessi  GET : a tutti gli utenti
+    # recensioni/nuova/<utente_recensito>/ metodi ammessi  POST : a tutti gli utenti
+    # in automatico verrà settato il nickname di chi scrive la recensione
     url(r'recensioni/nuova/(?P<utente>[A-Za-z0-9èòàùì]+)/$',
         views.recensisciUtente.as_view(),
         name='API-recensisci-utenti'),
@@ -88,6 +89,6 @@ urlpatterns = [
         name='API-lista-recensioni-utente'),
 
     # contattaci
-    # /API/annunci/nuovo/
+    # /API/annunci/nuovo/ metodi ammessi  POST : a tutti gli utenti loggati
     url(r'contattaci/$', views.contattaciInPrivato.as_view(), name='API-contattaci'),
 ]
