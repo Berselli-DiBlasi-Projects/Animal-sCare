@@ -24,8 +24,8 @@ class InserisciAnnuncio extends Component {
             titolo: "",
             sottotitolo: "",
             descrizione: "",
-            data_inizio: "",
-            data_fine: "",
+            data_inizio: "YYYY-MM-DDTHH:mm",
+            data_fine: "YYYY-MM-DDTHH:mm",
             pet: "Cane",
             pet_coins: 0,
             logo_annuncio: null
@@ -66,6 +66,7 @@ class InserisciAnnuncio extends Component {
             .then((res) => {
                 if (res.id != null) {
                     this.clearFields();
+                    this.props.navigation.goBack(null);
                 } else {
                     this.setState({error_message: "Errore: controlla i campi inseriti e riprova."});
                 }
@@ -152,9 +153,6 @@ class InserisciAnnuncio extends Component {
                                             <Text style={styles.asteriskStyle}>*</Text>
                                         </View>
                                         <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Logo annuncio: </Text>
-                                        </View>
-                                        <View style={styles.entryTitle}>
                                             <Text style={styles.textTitle}>Passeggiate: </Text>
                                         </View>
                                         <View style={styles.entryTitle}>
@@ -189,11 +187,13 @@ class InserisciAnnuncio extends Component {
                                         </View>
                                         <View style={styles.textContainer}>
                                             <TextInput editable maxLength={20} multiline={true}
+                                            value = {this.state.data_inizio}
                                             ref={input => { this.txtDataInizio = input }}
                                             onChangeText={(value) => this.setState({data_inizio: value})} />
                                         </View>
                                         <View style={styles.textContainer}>
                                             <TextInput editable maxLength={20} multiline={true}
+                                            value = {this.state.data_fine}
                                             ref={input => { this.txtDataFine = input }}
                                             onChangeText={(value) => this.setState({data_fine: value})} />
                                         </View>
@@ -215,11 +215,6 @@ class InserisciAnnuncio extends Component {
                                             <TextInput editable maxLength={10} multiline={true}
                                             ref={input => { this.txtPetCoins = input }}
                                             onChangeText={(value) => this.setState({pet_coins: value})} />
-                                        </View>
-                                        <View>
-                                            <TouchableOpacity style={styles.caricaStyle}>
-                                                <Text style={{marginTop: 2}}>Browse...</Text>
-                                            </TouchableOpacity>
                                         </View>
                                         <View style={styles.checkBoxStyle}>
                                             <CheckBox

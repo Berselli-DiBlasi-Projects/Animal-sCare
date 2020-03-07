@@ -5,13 +5,168 @@ import Card from '../components/Card';
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import { Dimensions } from 'react-native';
 import { IconButton } from 'react-native-paper';
-import PickerAnimali from '../components/PickerAnimali';
+import { Picker } from 'native-base';
 import PickerProvince from '../components/PickerProvince';
 import PickerRegioni from '../components/PickerRegioni';
 
 const {width, height} = Dimensions.get('window');
 
 class RegistrazioneNormale extends Component {
+
+    constructor(props){
+        super(props);
+        this.state ={
+            error_message: "",
+            username: "",
+            password: "",
+            conferma_password: "",
+            nome: "",
+            cognome: "",
+            email: "",
+            indirizzo: "",
+            citta: "",
+            telefono: "",
+            nome_pet: "",
+            razza: "",
+            eta: 0,
+            caratteristiche: "",
+            pet: "Cane"
+        }
+    }
+
+    fetchUserId() {
+        fetch('http://2.224.160.133.xip.io/api/utenti/cerca/' + this.state.username + '/?format=json')
+        .then((user_response) => user_response.json())
+        .then((user_responseJson) => {
+            global.user_id = user_responseJson[0].user.id;
+            global.is_petsitter = user_responseJson[0].pet_sitter;
+        })
+        .catch((error) =>{
+        this.fetchUserId();
+        });
+    }
+
+    registraUtente = () => {
+        if (this.state.username != "" && this.state.password != "" && this.state.conferma_password != "" &&
+            this.state.nome != "" && this.state.cognome != "" && this.state.pet != "" &&
+            this.state.email != "" && this.state.indirizzo != "" && this.state.citta != "" &&
+            this.state.telefono != "" && this.state.nome_pet != "" && this.state.razza != "" &&
+            this.state.eta != "" && this.state.caratteristiche != "") {
+                if (this.state.password == this.state.conferma_password) {
+
+                    fetch('http://2.224.160.133.xip.io/api/rest-auth/registration/',
+                    {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: this.state.username,
+                        email: this.state.email,
+                        password1: this.state.password,
+                        password2: this.state.conferma_password
+                    }),
+                    })
+                    .then(res => res.json())
+                    .then((res) => {
+                        if (res.key != null) {
+                            global.user_key = res.key;
+                            global.logged_in = true;
+                            global.username = this.state.username;
+                            this.fetchUserId();
+                            this.registraProfilo();
+                        } else {
+                            this.setState({error_message: "Errore: " + JSON.stringify(res)});
+                        }
+                    })
+                    .catch((error) => {
+                        this.registraUtente;
+                    })
+            } else {
+                this.setState({error_message: "Errore: i campi Password e Conferma password non coincidono."});
+            }
+        } else {
+        this.setState({error_message: "Errore: assicurati di riempire tutti i campi."});
+        }
+    }
+
+    registraProfilo = () => {
+        fetch('http://2.224.160.133.xip.io/api/utenti/registra/utente-normale',
+        {
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + global.user_key,
+        },
+        body: JSON.stringify({
+            user: {
+                username: this.state.username,
+                first_name: this.state.nome,
+                last_name: this.state.cognome
+            },
+            indirizzo: this.state.indirizzo,
+            citta: this.state.citta,
+            provincia: global.provincia,
+            regione: global.regione,
+            telefono: this.state.telefono,
+            foto_profilo: null,
+            nome_pet: this.state.nome_pet,
+            pet: this.state.pet,
+            razza: this.state.razza,
+            eta: this.state.eta,
+            caratteristiche: this.state.caratteristiche,
+            foto_pet: null
+        }),
+        })
+        .then(res => res.json())
+        .then((res) => {
+            if (res.user.id != null) {
+                this.clearFields();
+                this.props.navigation.navigate("ListaAnnunci");
+            } else {
+                this.setState({error_message: "Errore: " + JSON.stringify(res)});
+            }
+        })
+        .catch((error) => {
+            this.setState({error_message: "Errore: " + error});
+            this.registraProfilo;
+        })        
+    }
+
+    clearFields = () => {
+        this.setState({error_message: "",
+            username: "",
+            password: "",
+            conferma_password: "",
+            nome: "",
+            cognome: "",
+            email: "",
+            indirizzo: "",
+            citta: "",
+            telefono: "",
+            nome_pet: "",
+            razza: "",
+            eta: "",
+            caratteristiche: "",
+            pet: "Cane"
+        });
+
+        this.txtUsername.clear();
+        this.txtPassword.clear();
+        this.txtConfermaPassword.clear();
+        this.txtNome.clear();
+        this.txtCognome.clear();
+        this.txtEmail.clear();
+        this.txtIndirizzo.clear();
+        this.txtCitta.clear();
+        this.txtTelefono.clear();
+        this.txtNomePet.clear();
+        this.txtRazza.clear();
+        this.txtEta.clear();
+        this.txtCaratteristiche.clear();
+    }
 
     render() {
         return (
@@ -80,9 +235,6 @@ class RegistrazioneNormale extends Component {
                                             <Text style={styles.asteriskStyle}>*</Text>
                                         </View>
                                         <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Foto profilo: </Text>
-                                        </View>
-                                        <View style={styles.entryTitle}>
                                             <Text style={styles.textTitle}>Nome pet: </Text>
                                             <Text style={styles.asteriskStyle}>*</Text>
                                         </View>
@@ -102,71 +254,100 @@ class RegistrazioneNormale extends Component {
                                             <Text style={styles.textTitle}>Caratteristiche: </Text>
                                             <Text style={styles.asteriskStyle}>*</Text>
                                         </View>
-                                        <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Foto pet: </Text>
-                                        </View>
                                     </View>
 
                                     <View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95} 
+                                            ref={input => { this.txtUsername = input }}
+                                            onChangeText={(value) => this.setState({username: value})} />
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95} secureTextEntry={true}
+                                            ref={input => { this.txtPassword = input }}
+                                            onChangeText={(value) => this.setState({password: value})} />
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95} secureTextEntry={true}
+                                            ref={input => { this.txtConfermaPassword = input }}
+                                            onChangeText={(value) => this.setState({conferma_password: value})}/>
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95} 
+                                            ref={input => { this.txtNome = input }}
+                                            onChangeText={(value) => this.setState({nome: value})}/>
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95} 
+                                            ref={input => { this.txtCognome = input }}
+                                            onChangeText={(value) => this.setState({cognome: value})}/>
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95} 
+                                            ref={input => { this.txtEmail = input }}
+                                            onChangeText={(value) => this.setState({email: value})}/>
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95} 
+                                            ref={input => { this.txtIndirizzo = input }}
+                                            onChangeText={(value) => this.setState({indirizzo: value})}/>
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95} 
+                                            ref={input => { this.txtCitta = input }}
+                                            onChangeText={(value) => this.setState({citta: value})}/>
                                         </View>
                                         <PickerProvince />
                                         <PickerRegioni />
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
-                                        </View>
-                                        <View>
-                                            <TouchableOpacity style={styles.caricaStyle}>
-                                                <Text style={{marginTop: 2}}>Browse...</Text>
-                                            </TouchableOpacity>
+                                            <TextInput editable maxLength={95} 
+                                            ref={input => { this.txtTelefono = input }}
+                                            onChangeText={(value) => this.setState({telefono: value})}/>
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95} 
+                                            ref={input => { this.txtNomePet = input }}
+                                            onChangeText={(value) => this.setState({nome_pet: value})}/>
                                         </View>
-                                        <PickerAnimali />
+                                        <Picker
+                                            style={styles.picker} itemStyle={styles.pickerItem}
+                                            selectedValue={this.state.pet}
+                                            onValueChange={(itemValue) => this.setState({pet: itemValue})}
+                                            >
+                                            <Picker.Item label="Cane" value="cane" />
+                                            <Picker.Item label="Gatto" value="gatto" />
+                                            <Picker.Item label="Coniglio" value="coniglio" />
+                                            <Picker.Item label="Volatile" value="volatile" />
+                                            <Picker.Item label="Rettile" value="rettile" />
+                                            <Picker.Item label="Altro" value="altro" />
+                                        </Picker>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95} 
+                                            ref={input => { this.txtRazza = input }}
+                                            onChangeText={(value) => this.setState({razza: value})}/>
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
+                                            <TextInput editable maxLength={95} 
+                                            ref={input => { this.txtEta = input }}
+                                            onChangeText={(value) => this.setState({eta: value})}/>
                                         </View>
                                         <View style={styles.textContainer}>
-                                            <TextInput editable maxLength={95} />
-                                        </View>
-                                        <View>
-                                            <TouchableOpacity style={styles.caricaStyle}>
-                                                <Text style={{marginTop: 2}}>Browse...</Text>
-                                            </TouchableOpacity>
+                                            <TextInput editable maxLength={95} 
+                                            ref={input => { this.txtCaratteristiche = input }}
+                                            onChangeText={(value) => this.setState({caratteristiche: value})}/>
                                         </View>
                                     </View>
                                 </View>
                                 <View style={styles.controlli}>
                                     <View style={styles.buttonview}>
-                                        <Button title="Registrati" />
+                                        <Button title="Registrati" onPress={() => {
+                                            this.registraUtente();}} />
                                     </View>
                                 </View>
+
+                                <View style={{paddingTop: 10}}></View>
+                                <Text style={{color: 'red'}}>{this.state.error_message}</Text>
+                                <View style={{paddingTop: 10}}></View>
 
                                 <View style={{flexDirection: 'row', marginTop: 20, marginBottom: 5}}>
                                     <Text>I campi contrassegnati con</Text>
@@ -242,19 +423,21 @@ const styles = StyleSheet.create({
         marginBottom: 3,
         marginTop: 3
     },
-    caricaStyle: {
-        marginBottom: 1,
-        marginTop: 1,
-        height: 28,
-        width: 100,
-        marginLeft: 10,
-        borderWidth: 1,
-        alignItems: 'center'
-    },
     asteriskStyle: {
         marginLeft: 3,
         marginRight: 3,
         color: 'red'
+    },
+    picker: {
+        marginLeft: 10,
+        width: width - width / 2,
+        height: 28,
+        backgroundColor: '#e7e7e7',
+        marginBottom: 3,
+        marginTop: 3
+    },
+    pickerItem: {
+        color: 'white'
     }
 });
 
