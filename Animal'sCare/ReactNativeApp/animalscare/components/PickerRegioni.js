@@ -7,7 +7,7 @@ const {width, height} = Dimensions.get('window');
 export default class PickerRegioni extends Component {
 
     state = {
-        regione: "Abruzzo"
+        regione: global.regione
     };
 
     render() {
@@ -15,7 +15,8 @@ export default class PickerRegioni extends Component {
             <Picker
                 style={styles.picker} itemStyle={styles.pickerItem}
                 selectedValue={this.state.regione}
-                onValueChange={(itemValue) => this.setState({regione: itemValue})}
+                onValueChange={(itemValue) => {global.regione = itemValue;
+                    this.setState({regione: global.regione})}}
                 >
                 <Picker.Item label="Abruzzo" value="Abruzzo" />
                 <Picker.Item label="Basilicata" value="Basilicata" />

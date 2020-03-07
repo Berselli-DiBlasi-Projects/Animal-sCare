@@ -46,7 +46,6 @@ class Login extends Component {
             .then(res => res.json())
             .then((res) => {
                 if(res.key != null) {
-                    console.log("Token: " + res.key);
                     global.user_key = res.key;
                     global.logged_in = true;
                     global.username = this.state.username;
@@ -136,9 +135,6 @@ class Login extends Component {
                                         <View style={styles.bottomTitle}>
                                             <Text style={styles.textTitle}>Non hai un account?</Text>
                                         </View>
-                                        <View style={styles.bottomTitle}>
-                                            <Text style={styles.textTitle}>Oppure: </Text>
-                                        </View>
                                     </View>
 
                                     <View>
@@ -146,10 +142,6 @@ class Login extends Component {
                                             <Button title="Registrati" onPress={() => {
                                                 this.clearFields();
                                                 this.props.navigation.navigate('Registrazione');}}/>
-                                        </View>
-                                        <View style={styles.bottomButton}>
-                                            <Button title="Login con Google" onPress={() => {
-                                                this.clearFields();}}/>
                                         </View>
                                     </View>
                                 </View>

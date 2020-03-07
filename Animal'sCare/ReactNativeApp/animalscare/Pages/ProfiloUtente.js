@@ -131,10 +131,6 @@ class ProfiloUtente extends Component {
                                         <Text style={styles.textData}>{data.regione}</Text>
                                     </View>
                                     <View style={styles.entry}>
-                                        <Text style={styles.textTitle}>Posizione: </Text>
-                                        <Text style={styles.textData}>INSERIRE MAPPA</Text>
-                                    </View>
-                                    <View style={styles.entry}>
                                         <Text style={styles.textTitle}>Telefono: </Text>
                                         <Text style={styles.textData}>{data.telefono}</Text>
                                     </View>
@@ -250,10 +246,6 @@ class ProfiloUtente extends Component {
                                     <View style={styles.entry}>
                                         <Text style={styles.textTitle}>Regione: </Text>
                                         <Text style={styles.textData}>{data.regione}</Text>
-                                    </View>
-                                    <View style={styles.entry}>
-                                        <Text style={styles.textTitle}>Posizione: </Text>
-                                        <Text style={styles.textData}>INSERIRE MAPPA</Text>
                                     </View>
                                     <View style={styles.entry}>
                                         <Text style={styles.textTitle}>Telefono: </Text>

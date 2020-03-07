@@ -211,9 +211,6 @@ class ModificaAnnuncio extends Component {
                                             <Text style={styles.asteriskStyle}>*</Text>
                                         </View>
                                         <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Logo annuncio: </Text>
-                                        </View>
-                                        <View style={styles.entryTitle}>
                                             <Text style={styles.textTitle}>Passeggiate: </Text>
                                         </View>
                                         <View style={styles.entryTitle}>
@@ -280,11 +277,6 @@ class ModificaAnnuncio extends Component {
                                             value = {this.state.pet_coins.toString()}
                                             ref={input => { this.txtPetCoins = input }}
                                             onChangeText={(value) => this.setState({pet_coins: value})} />
-                                        </View>
-                                        <View>
-                                            <TouchableOpacity style={styles.caricaStyle}>
-                                                <Text style={{marginTop: 2}}>Browse...</Text>
-                                            </TouchableOpacity>
                                         </View>
                                         <View style={styles.checkBoxStyle}>
                                             <CheckBox

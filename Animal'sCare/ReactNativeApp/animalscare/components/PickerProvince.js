@@ -7,7 +7,7 @@ const {width, height} = Dimensions.get('window');
 export default class PickerProvince extends Component {
 
     state = {
-        provincia: "AG"
+        provincia: global.provincia
     };
 
     render() {
@@ -15,7 +15,8 @@ export default class PickerProvince extends Component {
             <Picker
                 style={styles.picker} itemStyle={styles.pickerItem}
                 selectedValue={this.state.provincia}
-                onValueChange={(itemValue) => this.setState({provincia: itemValue})}
+                onValueChange={(itemValue) => {global.provincia = itemValue;
+                    this.setState({provincia: global.provincia});}}
                 >
                 <Picker.Item label="AG" value="AG" />
                 <Picker.Item label="AL" value="AL" />

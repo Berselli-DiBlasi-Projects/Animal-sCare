@@ -12,9 +12,11 @@ export default class App extends React.Component {
     super();
     global.logged_in = false;
     global.is_petsitter = false;
-    global.user_key = '-1';
-    global.username = '';
+    global.user_key = "-1";
+    global.username = "";
     global.user_id = -1;
+    global.provincia = "AG";
+    global.regione = "Abruzzo";
   }
 
   state = {

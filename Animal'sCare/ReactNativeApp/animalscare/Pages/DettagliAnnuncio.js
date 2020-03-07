@@ -48,7 +48,7 @@ class DettagliAnnuncio extends Component {
         this.setState({
             isLoading: false,
             id_annuncio: this.props.navigation.state.params.id_annuncio,
-            dataSource: responseJson,
+            dataSource: responseJson
         }, function(){
 
         });
@@ -171,10 +171,6 @@ class DettagliAnnuncio extends Component {
                                 <View style={styles.entry}>
                                     <Text style={styles.textTitle}>Data fine: </Text>
                                     <Text style={styles.textData}>{data.annuncio.data_fine}</Text>
-                                </View>
-                                <View style={styles.entry}>
-                                    <Text style={styles.textTitle}>Posizione: </Text>
-                                    <Text style={styles.textData}>INSERIRE MAPPA</Text>
                                 </View>
                                 <View style={styles.entry}>
                                     <Text style={styles.textTitle}>Servizi richiesti: </Text>
