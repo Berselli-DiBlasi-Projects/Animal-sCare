@@ -380,7 +380,10 @@ class recensisciUtente(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         nickname_recensore = self.request.user.username
+        print("nickname_recensore",nickname_recensore)
+
         nickname_recensito = self.kwargs['utente']
+        print("nickname_recensito",nickname_recensito)
         try:
             recensore = User.objects.get(username=nickname_recensore)
         except Exception:
@@ -389,8 +392,10 @@ class recensisciUtente(generics.CreateAPIView):
             recensito = User.objects.get(username=nickname_recensito)
         except Exception:
             raise Exception("Utente recensito non trovato")
-        serializer.save(user_recensore=recensore, user_recensito=recensito)
-
+        if recensito != recensore:
+            serializer.save(user_recensore=recensore, user_recensito=recensito)
+        else:
+            raise PermissionDenied("non puoi recensire te stesso")
 
 class recensioniRicevute(generics.ListAPIView):
     serializer_class = RecensioniSerializer
@@ -404,30 +409,6 @@ class recensioniRicevute(generics.ListAPIView):
         recensioni = Recensione.objects.filter(user_recensito=recensito)
         return list(recensioni)
 
-# @csrf_exempt
-class modificaRecensione(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = RecensioniSerializer
-    permission_classes = [IsUserLogged, IsRecensionePossessorOrReadOnly]
-
-    def get_object(self):
-        nickname_recensore = self.request.user.username
-        nickname_recensito = self.kwargs['utente']
-        try:
-            recensore = User.objects.get(username=nickname_recensore)
-        except Exception:
-            raise Exception("Utente recensore non trovato")
-        try:
-            recensito = User.objects.get(username=nickname_recensito)
-        except Exception:
-            raise Exception("Utente recensito non trovato")
-
-        try:
-            recensione = Recensione.objects.get(user_recensore=recensore, user_recensito=recensito)
-            return recensione
-        except Exception:
-            raise Exception("Recensione non trovata." +
-                            " \nrecensore : " + nickname_recensore +
-                            " \nrecensito : " + nickname_recensito)
 
 # @csrf_exempt
 class modificaPetCoins(generics.UpdateAPIView):

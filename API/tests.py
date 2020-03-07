@@ -291,6 +291,34 @@ class listAPIViewTestCase(APITestCase):
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_modifica_annuncio_utente(self):
+        url = reverse("API:API-dettaglio-annuncio",
+                      kwargs={'pk': self.annuncio_petsitter.pk}
+                      )
+        data = {
+            "annuncio": {
+                "data_inizio": "2021-04-08T17:30:00",
+                "data_fine": "2022-04-08T17:30:00",
+                "annuncio_petsitter": 'false',
+                "titolo": "titolo annuncio modificato",
+                "sottotitolo": "sottotitolo annuncio",
+                "descrizione": "descrizione modificata",
+                "pet_coins": 1,
+                "pet": "Cane",
+                "logo_annuncio": None,
+                # "user_accetta": None
+            },
+            "passeggiate": 'true',
+            "pulizia_gabbia": 'true',
+            "ore_compagnia": 'true',
+            "cibo": 'true',
+            "accompagna_dal_vet": 'true'
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_petsitter.key)
+        response = self.client.put(url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
     def test_inserisci_nuovo_annuncio(self):
 
         data = {
@@ -318,6 +346,7 @@ class listAPIViewTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_user_normale.key)
         response = self.client.post(url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
 
     def test_accetta_annuncio_petsitter_da_petsitter(self):
         data = {
@@ -454,12 +483,51 @@ class listAPIViewTestCase(APITestCase):
                 "titolo": "Recensione",
                 "descrizione": "prova",
                 "voto": 3,
-                "user_recensore": self.user_normale.pk,
-                "user_recensito": self.user_petsitter.pk
-
             }
-        url = reverse("API:API-recensisci-utenti", kwargs={'utente': self.user_normale.username})
+        #  nell'url viene specificato l'username dell'utente che si vuole recensire
+        url = reverse("API:API-recensisci-utenti",
+                      kwargs={
+                          'utente': self.user_petsitter.username
+                      }
+                      )
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_user_normale.key)
+        response = self.client.post(url, data=data, format='json')
+        print(response.json())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_recensisci_te_stesso(self):
+        data = {
+            "titolo": "Recensione",
+            "descrizione": "prova",
+            "voto": 3,
+        }
+        #  nell'url viene specificato l'username dell'utente che si vuole recensire
+        url = reverse("API:API-recensisci-utenti",
+                      kwargs={
+                          'utente': self.user_petsitter.username
+                      }
+                      )
+
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_petsitter.key)
+        response = self.client.post(url, data=data, format='json')
+        print(response.json())
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_modifica_recensione(self):
+        data = {
+            "titolo": "Recensione",
+            "descrizione": "prova",
+            "voto": 3,
+        }
+        #  nell'url viene specificato l'username dell'utente che si vuole recensire
+        url = reverse("API:API-recensisci-utenti",
+                      kwargs={
+                          'utente': self.user_petsitter.username
+                      }
+                      )
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_user_normale.key)
         response = self.client.post(url, data=data, format='json')
         print(response.json())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

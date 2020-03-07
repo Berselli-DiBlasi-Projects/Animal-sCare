@@ -99,12 +99,6 @@ urlpatterns = [
         views.recensioniRicevute.as_view(),
         name='API-lista-recensioni-utente'),
 
-    # modifica una recensione fatta per un utente
-    # /API/recensioni/ricevute/<utente>/  metodi ammessi  GET : a tutti gli utenti
-    url(r'recensioni/modifica/(?P<utente>[A-Za-z0-9èòàùì]+)/$',
-        views.modificaRecensione.as_view(),
-        name='API-modifica-recensione'),
-
     # contattaci
     # /API/annunci/nuovo/
     url(r'contattaci/$', views.contattaciInPrivato.as_view(), name='API-contattaci'),

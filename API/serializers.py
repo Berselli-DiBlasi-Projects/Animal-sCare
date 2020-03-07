@@ -146,7 +146,8 @@ class AnagraficaSerializer(serializers.ModelSerializer):
     istanze di modelli o queryset in tipi di dato nativi di Python,
     facilitandone il rendering in formati a noi utili come ad esempio JSON
     '''
-
+    foto_profilo = serializers.FileField(read_only=True)
+    foto_pet = serializers.FileField(read_only=True)
     class Meta:
         model = Profile
         fields = "__all__"
@@ -274,9 +275,15 @@ class AnagraficaSerializer(serializers.ModelSerializer):
 
 
 class RecensioniSerializer(serializers.ModelSerializer):
+    user_recensore = serializers.CharField(max_length=30, allow_null=True, allow_blank=True, required=False)
+    user_recensito = serializers.CharField(max_length=30, allow_null=True, allow_blank=True, required=False)
     class Meta:
         model = Recensione
-        fields ="__all__"
+        fields ='__all__'
+        # fields =['titolo',
+        #          'descrizione',
+        #          'voto'
+        #          ]
 
     def validate_descrizione(self, data):
         # controllo descrizione
@@ -297,7 +304,8 @@ class DatiUtenteCompleti(serializers.ModelSerializer):
     user = UserSerializer(many=False)
     numero_recensioni = serializers.SerializerMethodField("get_numero_recensioni_utente")
     media_voti = serializers.SerializerMethodField("get_media_voti_utente")
-
+    foto_profilo = serializers.FileField(read_only=True)
+    foto_pet = serializers.FileField(read_only=True)
     class Meta:
         model = Profile
         fields =["user",
@@ -538,6 +546,7 @@ class CompletaDatiDjangoUser(serializers.ModelSerializer):
 
 class CompletaRegPetsitterSerializer(serializers.ModelSerializer):
     user = CompletaDatiDjangoUser(many=False)
+    foto_profilo = serializers.FileField(read_only=True)
     class Meta:
         model = Profile
         exclude = ("pet_coins",
@@ -663,6 +672,8 @@ class CompletaRegPetsitterSerializer(serializers.ModelSerializer):
 
 class CompletaRegUtenteNormale(serializers.ModelSerializer):
     user = CompletaDatiDjangoUser(many=False)
+    foto_profilo = serializers.FileField(read_only=True)
+    foto_pet = serializers.FileField(read_only=True)
     class Meta:
         model = Profile
         # fields = "__all__"
