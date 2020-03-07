@@ -1,4 +1,3 @@
-from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -6,18 +5,8 @@ from django.contrib.auth.models import User
 from utenti.models import Profile
 from annunci.models import Annuncio, Servizio
 from rest_framework.authtoken.models import Token
-from rest_framework.test import force_authenticate
 from rest_framework.test import APIClient
-from rest_framework.test import APIRequestFactory
 
-
-
-
-
-import datetime
-
-
-# Create your tests here.
 
 class listAPIViewTestCase(APITestCase):
     def setUp(self):
@@ -57,12 +46,6 @@ class listAPIViewTestCase(APITestCase):
         self.profilo_petsitter.pet_coins = 100
         self.profilo_petsitter.foto_profilo = None
         self.profilo_petsitter.pet_sitter = True
-        # self.profilo_petsitter.nome_pet = 'Tobi'
-        # self.profilo_petsitter.pet = 'Cane'
-        # self.profilo_petsitter.razza = 'Meticcio'
-        # self.profilo_petsitter.eta = 3
-        # self.profilo_petsitter.caratteristiche = 'Allergico alle noci'
-        # self.profilo_petsitter.foto_pet = None
         self.profilo_petsitter.descrizione = 'Socievole'
         self.profilo_petsitter.hobby = 'Cinema, Musica, Sport'
         self.profilo_petsitter.save()
@@ -144,7 +127,6 @@ class listAPIViewTestCase(APITestCase):
             "password": "12345"
         }
         response = self.client.post(url, data, format='json')
-        # print(response)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_completa_registrazione_normale(self):
@@ -154,6 +136,7 @@ class listAPIViewTestCase(APITestCase):
                     "username": "completa",
                     "first_name": "profilo",
                     "last_name": "normale",
+                    "email": "prova@prova.it"
                 },
                 "indirizzo": "via rossi",
                 "citta": "fermo",
@@ -181,6 +164,8 @@ class listAPIViewTestCase(APITestCase):
                     "username": "completa",
                     "first_name": "profilo",
                     "last_name": "normale",
+                    "email": "prova@prova.it"
+
                 },
                 "indirizzo": "via rossi",
                 "citta": "fermo",
@@ -205,12 +190,71 @@ class listAPIViewTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_delete_self_profilo_loggato(self):
-
-        token_h = "Token " + str(Token.objects.get(user=self.user_petsitter))
-        headers = {"Authorization": token_h}
         url = reverse("API:API-self-user-info")
-        response = self.client.delete(url,  headers=headers, format='json')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_user_petsitter_no_profilo.key)
+        response = self.client.delete(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_modifica_self_profilo_loggato_petsitter(self):
+
+        data = {
+                "user": {
+                    "username": "completa",
+                    "first_name": "profilo",
+                    "last_name": "petsitter",
+                    "email": "prova@prova.it",
+                    "password": "cambiami123"
+                },
+                "indirizzo": "via rossi",
+                "citta": "fermo",
+                "provincia": "FM",
+                "regione": "Marche",
+                "telefono": "1234567890",
+                "foto_profilo": None,
+                "descrizione" : 'Socievole',
+                "hobby" : 'Cinema, Musica, Sport',
+            }
+        url = reverse("API:API-self-user-info")
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_petsitter.key)
+        response = self.client.put(url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_modifica_self_profilo_loggato_user_normale(self):
+
+        data = {
+                "user": {
+                    "username": "completa",
+                    "first_name": "profilo",
+                    "last_name": "petsitter",
+                    "email": "prova@prova.it",
+                    "password": "cambiami123"
+                },
+                "indirizzo": "via rossi",
+                "citta": "fermo",
+                "provincia": "FM",
+                "regione": "Marche",
+                "telefono": "1234567890",
+                "foto_profilo": None,
+                "nome_pet": "pluto",
+                "pet": "Cane",
+                "foto_pet": None,
+                "razza": "meticcio",
+                "eta": "11",
+                "caratteristiche": "giocherellone"
+
+            }
+        url = reverse("API:API-self-user-info")
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_user_normale.key)
+        response = self.client.put(url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+    def test_delete_self_non_profilo_loggato(self):
+        url = reverse("API:API-self-user-info")
+        response = self.client.delete(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
 
     def test_get_self_profilo_non_loggato(self):
         url = reverse("API:API-self-user-info")
@@ -226,53 +270,43 @@ class listAPIViewTestCase(APITestCase):
     def test_get_lista_annunci(self):
         url = reverse("API:API-lista-annunci")
         response = self.client.get(url, format='json')
-        # print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_lista_annunci_filtrata_parametri_generici(self):
-        # url = "http://127.0.0.1:8000/api/annunci/ordina/*/*/*/"
         url = reverse("API:API-ordina-annunci-animale-distanza-utente",
                       kwargs={'animale': '*',
                               'ordinamento': '*',
                               'tipo_utente': '*'
                               }
                       )
-        print(url)
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_lista_annunci_filtrata_con_criterio(self):
-        # url = "http://127.0.0.1:8000/api/annunci/ordina/*/*/*/"
         url = reverse("API:API-ordina-annunci-animale-distanza-utente",
                       kwargs={'animale': 'Cane',
                               'ordinamento': 'crescente',
                               'tipo_utente': 'normale'
                               }
                       )
-        print(url)
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_dettaglio_annuncio(self):
-        # url = "http://127.0.0.1:8000/api/annunci/ordina/*/*/*/"
         url = reverse("API:API-dettaglio-annuncio",
                       kwargs={'pk': 1}
                       )
-        print(url)
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_delete_annuncio_utente_non_loggato(self):
-        # url = "http://127.0.0.1:8000/api/annunci/ordina/*/*/*/"
         url = reverse("API:API-dettaglio-annuncio",
                       kwargs={'pk': 1}
                       )
-        print(url)
         response = self.client.delete(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_annuncio_utente_loggato(self):
-        # url = "http://127.0.0.1:8000/api/annunci/ordina/*/*/*/"
         da_cancellare = Annuncio.objects.get(user=self.user_normale)
         url = reverse("API:API-dettaglio-annuncio",
                       kwargs={'pk': da_cancellare.pk}
@@ -283,11 +317,9 @@ class listAPIViewTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_get_annunci_di_un_utente(self):
-        # url = "http://127.0.0.1:8000/api/annunci/ordina/*/*/*/"
         url = reverse("API:API-elenco-annunci-utente",
                       kwargs={'pk': 1}
                       )
-        print(url)
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -400,7 +432,6 @@ class listAPIViewTestCase(APITestCase):
 
     def test_calendario_utente_non_loggato(self):
         url = reverse("API:API-calendario-utente")
-        # self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_user_normale.key)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -414,7 +445,6 @@ class listAPIViewTestCase(APITestCase):
     def test_calendario_utente_non_loggato_filtrato(self):
         url = reverse("API:API-calendario-utente-con-filtro-annunci",
                       kwargs={'animale': 'Cane'})
-        # self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_user_normale.key)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -473,7 +503,6 @@ class listAPIViewTestCase(APITestCase):
             "pet_coins": '50'
             }
         url = reverse("API:API-petcoins-utenti")
-        # self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_user_normale.key)
         response = self.client.put(url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -493,7 +522,6 @@ class listAPIViewTestCase(APITestCase):
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_user_normale.key)
         response = self.client.post(url, data=data, format='json')
-        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_recensisci_te_stesso(self):
@@ -511,7 +539,6 @@ class listAPIViewTestCase(APITestCase):
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_petsitter.key)
         response = self.client.post(url, data=data, format='json')
-        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_modifica_recensione(self):
@@ -529,5 +556,4 @@ class listAPIViewTestCase(APITestCase):
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_user_normale.key)
         response = self.client.post(url, data=data, format='json')
-        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

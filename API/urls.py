@@ -5,24 +5,12 @@ app_name = 'API'
 
 urlpatterns = [
 
-########################################################################################################################
-    # DA ELIMINARE
-    url(r'lista-anagrafica/$', views.ListaAnagraficheRegistrate.as_view(), name='API-Lista-Anagrafiche'),
-
-    # # DA ELIMINARE
-    url(r'lista-profili/$', views.ListaUtentiRegistrati.as_view(), name='API-lista-profili-utente'),
-
-    # # DA ELIMINARE
-    url(r'lista-servizi/$', views.elencoservizi.as_view(), name='API-elencoservizi'),
-
-########################################################################################################################
-
     # prende le informazioni di un utente
     # /API/utenti/profilo/<int:oid> metodi ammessi :GET
     url(r'utenti/profilo/(?P<pk>[0-9]+)/$', views.userInfoLogin.as_view(), name='API-user-info'),
 
     # prende le informazioni dell'utente che ha richiamato l'api e ne permette la modifica
-    # /API/utenti/profilo/<int:oid> metodi ammessi :GET / PUT
+    # /API/utenti/profilo/<int:oid> metodi ammessi :GET / PUT - serve essere loggati
     url(r'utenti/profilo/$', views.selfUserInfoLogin.as_view(), name='API-self-user-info'),
 
     # completa la registrazione per un petsitter

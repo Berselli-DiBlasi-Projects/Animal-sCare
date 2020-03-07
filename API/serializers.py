@@ -15,15 +15,16 @@ from utenti.models import Profile
 from annunci.models import Annuncio, Servizio
 from utenti.views import calcola_lat_lon
 
+
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 MIME_TYPES = ['image/jpeg', 'image/png']
 CONTENT_TYPES = ['image', 'video']
 MAX_UPLOAD_SIZE = "5242880"
 
+
 def aggiornaLatLng(user, request):
     utente_richiedente = Profile.objects.get(user=user)
     latitudine, longitudine = calcola_lat_lon(request, utente_richiedente)
-    print(latitudine, longitudine)
     utente_richiedente.latitudine = latitudine
     utente_richiedente.longitudine = longitudine
     utente_richiedente.save()
@@ -33,7 +34,6 @@ def calcolaMediaVotiUtente(profilo):
     utente = User.objects.get(username = profilo)
     somma = 0
     recensioni = Recensione.objects.filter(user_recensito=utente)
-    # print("recensioni : ",recensioni)
     for obj in recensioni:
         somma += obj.voto
     if len(recensioni)!=0:
@@ -41,6 +41,7 @@ def calcolaMediaVotiUtente(profilo):
     else:
         media = 0
     return media
+
 
 def calcolaNumeroVotiUtente(profilo):
     utente = User.objects.get(username = profilo)
@@ -65,7 +66,6 @@ class UsernameOnlySerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        # fields = "__all__"
         exclude=[
                 "last_login",
                 "is_superuser",
@@ -76,11 +76,6 @@ class UserSerializer(serializers.ModelSerializer):
                 "user_permissions",
                 ]
         read_only_fields = ["id"]
-        # fields = [  "id",
-        #             "username",
-        #             "first_name",
-        #             "last_name",
-        #             "email"]
         extra_kwargs = {
                         'username': {
                             'validators': [UnicodeUsernameValidator()],
@@ -137,8 +132,6 @@ class UserSerializer(serializers.ModelSerializer):
             return data
 
 
-
-
 class AnagraficaSerializer(serializers.ModelSerializer):
     '''
     classe per effettuare la serializzazione dei dati.
@@ -152,8 +145,6 @@ class AnagraficaSerializer(serializers.ModelSerializer):
         model = Profile
         fields = "__all__"
         read_only_fields =["id"]
-        # exclude = ("latitudine", "longitudine","pet_coins", "pet_sitter", "id", "user")
-        # read_only_fields = ['user',"latitudine", "longitudine","pet_coins", "pet_sitter", "id"]
 
     def validate_indirizzo(self,data):
         # controllo indirizzo
@@ -271,19 +262,12 @@ class AnagraficaSerializer(serializers.ModelSerializer):
         return data
 
 
-
-
-
 class RecensioniSerializer(serializers.ModelSerializer):
     user_recensore = serializers.CharField(max_length=30, allow_null=True, allow_blank=True, required=False)
     user_recensito = serializers.CharField(max_length=30, allow_null=True, allow_blank=True, required=False)
     class Meta:
         model = Recensione
         fields ='__all__'
-        # fields =['titolo',
-        #          'descrizione',
-        #          'voto'
-        #          ]
 
     def validate_descrizione(self, data):
         # controllo descrizione
@@ -447,20 +431,15 @@ class DatiUtenteCompleti(serializers.ModelSerializer):
         # user = Profile.__class__.objects.get(user=self.instance)
         return calcolaMediaVotiUtente(profilo)
 
-
     def get_numero_recensioni_utente(self,profilo):
         # user = Profile.__class__.objects.get(user=self.instance)
         return calcolaNumeroVotiUtente(profilo)
 
     def update(self, instance, validated_data):
         v = instance.user.username
-        print(v)
         dati_utente= validated_data.pop('user')
-        print("dati_utente",dati_utente)
         utente_richiedente = Profile.objects.get(user=instance.user)
-        print("utente richiedente ",utente_richiedente)
         # username, first_name, last_name, email
-        print("validated_data",validated_data)
         instance.user.username = dati_utente['username']
         instance.user.set_password(dati_utente['password'])
         instance.user.first_name = dati_utente['first_name']
@@ -472,24 +451,16 @@ class DatiUtenteCompleti(serializers.ModelSerializer):
         instance.citta =  validated_data['citta']
         instance.regione =  validated_data['regione']
         instance.provincia =  validated_data['provincia']
-        # instance.latitudine =  validated_data['latitudine']
-        # instance.longitudine =validated_data['longitudine']
-        instance.telefono =validated_data['telefono']
-        instance.pet_coins =validated_data['pet_coins']
-        # instance.foto_profilo =validated_data['foto_profilo']
-#         controllo il tipo di utente
 
+        instance.telefono =validated_data['telefono']
         if utente_richiedente.pet_sitter == False:
-            print("pet sitter FALSE")
             instance.pet_sitter=False
             instance.nome_pet = validated_data['nome_pet']
             instance.pet = validated_data['pet']
             instance.razza = validated_data['razza']
             instance.eta = validated_data['eta']
             instance.caratteristiche = validated_data['caratteristiche']
-            # instance.foto_pet = validated_data['foto_pet']
         else:
-            print("pet sitter TRUE")
             instance.pet_sitter=True
             instance.descrizione = validated_data['descrizione']
             instance.hobby = validated_data['hobby']
@@ -497,14 +468,6 @@ class DatiUtenteCompleti(serializers.ModelSerializer):
         instance.user.save()
         instance.save()
         aggiornaLatLng(instance.user, self.context['request'])
-
-        # utente_richiedente = Profile.objects.get(user=instance.user)
-        # latitudine, longitudine = calcola_lat_lon(self.context['request'], utente_richiedente)
-        # print(latitudine,longitudine)
-        # utente_richiedente.latitudine = latitudine
-        # utente_richiedente.longitudine = longitudine
-        # utente_richiedente.save()
-
         return instance
 
 
@@ -513,7 +476,6 @@ class DatiUtenteCompleti(serializers.ModelSerializer):
 class CompletaDatiDjangoUser(serializers.ModelSerializer):
     class Meta:
         model = User
-        # fields = "__all__"
         exclude=[
                 "last_login",
                 "is_superuser",
@@ -630,44 +592,22 @@ class CompletaRegPetsitterSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         v = instance.user.username
-        print(v)
         dati_utente= validated_data.pop('user')
-        print("dati_utente",dati_utente)
         utente_richiedente = Profile.objects.get(user=instance.user)
-        print("utente richiedente ",utente_richiedente)
-        # username, first_name, last_name, email
-        print("validated_data",validated_data)
-        # instance.user.username = dati_utente['username']
-        # instance.user.set_password(dati_utente['password'])
         instance.user.first_name = dati_utente['first_name']
         instance.user.last_name = dati_utente['last_name']
-        # instance.user.email = dati_utente['email']
         instance.indirizzo = validated_data['indirizzo']
         instance.citta =  validated_data['citta']
         instance.regione =  validated_data['regione']
         instance.provincia =  validated_data['provincia']
-
-        # instance.latitudine =  validated_data['latitudine']
-        # instance.longitudine =validated_data['longitudine']
-
         instance.telefono =validated_data['telefono']
-        # instance.pet_coins =validated_data['pet_coins']
-        # instance.foto_profilo =validated_data['foto_profilo']
-
         instance.pet_sitter=True
-
         instance.descrizione = validated_data['descrizione']
         instance.hobby = validated_data['hobby']
         instance.user.save()
         instance.save()
 
         aggiornaLatLng(instance.user, self.context['request'])
-
-        # latitudine , longitudine =  calcola_lat_lon(self.context['request'], utente_richiedente)
-        # utente_richiedente.latitudine = latitudine
-        # utente_richiedente.longitudine = longitudine
-        # utente_richiedente.save()
-
         return instance
 
 class CompletaRegUtenteNormale(serializers.ModelSerializer):
@@ -676,7 +616,6 @@ class CompletaRegUtenteNormale(serializers.ModelSerializer):
     foto_pet = serializers.FileField(read_only=True)
     class Meta:
         model = Profile
-        # fields = "__all__"
         exclude = ("latitudine",
                    "longitudine",
                    "pet_coins",
@@ -805,49 +744,25 @@ class CompletaRegUtenteNormale(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         v = instance.user.username
-        print(v)
         dati_utente= validated_data.pop('user')
-        print("dati_utente",dati_utente)
         utente_richiedente = Profile.objects.get(user=instance.user)
-        print("utente richiedente ",utente_richiedente)
-        # username, first_name, last_name, email
-        print("validated_data",validated_data)
-        # instance.user.username = dati_utente['username']
-        # instance.user.set_password(dati_utente['password'])dati_annuncio
         instance.user.first_name = dati_utente['first_name']
         instance.user.last_name = dati_utente['last_name']
-        # instance.user.email = dati_utente['email']
-
-
         instance.indirizzo = validated_data['indirizzo']
         instance.citta =  validated_data['citta']
         instance.regione =  validated_data['regione']
         instance.provincia =  validated_data['provincia']
-        # instance.latitudine =  validated_data['latitudine']
-        # instance.longitudine =validated_data['longitudine']
         instance.telefono =validated_data['telefono']
-        # instance.pet_coins =validated_data['pet_coins']
-        # instance.foto_profilo =validated_data['foto_profilo']
-        print("pet sitter FALSE")
         instance.pet_sitter=False
         instance.nome_pet = validated_data['nome_pet']
         instance.pet = validated_data['pet']
         instance.razza = validated_data['razza']
         instance.eta = validated_data['eta']
         instance.caratteristiche = validated_data['caratteristiche']
-        # instance.foto_pet = validated_data['foto_pet']
-        # instance.descrizione = validated_data['descrizione']
-        # instance.hobby = validated_data['hobby']
         instance.user.save()
         instance.save()
 
         aggiornaLatLng(instance.user, self.context['request'])
-
-        # latitudine, longitudine = calcola_lat_lon(self.context['request'], utente_richiedente)
-        # utente_richiedente.latitudine = latitudine
-        # utente_richiedente.longitudine = longitudine
-        # utente_richiedente.save()
-
         return instance
 
 
@@ -937,24 +852,15 @@ class AnnuncioSerializer(serializers.ModelSerializer):
 
 
 class ServizioOffertoSerializer(serializers.ModelSerializer):
-    # annuncio = AnnuncioSerializer(many=False)
     class Meta:
         model = Servizio
         fields = "__all__"
 
 class AnnuncioConServizi(serializers.ModelSerializer):
     annuncio = AnnuncioSerializer(many=False)
-    # annuncio_valido = serializers.SerializerMethodField("get_annuncio_valido")
     class Meta:
         model = Servizio
         fields = "__all__"
-
-    # def get_annuncio_valido(self, servizio):
-    #     now = datetime.datetime.now()
-    #     if now < servizio.annuncio.data_inizio:
-    #         return True
-    #     else:
-    #         return False
 
     def update(self, instance, validated_data):
         dati_annuncio = validated_data.pop('annuncio')
@@ -965,7 +871,6 @@ class AnnuncioConServizi(serializers.ModelSerializer):
         instance.annuncio.pet_coins = dati_annuncio['pet_coins']
         instance.annuncio.data_inizio = dati_annuncio['data_inizio']
         instance.annuncio.data_fine = dati_annuncio['data_fine']
-        # instance.annuncio.logo_annuncio = dati_annuncio['logo_annuncio']
         instance.annuncio.save()
 
         instance.passeggiate = validated_data['passeggiate']
@@ -979,14 +884,8 @@ class AnnuncioConServizi(serializers.ModelSerializer):
 
     def create(self, validated_data):
         dati_annuncio = validated_data.pop('annuncio')
-        # print(validated_data)
-        # print(dati_annuncio)
-        # request = getattr(self.context, 'request', None)
-        # print(self.context)
-        # print("request USER : ",self.context['request'].user)
         annuncio_nuovo=Annuncio.objects.create(user=self.context['request'].user)
         userprofile = Profile.objects.filter(user=self.context['request'].user).first()
-        # print("userprofile",userprofile)
         if userprofile.pet_sitter:
             annuncio_nuovo.annuncio_petsitter=True
         else:
