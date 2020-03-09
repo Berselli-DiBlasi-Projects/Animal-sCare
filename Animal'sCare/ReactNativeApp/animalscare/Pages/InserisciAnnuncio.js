@@ -89,16 +89,14 @@ class InserisciAnnuncio extends Component {
         titolo: "",
         sottotitolo: "",
         descrizione: "",
-        data_inizio: "",
-        data_fine: "",
+        data_inizio: "YYYY-MM-DDTHH:mm",
+        data_fine: "YYYY-MM-DDTHH:mm",
         pet_coins: 0,
-        logo_annuncio: ""});
+        logo_annuncio: null});
 
         this.txtTitolo.clear();
         this.txtSottotitolo.clear();
         this.txtDescrizione.clear();
-        this.txtDataInizio.clear();
-        this.txtDataFine.clear();
         this.txtPetCoins.clear();
     }
 
