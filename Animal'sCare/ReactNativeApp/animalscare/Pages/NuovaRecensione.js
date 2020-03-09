@@ -5,23 +5,25 @@ import Card from '../components/Card'
 import { TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native-gesture-handler';
 import { Dimensions } from 'react-native';
 import { IconButton } from 'react-native-paper';
+import { Picker } from 'native-base';
 
 const {width, height} = Dimensions.get('window');
 
-class Contattaci extends Component {
+class NuovaRecensione extends Component {
 
     constructor(props){
         super(props);
         this.state ={ 
             titolo: "",
-            messaggio: "",
+            descrizione: "",
+            voto: 1,
             error_message: ""
         }
     }
 
-    sendMessage = () => {
-        if (this.state.titolo != "" && this.state.messaggio != "") {
-            fetch('http://2.224.160.133.xip.io/api/contattaci/',
+    inviaRecensione = () => {
+        if (this.state.titolo != "" && this.state.descrizione != "") {
+            fetch('http://2.224.160.133.xip.io/api/recensioni/nuova/' + this.props.navigation.state.params.username + '/',
             {
               method: 'POST',
               headers: {
@@ -31,19 +33,22 @@ class Contattaci extends Component {
               },
               body: JSON.stringify({
                 titolo: this.state.titolo,
-                messaggio: this.state.messaggio,
+                descrizione: this.state.descrizione,
+                voto: this.state.voto
               }),
             })
             .then(res => res.json())
             .then((res) => {
-                this.clearFields();
-                this.props.navigation.goBack(null);
-            })
-            .then(obj =>  {
-              callback(obj)
+                if (res.id != null) {
+                    this.clearFields();
+                    this.props.navigation.goBack(null);
+                } else {
+                    this.setState({error_message: JSON.stringify(res)});
+                }
             })
             .catch((error) => {
-                this.sendMessage;
+                this.setState({error_message: error});
+                this.inviaRecensione;
             })
         } else {
             this.setState({error_message: "Errore: assicurati di riempire tutti i campi."});
@@ -52,10 +57,11 @@ class Contattaci extends Component {
 
     clearFields = () => {
         this.setState({titolo: ""});
-        this.setState({messaggio: ""});
+        this.setState({descrizione: ""});
+        this.setState({voto: 1});
         this.setState({error_message: ""});
         this.txtTitolo.clear();
-        this.txtMessaggio.clear();
+        this.txtDescrizione.clear();
     }
 
     render() {
@@ -69,7 +75,7 @@ class Contattaci extends Component {
                         <IconButton icon="arrow-left" onPress={() => this.props.navigation.goBack(null)} />
                     </View>
                     <Text style={styles.title}>
-                        Contattaci
+                        Recensisci utente
                     </Text>
                     <View style={styles.rightcontainer}></View>
                 </View>
@@ -85,7 +91,11 @@ class Contattaci extends Component {
                                             <Text style={styles.asteriskStyle}>*</Text>
                                         </View>
                                         <View style={styles.entryTitle}>
-                                            <Text style={styles.textTitle}>Messaggio: </Text>
+                                            <Text style={styles.textTitle}>Descrizione: </Text>
+                                            <Text style={styles.asteriskStyle}>*</Text>
+                                        </View>
+                                        <View style={styles.entryTitle}>
+                                            <Text style={styles.textTitle}>Voto: </Text>
                                             <Text style={styles.asteriskStyle}>*</Text>
                                         </View>
                                     </View>
@@ -98,14 +108,25 @@ class Contattaci extends Component {
                                         </View>
                                         <View style={styles.textContainer}>
                                             <TextInput editable maxLength={300} 
-                                            ref={input => { this.txtMessaggio = input }}
-                                            onChangeText={(value) => this.setState({messaggio: value})}/>
+                                            ref={input => { this.txtDescrizione = input }}
+                                            onChangeText={(value) => this.setState({descrizione: value})}/>
                                         </View>
+                                        <Picker
+                                            style={styles.picker} itemStyle={styles.pickerItem}
+                                            selectedValue={this.state.voto}
+                                            onValueChange={(itemValue) => this.setState({voto: itemValue})}
+                                            >
+                                            <Picker.Item label="1" value={1} />
+                                            <Picker.Item label="2" value={2} />
+                                            <Picker.Item label="3" value={3} />
+                                            <Picker.Item label="4" value={4} />
+                                            <Picker.Item label="5" value={5} />
+                                        </Picker>
                                     </View>
                                 </View>
                                 <View style={styles.controlli}>
                                     <View style={styles.buttonview}>
-                                        <Button title="Invia messaggio" onPress={ this.sendMessage } />
+                                        <Button title="Invia recensione" onPress={ this.inviaRecensione } />
                                     </View>
                                 </View>
 
@@ -189,7 +210,18 @@ const styles = StyleSheet.create({
         marginLeft: 3,
         marginRight: 3,
         color: 'red'
+    },
+    picker: {
+        marginLeft: 10,
+        width: width - width / 2,
+        height: 28,
+        backgroundColor: '#e7e7e7',
+        marginBottom: 3,
+        marginTop: 3
+    },
+    pickerItem: {
+        color: 'white'
     }
 });
 
-export default Contattaci;
+export default NuovaRecensione;
