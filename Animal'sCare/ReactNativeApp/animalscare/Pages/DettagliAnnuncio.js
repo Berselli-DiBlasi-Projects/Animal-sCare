@@ -184,6 +184,11 @@ class DettagliAnnuncio extends Component {
                                             <Button title="Accetta annuncio" onPress={() => this.props.navigation.navigate('AccettaAnnuncioConferma', {id_annuncio: this.state.id_annuncio})}/>
                                         </View>
                                         ) : null }
+                                        { data.annuncio.annuncio_valido == false && data.annuncio.user_accetta == global.user_id ? (
+                                            <View style={styles.buttonview}>
+                                                <Button title="Recensisci utente" onPress={() => this.props.navigation.navigate('NuovaRecensione', {username: data.annuncio.user.username})}/>
+                                            </View>
+                                        ) : null }
                                         { data.annuncio.user.id == global.user_id ? (
                                         <View style={{flexDirection: 'row'}}>
                                             <View style={styles.buttonview}>

@@ -5,6 +5,7 @@ import AccettaAnnuncioConferma from '../Pages/AccettaAnnuncioConferma';
 import EliminaAnnuncioConferma from '../Pages/EliminaAnnuncioConferma';
 import ModificaAnnuncio from '../Pages/ModificaAnnuncio';
 import ProfiloUtenteAnnuncioSN from './ProfiloUtenteStackNavigator';
+import NuovaRecensione from '../Pages/NuovaRecensione';
 
 const AnnuncioStackNavigator = createStackNavigator({
     DettagliAnnuncio: {
@@ -36,6 +37,12 @@ const AnnuncioStackNavigator = createStackNavigator({
         navigationOptions: {
         title: 'Modifica annuncio'
         }
+    },
+    NuovaRecensione: {
+        screen: NuovaRecensione,
+        navigationOptions: {
+            title: 'Nuova recensione'
+            }
     }
 }, {headerMode: 'none'});
 
