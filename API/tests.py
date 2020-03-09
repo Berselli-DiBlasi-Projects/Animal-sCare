@@ -290,6 +290,7 @@ class listAPIViewTestCase(APITestCase):
                               'tipo_utente': 'normale'
                               }
                       )
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_petsitter.key)
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -352,7 +353,7 @@ class listAPIViewTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-    def test_inserisci_nuovo_annuncio(self):
+    def test_inserisci_nuovo_annuncio_normale(self):
 
         data = {
             "annuncio": {
@@ -377,6 +378,34 @@ class listAPIViewTestCase(APITestCase):
         url = reverse("API:API-nuovo-annuncio")
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_user_normale.key)
+        response = self.client.post(url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_inserisci_nuovo_annuncio_pet_sitter(self):
+
+        data = {
+            "annuncio": {
+                "data_inizio": "2021-03-12T17:30:00",
+                "data_fine": "2022-03-25T17:30:00",
+                "annuncio_petsitter": 'true',
+                "titolo": "titolo annuncio",
+                "sottotitolo": "sottotitolo annuncio",
+                "descrizione": "descrizione",
+                "pet_coins": 1,
+                "pet": "Gatto",
+                "logo_annuncio": None,
+                # "user_accetta": None
+            },
+            "passeggiate": 'true',
+            "pulizia_gabbia": 'false',
+            "ore_compagnia": 'true',
+            "cibo": 'false',
+            "accompagna_dal_vet": 'false'
+        }
+
+        url = reverse("API:API-nuovo-annuncio")
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_petsitter.key)
         response = self.client.post(url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 

@@ -127,7 +127,7 @@ class ordinaAnnunci(generics.ListAPIView):
         if tipo_utente == 'normale' and animale == '*':
             lista = Annuncio.objects.filter(user_accetta__isnull=True, annuncio_petsitter=False)
 
-        if (ordinamento == 'crescente' or ordinamento == 'decrescente') and self.request.user.is_authenticated():
+        if ordinamento == 'crescente' or ordinamento == 'decrescente':
             profilo_utente = Profile.objects.get(user=self.request.user)
             indici = ordina_geograficamente(profilo_utente, lista, ordinamento)
 
