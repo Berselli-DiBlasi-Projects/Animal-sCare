@@ -264,12 +264,12 @@ class ModificaAnnuncio extends Component {
                                             selectedValue={this.state.pet}
                                             onValueChange={(itemValue) => this.setState({pet: itemValue})}
                                             >
-                                            <Picker.Item label="Cane" value="cane" />
-                                            <Picker.Item label="Gatto" value="gatto" />
-                                            <Picker.Item label="Coniglio" value="coniglio" />
-                                            <Picker.Item label="Volatile" value="volatile" />
-                                            <Picker.Item label="Rettile" value="rettile" />
-                                            <Picker.Item label="Altro" value="altro" />
+                                            <Picker.Item label="Cane" value="Cane" />
+                                            <Picker.Item label="Gatto" value="Gatto" />
+                                            <Picker.Item label="Coniglio" value="Coniglio" />
+                                            <Picker.Item label="Volatile" value="Volatile" />
+                                            <Picker.Item label="Rettile" value="Rettile" />
+                                            <Picker.Item label="Altro" value="Altro" />
                                         </Picker>
                                         </View>
                                         <View style={styles.textContainer}>

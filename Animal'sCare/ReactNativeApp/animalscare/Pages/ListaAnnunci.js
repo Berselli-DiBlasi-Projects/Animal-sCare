@@ -50,23 +50,48 @@ class ListaAnnunci extends Component {
     this.willFocusSubscription.remove();
     }
 
-    fetchAnnunci(){
-    return fetch('http://2.224.160.133.xip.io/api/annunci/ordina/' + this.animali + 
-        '/' + this.ordina + '/' + this.categorie + '/?format=json')
-
-        .then((response) => response.json())
-        .then((responseJson) => {
-
-        this.setState({
-            isLoading: false,
-            dataSource: responseJson,
-        }, function(){
-
-        });
-        })
-        .catch((error) =>{
-            this.fetchAnnunci();
-        });
+    fetchAnnunci() {
+        if (global.logged_in == false) {
+            return fetch('http://2.224.160.133.xip.io/api/annunci/ordina/' + this.animali + 
+            '/*/' + this.categorie + '/?format=json')
+    
+            .then((response) => response.json())
+            .then((responseJson) => {
+    
+            this.setState({
+                isLoading: false,
+                dataSource: responseJson,
+            }, function(){
+    
+            });
+            })
+            .catch((error) =>{
+                this.fetchAnnunci();
+            });
+        } else {
+            fetch('http://2.224.160.133.xip.io/api/annunci/ordina/' + this.animali + 
+            '/' + this.ordina + '/' + this.categorie + '/?format=json',
+            {
+              method: 'GET',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + global.user_key,
+              }
+            })
+            .then(response => response.json())
+            .then((responseJson) => {
+                this.setState({
+                    isLoading: false,
+                    dataSource: responseJson,
+                }, function(){
+        
+                });
+            })
+            .catch((error) => {
+                this.fetchAnnunci;
+            })
+        }
     }
 
     render() {
