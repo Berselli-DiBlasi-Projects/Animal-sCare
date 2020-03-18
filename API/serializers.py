@@ -944,7 +944,7 @@ class PetCoinsSerializer(serializers.Serializer):
 
     def validate_pet_coins(self, data):
         # controllo descrizione
-        if not re.match("^[0-9]+$", str(data)):
+        if not re.match("^[-+0-9]+$", str(data)):
             raise serializers.ValidationError(_('Errore: il valore dei pet coins deve contenere solo numeri'))
         return data
 

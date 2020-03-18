@@ -518,6 +518,15 @@ class listAPIViewTestCase(APITestCase):
         response = self.client.put(url, data=data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_modifica_pet_coins_petsitter_neg(self):
+        data = {
+            "pet_coins": '-50'
+            }
+        url = reverse("API:API-petcoins-utenti")
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token_petsitter.key)
+        response = self.client.put(url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     def test_modifica_pet_coins_errati_petsitter(self):
         data = {
             "pet_coins": '6443'
